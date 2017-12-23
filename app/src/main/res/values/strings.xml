@@ -1,0 +1,34 @@
+<resources>
+    <string name="APP_NAME_TEXT">Home System Client</string>
+    <string name="INSTRUCTION_TEXT">Enter the HSW server url:</string>
+
+    <string name="SAVE_SERVER_BUTTON">Save server</string>
+    <string name="REGISTER_USER_BUTTON">Register token and user on server</string>
+    <string name="SHOW_CURRENT_SERVER_BUTTON">Show current server</string>
+    <string name="SCAN_SECRET_QR">Pair with server</string>
+    <string name="GET_SYSTEM_STATE">Get system state</string>
+
+    <string name="POPUP_SAVED_SERVER">Server successfully saved: %s</string>
+    <string name="POPUP_TOKEN" translatable="false">InstanceID Token: %s</string>
+    <string name="POPUP_EMAIL">Email: %s</string>
+    <string name="POPUP_CURRENT_SERVER">Current server: %s</string>
+    <string name="POPUP_CURRENT_STATE">Current state: %s</string>
+    <string name="title_activity_drawer">Options</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="SYSTEM_MODE_ON_TEXT">Automatic</string>
+    <string name="SYSTEM_MODE_OFF_TEXT">Manual</string>
+    <string name="SYSTEM_STATE_ON_TEXT">Armed</string>
+    <string name="SYSTEM_STATE_OFF_TEXT">Disarmed</string>
+    <string name="PORTS_CLOSED_TEXT">Ports Closed</string>
+    <string name="PORTS_OPEN_TEXT">Ports Open</string>
+    <string name="CAMERA_APP_TEXT">Camera app</string>
+    <string name="RESEND_HOURLY_TEXT">Hourly report</string>
+    <string name="RESEND_WEEKLY_TEXT">Weekly report</string>
+    <string name="SETTINGS_TEXT">Settings</string>
+    <string name="SERVER_VERSION_TEXT">Server version:</string>
+    <string name="SERVER_LAST_PING_TEXT">Last time online:</string>
+    <string name="SERVER_UPTIME_TEXT">Server uptime:</string>
+</resources>

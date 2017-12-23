@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.rudyii.hsw.client">
+
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:name=".HomeSystemClientApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/APP_NAME_TEXT"
+        android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.rudyii.hsw.client.default_notification_icon"
+            android:resource="@drawable/ic_stat_ic_notification" />
+
+        <meta-data
+            android:name="com.rudyii.hsw.client.default_notification_color"
+            android:resource="@color/colorAccent" />
+
+        <activity
+            android:name=".activities.MainActivity"
+            android:label="@string/APP_NAME_TEXT">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:label="@string/title_activity_drawer"
+            android:parentActivityName=".activities.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.rudyii.hsw.client.activities.MainActivity" />
+        </activity>
+
+        <receiver android:name=".Autorun">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".listeners.MotionListener">
+            <intent-filter>
+                <action android:name="com.rudyii.hsw.client.HSC_MOTION_DETECTED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".listeners.StatusesListener">
+            <intent-filter>
+                <action android:name="com.rudyii.hsw.client.HSC_STATUSES_UPDATED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".listeners.WanInfoListener">
+            <intent-filter>
+                <action android:name="com.rudyii.hsw.client.HSC_WAN_IP_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".listeners.OfflineDeviceListener">
+            <intent-filter>
+                <action android:name="com.rudyii.hsw.client.HSC_DEVICE_REBOOT" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".listeners.ServerStartupListener">
+            <intent-filter>
+                <action android:name="com.rudyii.hsw.client.HSC_SERVER_STARTED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".listeners.NetworkChangeListener">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".services.FirebaseService"
+            android:enabled="true" />
+    </application>
+
+</manifest>

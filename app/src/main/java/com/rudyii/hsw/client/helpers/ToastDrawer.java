@@ -11,11 +11,11 @@ import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
  */
 
 public class ToastDrawer {
-    public void showToast(final String subject, final String message) {
+    public void showToast(final String message) {
         Handler h = new Handler(Looper.getMainLooper());
         h.post(new Runnable() {
             public void run() {
-                Toast.makeText(getAppContext(), subject + " : " + message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getAppContext(), message, Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_text">Home System Client</string>
+    <string name="server_unpaired">Соединить с сервером</string>
+    <string name="server_paired">Отсоединить сервер</string>
+    <string name="server_paired_success">Соединение удалось</string>
+    <string name="server_paired_failure">Соединение не удалось</string>
+    <string name="server_unpaired_success">Отсоединение удалось</string>
+    <string name="server_unpaired_failure">Отсоединение не удалось</string>
+    <string name="settings">Настройки</string>
+
+    <string name="system_mode_automatic_text">Автоматический</string>
+    <string name="system_mode_manual_text">Ручной</string>
+    <string name="system_state_armed_text">Включен</string>
+    <string name="system_state_disarmed_text">Выключен</string>
+    <string name="ports_closed_text">Порты закрыты</string>
+    <string name="ports_open_text">Порты открыты</string>
+    <string name="camera_app_text">Приложения для камер</string>
+    <string name="select_camera_app_text">Выберите приложения для камер</string>
+    <string name="choose_camera_app_text">Приложения для камер не выбрано, выберите желаемое</string>
+    <string name="choose_camera_app_error_text">Приложения для камер не доступно, выберите желаемое</string>
+    <string name="resend_hourly_text">Получить ежечасный отчет</string>
+    <string name="resend_weekly_text">Получить еженедельный отчет</string>
+    <string name="settings_text">Настройки</string>
+    <string name="server_version_text">Версия:</string>
+    <string name="server_ping_text">В сети:</string>
+    <string name="server_uptime_text">В работе:</string>
+    <string name="info_sound_text">Звук уведомления</string>
+    <string name="motion_sound_text">Звук движения</string>
+    <string name="retrieving_data_text">получаем данные</string>
+    <string name="armed_mode_text">Режим</string>
+    <string name="armed_state_text">Состояние</string>
+    <string name="info_sound_changed_to">Звук уведомлений изменен на:</string>
+    <string name="motion_sound_changed_to">Звук движений изменен на:</string>
+    <string name="info_sound_removed">Звук уведомлений удален</string>
+    <string name="motion_sound_removed">Звук движений удален</string>
+    <string name="no_sound">Без звука</string>
+</resources>

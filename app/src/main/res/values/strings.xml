@@ -1,34 +1,37 @@
 <resources>
-    <string name="APP_NAME_TEXT">Home System Client</string>
-    <string name="INSTRUCTION_TEXT">Enter the HSW server url:</string>
+    <string name="app_name_text">Home System Client</string>
+    <string name="server_unpaired">Pair with server</string>
+    <string name="server_paired">Unpair server</string>
+    <string name="server_paired_success">Pairing success</string>
+    <string name="server_paired_failure">Pairing failed</string>
+    <string name="server_unpaired_success">Unpairing success</string>
+    <string name="server_unpaired_failure">Unpairing failed</string>
+    <string name="settings">Settings</string>
 
-    <string name="SAVE_SERVER_BUTTON">Save server</string>
-    <string name="REGISTER_USER_BUTTON">Register token and user on server</string>
-    <string name="SHOW_CURRENT_SERVER_BUTTON">Show current server</string>
-    <string name="SCAN_SECRET_QR">Pair with server</string>
-    <string name="GET_SYSTEM_STATE">Get system state</string>
-
-    <string name="POPUP_SAVED_SERVER">Server successfully saved: %s</string>
-    <string name="POPUP_TOKEN" translatable="false">InstanceID Token: %s</string>
-    <string name="POPUP_EMAIL">Email: %s</string>
-    <string name="POPUP_CURRENT_SERVER">Current server: %s</string>
-    <string name="POPUP_CURRENT_STATE">Current state: %s</string>
-    <string name="title_activity_drawer">Options</string>
-
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <string name="SYSTEM_MODE_ON_TEXT">Automatic</string>
-    <string name="SYSTEM_MODE_OFF_TEXT">Manual</string>
-    <string name="SYSTEM_STATE_ON_TEXT">Armed</string>
-    <string name="SYSTEM_STATE_OFF_TEXT">Disarmed</string>
-    <string name="PORTS_CLOSED_TEXT">Ports Closed</string>
-    <string name="PORTS_OPEN_TEXT">Ports Open</string>
-    <string name="CAMERA_APP_TEXT">Camera app</string>
-    <string name="RESEND_HOURLY_TEXT">Hourly report</string>
-    <string name="RESEND_WEEKLY_TEXT">Weekly report</string>
-    <string name="SETTINGS_TEXT">Settings</string>
-    <string name="SERVER_VERSION_TEXT">Server version:</string>
-    <string name="SERVER_LAST_PING_TEXT">Last time online:</string>
-    <string name="SERVER_UPTIME_TEXT">Server uptime:</string>
+    <string name="system_mode_automatic_text">Automatic</string>
+    <string name="system_mode_manual_text">Manual</string>
+    <string name="system_state_armed_text">Armed</string>
+    <string name="system_state_disarmed_text">Disarmed</string>
+    <string name="ports_closed_text">Ports Closed</string>
+    <string name="ports_open_text">Ports Open</string>
+    <string name="camera_app_text">Camera app</string>
+    <string name="select_camera_app_text">Select Camera app</string>
+    <string name="choose_camera_app_text">Camera application is not selected. Select new Camera application</string>
+    <string name="choose_camera_app_error_text">Camera application unavailable. Select new Camera application</string>
+    <string name="resend_hourly_text">Resend hourly report</string>
+    <string name="resend_weekly_text">Resend weekly report</string>
+    <string name="settings_text">Settings</string>
+    <string name="server_version_text">Server version:</string>
+    <string name="server_ping_text">Last time online:</string>
+    <string name="server_uptime_text">Server uptime:</string>
+    <string name="info_sound_text">Info sound</string>
+    <string name="motion_sound_text">Motion sound</string>
+    <string name="retrieving_data_text">retrieving data</string>
+    <string name="armed_mode_text">ARMED MODE</string>
+    <string name="armed_state_text">ARMED STATE</string>
+    <string name="info_sound_changed_to">Info sound changed to:</string>
+    <string name="motion_sound_changed_to">Motion sound changed to:</string>
+    <string name="info_sound_removed">Info sound removed</string>
+    <string name="motion_sound_removed">Motion sound removed</string>
+    <string name="no_sound">No sound</string>
 </resources>

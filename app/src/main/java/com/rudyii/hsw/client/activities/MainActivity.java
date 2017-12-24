@@ -93,8 +93,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         systemMode = (ToggleButton) findViewById(R.id.systemMode);
-        systemMode.setTextOn(getString(R.string.SYSTEM_MODE_ON_TEXT));
-        systemMode.setTextOff(getString(R.string.SYSTEM_MODE_OFF_TEXT));
+        systemMode.setTextOn(getString(R.string.system_mode_automatic_text));
+        systemMode.setTextOff(getString(R.string.system_mode_manual_text));
         systemMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -103,8 +103,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         systemState = (ToggleButton) findViewById(R.id.systemState);
-        systemState.setTextOn(getString(R.string.SYSTEM_STATE_ON_TEXT));
-        systemState.setTextOff(getString(R.string.SYSTEM_STATE_OFF_TEXT));
+        systemState.setTextOn(getString(R.string.system_state_armed_text));
+        systemState.setTextOff(getString(R.string.system_state_disarmed_text));
         systemState.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -174,10 +174,10 @@ public class MainActivity extends AppCompatActivity {
         String cameraAppPackageName = getCameraAppPackageName();
 
         if (cameraAppPackageName == null) {
-            new ToastDrawer().showToast("Camera application is not selected", "Select new Camera application");
+            new ToastDrawer().showToast(getResources().getString(R.string.choose_camera_app_text));
             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
         } else if (getPackageManager().getLaunchIntentForPackage(cameraAppPackageName) == null) {
-            new ToastDrawer().showToast("Camera application uninstalled", "Select new Camera application");
+            new ToastDrawer().showToast(getResources().getString(R.string.choose_camera_app_error_text));
             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
         } else {
             Intent intent = getPackageManager().getLaunchIntentForPackage(cameraAppPackageName);
@@ -254,8 +254,8 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 String serverVersion = info.get("serverVersion").toString();
-                String serverLastPing = info.get("ping").toString();
-                String serverUptime = info.get("uptime").toString();
+                Long serverLastPing = (long) info.get("ping");
+                Long serverUptime = (long) info.get("uptime");
 
                 TextView serverVersionTextValue = (TextView) findViewById(R.id.serverVersionTextValue);
                 serverVersionTextValue.setText(serverVersion);
@@ -322,18 +322,15 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
-    private String calculatePing(String serverLastPing) {
-        Long pingTimestamp = Long.decode(serverLastPing);
-
-        return getCurrentTimeAndDateDoubleDotsDelimFrom(pingTimestamp);
+    private String calculatePing(long serverLastPing) {
+        return getCurrentTimeAndDateDoubleDotsDelimFrom(serverLastPing);
     }
 
-    private String calculateUptime(String serverUptime) {
-        Long uptime = Long.decode(serverUptime);
-        long days = TimeUnit.MILLISECONDS.toDays(uptime);
-        long hours = TimeUnit.MILLISECONDS.toHours(uptime) % 24L;
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(uptime) % 60L;
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(uptime) % 60L;
+    private String calculateUptime(Long serverUptime) {
+        long days = TimeUnit.MILLISECONDS.toDays(serverUptime);
+        long hours = TimeUnit.MILLISECONDS.toHours(serverUptime) % 24L;
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(serverUptime) % 60L;
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(serverUptime) % 60L;
 
         StringBuilder builder = new StringBuilder();
 

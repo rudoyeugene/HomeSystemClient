@@ -10,6 +10,7 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +21,6 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.firebase.database.FirebaseDatabase;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.helpers.ToastDrawer;
 import com.rudyii.hsw.client.services.FirebaseService;
@@ -44,12 +44,11 @@ import static com.rudyii.hsw.client.providers.DatabaseProvider.deleteIdFromSetti
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueToSettings;
 
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends AppCompatActivity {
     static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
     private final int QR_SCAN_CODE = 84695;
     private final int INFORMATION_NOTIFICATION_SOUND_CODE = 35978;
     private final int MOTION_NOTIFICATION_SOUND_CODE = 35949;
-    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private Button pairServerButton, infoSoundButton, motionSoundButton;
 
     @Override
@@ -142,7 +141,7 @@ public class SettingsActivity extends Activity {
         });
 
         pairServerButton = (Button) findViewById(R.id.SCAN_SECRET_QR);
-        pairServerButton.setText(isPaired() ? "UNPAIR SERVER" : "PAIR WITH SERVER");
+        pairServerButton.setText(isPaired() ? getResources().getString(R.string.server_paired) : getResources().getString(R.string.server_paired));
         pairServerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,8 +159,8 @@ public class SettingsActivity extends Activity {
                                 stopService(new Intent(getApplicationContext(), FirebaseService.class));
                             }
 
-                            new ToastDrawer().showToast("Unpairing", isPaired() ? "failed" : "success");
-                            pairServerButton.setText("PAIR WITH SERVER");
+                            new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.server_unpaired_failure) : getResources().getString(R.string.server_unpaired_success));
+                            pairServerButton.setText(R.string.server_unpaired);
                         }
                     });
 
@@ -229,7 +228,7 @@ public class SettingsActivity extends Activity {
             return;
         }
 
-        String contents, soundName;
+        String contents, soundName = null;
         Uri soundUri;
         switch (requestCode) {
             case QR_SCAN_CODE:
@@ -238,39 +237,48 @@ public class SettingsActivity extends Activity {
                 if (serverKeyIsValid(contents)) {
                     saveStringValueToSettings("SERVER_KEY", contents);
 
-                    //Read settings once
                     if (isMyServiceRunning(FirebaseService.class)) {
                         stopService(new Intent(getApplicationContext(), FirebaseService.class));
                         startService(new Intent(getApplicationContext(), FirebaseService.class));
                     } else {
                         startService(new Intent(getApplicationContext(), FirebaseService.class));
                     }
-                    new ToastDrawer().showToast("Pairing", isPaired() ? "success" : "failed");
-                    pairServerButton.setText("UNPAIR SERVER");
+                    new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.server_paired_success) : getResources().getString(R.string.server_paired_failure));
+                    pairServerButton.setText(R.string.server_paired);
                 } else {
-                    new ToastDrawer().showToast("Failed", "Unsupported server key provided, please try again.");
+                    new ToastDrawer().showToast("Failed. Unsupported server key provided, please try again.");
                 }
 
                 break;
 
             case INFORMATION_NOTIFICATION_SOUND_CODE:
                 soundUri = (Uri) intent.getExtras().get("android.intent.extra.ringtone.PICKED_URI");
-                soundName = getSoundNameBy(soundUri.toString());
 
-                saveStringValueToSettings("INFO_SOUND", soundUri.toString());
-
+                if (soundUri == null){
+                    deleteIdFromSettings("INFO_SOUND");
+                    soundName = getSoundNameBy(getStringValueFromSettings("INFO_SOUND"));
+                    new ToastDrawer().showToast(getResources().getString(R.string.info_sound_removed));
+                } else {
+                    saveStringValueToSettings("INFO_SOUND", soundUri.toString());
+                    soundName = getSoundNameBy(getStringValueFromSettings("INFO_SOUND"));
+                    new ToastDrawer().showToast(getResources().getString(R.string.info_sound_changed_to) + " " + soundName);
+                }
                 infoSoundButton.setText(soundName);
-                new ToastDrawer().showToast("Info sound changed to ", soundName);
                 break;
 
             case MOTION_NOTIFICATION_SOUND_CODE:
                 soundUri = (Uri) intent.getExtras().get("android.intent.extra.ringtone.PICKED_URI");
-                soundName = getSoundNameBy(soundUri.toString());
 
-                saveStringValueToSettings("MOTION_SOUND", soundUri.toString());
-
+                if (soundUri == null){
+                    deleteIdFromSettings("MOTION_SOUND");
+                    soundName = getSoundNameBy(getStringValueFromSettings("MOTION_SOUND"));
+                    new ToastDrawer().showToast(getResources().getString(R.string.motion_sound_removed));
+                } else {
+                    saveStringValueToSettings("MOTION_SOUND", soundUri.toString());
+                    soundName = getSoundNameBy(getStringValueFromSettings("MOTION_SOUND"));
+                    new ToastDrawer().showToast(getResources().getString(R.string.motion_sound_changed_to) + " " + soundName);
+                }
                 motionSoundButton.setText(soundName);
-                new ToastDrawer().showToast("Motion sound changed to ", soundName);
                 break;
         }
     }
@@ -306,7 +314,6 @@ public class SettingsActivity extends Activity {
 
             View view = convertView;
             if (view == null) {
-                // Inflate the view and cache the pointer to the text view
                 view = mInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
                 view.setTag(view.findViewById(android.R.id.text1));
             }

@@ -6,12 +6,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".HomeSystemClientApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/APP_NAME_TEXT"
+        android:label="@string/app_name_text"
         android:theme="@style/AppTheme">
 
         <meta-data
@@ -24,7 +25,7 @@
 
         <activity
             android:name=".activities.MainActivity"
-            android:label="@string/APP_NAME_TEXT">
+            android:label="@string/app_name_text">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -32,12 +33,8 @@
         </activity>
         <activity
             android:name=".activities.SettingsActivity"
-            android:label="@string/title_activity_drawer"
-            android:parentActivityName=".activities.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.rudyii.hsw.client.activities.MainActivity" />
+            android:label="@string/settings"
+            android:parentActivityName=".activities.MainActivity">
         </activity>
 
         <receiver android:name=".Autorun">

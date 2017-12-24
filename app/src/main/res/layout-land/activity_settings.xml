@@ -10,17 +10,19 @@
 
     <Button
         android:id="@+id/SCAN_SECRET_QR"
-        style="@android:style/TextAppearance.Material.Button"
+        style="@android:style/TextAppearance.Material.Widget.TextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="@string/SCAN_SECRET_QR"
+        android:layout_marginTop="16dp"
+        android:text="@string/server_unpaired"
+        android:textAllCaps="false"
         app:layout_constraintStart_toEndOf="@+id/motionSound"
+        app:layout_constraintTop_toBottomOf="@+id/motionSoundTesxt"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_editor_absoluteY="152dp" />
+        tools:layout_constraintTop_creator="1" />
 
     <TextView
         android:id="@+id/selectCameraApp"
@@ -44,7 +46,7 @@
         app:layout_constraintTop_toBottomOf="@+id/selectCameraApp" />
 
     <TextView
-        android:id="@+id/infoSoundTesxt"
+        android:id="@+id/infoSoundText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -56,14 +58,15 @@
 
     <Button
         android:id="@+id/infoSound"
-        style="@android:style/TextAppearance.Material.Button"
+        style="@android:style/TextAppearance.Material.Widget.TextView"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:text="Info sound"
+        android:textAllCaps="false"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/infoSoundTesxt" />
+        app:layout_constraintTop_toBottomOf="@+id/infoSoundText" />
 
     <TextView
         android:id="@+id/motionSoundTesxt"
@@ -78,12 +81,13 @@
 
     <Button
         android:id="@+id/motionSound"
-        style="@android:style/TextAppearance.Material.Button"
+        style="@android:style/TextAppearance.Material.Widget.TextView"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Motion sound"
+        android:textAllCaps="false"
         app:layout_constraintStart_toEndOf="@+id/infoSound"
         app:layout_constraintTop_toBottomOf="@+id/motionSoundTesxt" />
 

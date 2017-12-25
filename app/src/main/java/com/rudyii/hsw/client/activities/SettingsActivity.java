@@ -147,11 +147,11 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 if (isPaired()) {
-                    AlertDialog.Builder unpaiServerAlert = new AlertDialog.Builder(SettingsActivity.this);
-                    unpaiServerAlert.setTitle("Unpair current server");
-                    unpaiServerAlert.setMessage("Are you sure, this can't be undone. Later you'll need to pair with another server");
+                    AlertDialog.Builder unpairServerAlert = new AlertDialog.Builder(SettingsActivity.this);
+                    unpairServerAlert.setTitle(getResources().getString(R.string.server_unpair_alert_title));
+                    unpairServerAlert.setMessage(getResources().getString(R.string.server_unpair_alert_message));
 
-                    unpaiServerAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    unpairServerAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             deleteIdFromSettings("SERVER_KEY");
 
@@ -164,13 +164,13 @@ public class SettingsActivity extends AppCompatActivity {
                         }
                     });
 
-                    unpaiServerAlert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    unpairServerAlert.setNegativeButton("No", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
 
                         }
                     });
 
-                    unpaiServerAlert.show();
+                    unpairServerAlert.show();
 
                 } else {
                     try {
@@ -187,20 +187,20 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void showDialogToDownloadQrCodeScanner(final Activity act) {
         AlertDialog.Builder downloadDialog = new AlertDialog.Builder(act);
-        downloadDialog.setTitle("No Scanner Found");
-        downloadDialog.setMessage("Download a scanner code activity?");
-        downloadDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        downloadDialog.setTitle(getResources().getString(R.string.download_qr_scanner_title));
+        downloadDialog.setMessage(getResources().getString(R.string.download_qr_scanner_message));
+        downloadDialog.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int i) {
                 Uri uri = Uri.parse("market://search?q=pname:" + "com.google.zxing.client.android");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 try {
                     act.startActivity(intent);
                 } catch (ActivityNotFoundException anfe) {
-                    Log.e(TAG, "Failed to start QR Code scanner, seems it was just uninstalled.");
+                    Log.e(TAG, "Failed to open Play Store.");
                 }
             }
         });
-        downloadDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        downloadDialog.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int i) {
 
             }
@@ -213,7 +213,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private String getCameraAppName() {
-        String appName = "Select application";
+        String appName = getResources().getString(R.string.select_camera_app_text);
         try {
             appName = String.valueOf(getPackageManager().getApplicationLabel(getPackageManager().getApplicationInfo(getCameraAppPackageName(), PackageManager.GET_META_DATA)));
         } catch (PackageManager.NameNotFoundException e) {
@@ -246,7 +246,7 @@ public class SettingsActivity extends AppCompatActivity {
                     new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.server_paired_success) : getResources().getString(R.string.server_paired_failure));
                     pairServerButton.setText(R.string.server_paired);
                 } else {
-                    new ToastDrawer().showToast("Failed. Unsupported server key provided, please try again.");
+                    new ToastDrawer().showToast(getResources().getString(R.string.server_paired_failure_detailed));
                 }
 
                 break;
@@ -254,7 +254,7 @@ public class SettingsActivity extends AppCompatActivity {
             case INFORMATION_NOTIFICATION_SOUND_CODE:
                 soundUri = (Uri) intent.getExtras().get("android.intent.extra.ringtone.PICKED_URI");
 
-                if (soundUri == null){
+                if (soundUri == null) {
                     deleteIdFromSettings("INFO_SOUND");
                     soundName = getSoundNameBy(getStringValueFromSettings("INFO_SOUND"));
                     new ToastDrawer().showToast(getResources().getString(R.string.info_sound_removed));
@@ -269,7 +269,7 @@ public class SettingsActivity extends AppCompatActivity {
             case MOTION_NOTIFICATION_SOUND_CODE:
                 soundUri = (Uri) intent.getExtras().get("android.intent.extra.ringtone.PICKED_URI");
 
-                if (soundUri == null){
+                if (soundUri == null) {
                     deleteIdFromSettings("MOTION_SOUND");
                     soundName = getSoundNameBy(getStringValueFromSettings("MOTION_SOUND"));
                     new ToastDrawer().showToast(getResources().getString(R.string.motion_sound_removed));

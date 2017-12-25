@@ -34,4 +34,11 @@
     <string name="info_sound_removed">Info sound removed</string>
     <string name="motion_sound_removed">Motion sound removed</string>
     <string name="no_sound">No sound</string>
+    <string name="server_unpair_alert_title">Unpair current server</string>
+    <string name="server_unpair_alert_message">Are you sure? This can\'t be reverted, later you can pair with another server.</string>
+    <string name="download_qr_scanner_title">No QR Code Scanner Found</string>
+    <string name="download_qr_scanner_message">Download QR Code Scanner from Play Store?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="server_paired_failure_detailed">Pairing failed, server key unrecognized, please try again</string>
 </resources>

@@ -1,11 +1,20 @@
 package com.rudyii.hsw.client.helpers;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Environment;
+import android.util.Log;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,6 +22,7 @@ import java.util.HashMap;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 
@@ -105,5 +115,62 @@ public class Utils {
         }
 
         return result;
+    }
+
+    public static String getSimplifiedPrimaryAccountName(){
+        AccountManager accountManager = AccountManager.get(getAppContext());
+        Account[] accounts = accountManager.getAccountsByType("com.google");
+        String simplifiedAccountName = "";
+
+        if (accounts.length > 0) {
+            Account mainAccount = accounts[0];
+            simplifiedAccountName = mainAccount.name.split("@")[0].replace(".", "");
+
+        }
+
+        return simplifiedAccountName;
+    }
+
+
+    public static void saveImageFromCamera(Bitmap bitmap, String cameraName, String imageName) {
+        imageName = imageName + ".png";
+
+        FileOutputStream fos = null;
+
+        try {
+            final File directory = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/HomeSystemMotions/" + cameraName + "/");
+
+            if (!directory.exists()) {
+                if (!directory.mkdirs()) {
+                    Log.e(TAG, "could not create the directories");
+                }
+            }
+
+            final File motionImage = new File(directory, imageName);
+
+            if (!motionImage.exists()) {
+                motionImage.createNewFile();
+            }
+
+            fos = new FileOutputStream(motionImage);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+
+            Uri uri = Uri.fromFile(motionImage);
+            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri);
+            getAppContext().sendBroadcast(intent);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            try {
+                if (fos != null) {
+                    fos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -23,7 +23,6 @@ import android.widget.TextView;
 
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.helpers.ToastDrawer;
-import com.rudyii.hsw.client.services.FirebaseService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +36,6 @@ import static android.media.RingtoneManager.EXTRA_RINGTONE_TYPE;
 import static android.media.RingtoneManager.TYPE_NOTIFICATION;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.helpers.Utils.getSoundNameBy;
-import static com.rudyii.hsw.client.helpers.Utils.isMyServiceRunning;
 import static com.rudyii.hsw.client.helpers.Utils.isPaired;
 import static com.rudyii.hsw.client.helpers.Utils.serverKeyIsValid;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.deleteIdFromSettings;
@@ -155,10 +153,6 @@ public class SettingsActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             deleteIdFromSettings("SERVER_KEY");
 
-                            if (isMyServiceRunning(FirebaseService.class)) {
-                                stopService(new Intent(getApplicationContext(), FirebaseService.class));
-                            }
-
                             new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.server_unpaired_failure) : getResources().getString(R.string.server_unpaired_success));
                             pairServerButton.setText(R.string.server_unpaired);
                         }
@@ -237,12 +231,6 @@ public class SettingsActivity extends AppCompatActivity {
                 if (serverKeyIsValid(contents)) {
                     saveStringValueToSettings("SERVER_KEY", contents);
 
-                    if (isMyServiceRunning(FirebaseService.class)) {
-                        stopService(new Intent(getApplicationContext(), FirebaseService.class));
-                        startService(new Intent(getApplicationContext(), FirebaseService.class));
-                    } else {
-                        startService(new Intent(getApplicationContext(), FirebaseService.class));
-                    }
                     new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.server_paired_success) : getResources().getString(R.string.server_paired_failure));
                     pairServerButton.setText(R.string.server_paired);
                 } else {

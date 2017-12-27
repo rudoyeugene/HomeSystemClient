@@ -1,30 +1,18 @@
-package com.rudyii.hsw.client.services;
+package com.rudyii.hsw.client.helpers;
 
-import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Environment;
-import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rudyii.hsw.client.R;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -32,7 +20,7 @@ import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.helpers.Utils.buildMainActivityButtonsStateMapFrom;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateSingleDotDelimFrom;
-import static com.rudyii.hsw.client.helpers.Utils.getServerKey;
+import static com.rudyii.hsw.client.helpers.Utils.saveImageFromCamera;
 import static com.rudyii.hsw.client.listeners.MotionListener.HSC_MOTION_DETECTED;
 import static com.rudyii.hsw.client.listeners.OfflineDeviceListener.HSC_DEVICE_REBOOT;
 import static com.rudyii.hsw.client.listeners.ServerStartupListener.HSC_SERVER_STARTED;
@@ -44,93 +32,20 @@ import static com.rudyii.hsw.client.providers.DatabaseProvider.saveLongValueToSe
 import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueToSettings;
 
 /**
- * Created by j-a-c on 11.12.2017.
+ * Created by j-a-c on 27.12.2017.
  */
 
-public class FirebaseService extends Service {
-    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    private List<ValueEventListener> valueEventListeners = new ArrayList<>();
-    private List<DatabaseReference> databaseReferences = new ArrayList<>();
+public class FirebaseListenersFactory {
+    private static FirebaseListenersFactory instance;
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(TAG, "Starting Firebase Service");
-
-        if (getServerKey().equals("")) {
-            return START_NOT_STICKY;
+    public static FirebaseListenersFactory getInstance() {
+        if (instance == null) {
+            instance = new FirebaseListenersFactory();
         }
-
-        //Read settings once
-        DatabaseReference settingsRef = firebaseDatabase.getReference(getServerKey() + "/settings");
-        settingsRef.addListenerForSingleValueEvent(buildSettingsRefValueEventListener());
-
-        //Subscribe on camera motions
-        String cameraList = getStringValueFromSettings("CAMERA_LIST");
-
-        List<String> cameras = Arrays.asList(cameraList.split(","));
-
-        if (cameraAvailable(cameras)) {
-            for (String cameraName : cameras) {
-                DatabaseReference motionsRef = firebaseDatabase.getReference(getServerKey() + "/motions/" + cameraName);
-                databaseReferences.add(motionsRef);
-
-                ValueEventListener motionRefValueEventListener = buildMotionRefValueEventListener();
-                motionsRef.addValueEventListener(motionRefValueEventListener);
-                valueEventListeners.add(motionRefValueEventListener);
-            }
-        }
-
-        //Subscribe to statuses
-        DatabaseReference statusesRef = firebaseDatabase.getReference(getServerKey() + "/statuses");
-        databaseReferences.add(statusesRef);
-        ValueEventListener statusesValueEventListener = buildStatusesValueEventListener();
-        statusesRef.addValueEventListener(statusesValueEventListener);
-        valueEventListeners.add(statusesValueEventListener);
-
-        //Subscribe to wanInfo
-        DatabaseReference wanInfoRef = firebaseDatabase.getReference(getServerKey() + "/info/wanInfo");
-        databaseReferences.add(wanInfoRef);
-        ValueEventListener wanInfoValueEventListener = buildWanInfoValueEventListener();
-        wanInfoRef.addValueEventListener(wanInfoValueEventListener);
-        valueEventListeners.add(wanInfoValueEventListener);
-
-        //Subscribe to offline devices
-        DatabaseReference offlineDevicesRef = firebaseDatabase.getReference(getServerKey() + "/offlineDevices");
-        databaseReferences.add(offlineDevicesRef);
-        ValueEventListener offlineDevicesValueEventListener = buildOfflineDevicesValueEventListener();
-        offlineDevicesRef.addValueEventListener(offlineDevicesValueEventListener);
-        valueEventListeners.add(offlineDevicesValueEventListener);
-
-        //Subscribe to pid
-        DatabaseReference pidRef = firebaseDatabase.getReference(getServerKey() + "/info/pid");
-        databaseReferences.add(pidRef);
-        ValueEventListener pidValueEventListener = buildPidValueEventListener();
-        pidRef.addValueEventListener(pidValueEventListener);
-        valueEventListeners.add(pidValueEventListener);
-
-        return START_STICKY;
+        return instance;
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
-    public void onDestroy() {
-        Log.i(TAG, "Stopping Firebase Service");
-
-        for (DatabaseReference reference : databaseReferences) {
-            for (ValueEventListener listener : valueEventListeners) {
-                reference.removeEventListener(listener);
-            }
-        }
-
-        databaseReferences.clear();
-        valueEventListeners.clear();
-    }
-
-    private ValueEventListener buildStatusesValueEventListener() {
+    public ValueEventListener buildStatusesValueEventListener() {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -178,7 +93,7 @@ public class FirebaseService extends Service {
                 Intent intent = new Intent();
                 intent.setAction(HSC_STATUSES_UPDATED);
                 intent.putExtra("HSC_STATUSES_UPDATED", statusesData);
-                sendBroadcast(intent);
+                getAppContext().sendBroadcast(intent);
             }
 
             @Override
@@ -188,7 +103,7 @@ public class FirebaseService extends Service {
         };
     }
 
-    private ValueEventListener buildMotionRefValueEventListener() {
+    public ValueEventListener buildMotionRefValueEventListener() {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -217,7 +132,7 @@ public class FirebaseService extends Service {
                 byte[] decodedImageString = Base64.decode(imageString, Base64.DEFAULT);
                 Bitmap bitmap = BitmapFactory.decodeByteArray(decodedImageString, 0, decodedImageString.length);
 
-                saveImage(bitmap, motionData.get("cameraName").toString(), getCurrentTimeAndDateSingleDotDelimFrom(currentTimeStamp).toString());
+                saveImageFromCamera(bitmap, motionData.get("cameraName").toString(), getCurrentTimeAndDateSingleDotDelimFrom(currentTimeStamp).toString());
 
                 while (bitmap.getByteCount() > 512000) {
                     int srcWidth = bitmap.getWidth();
@@ -232,7 +147,7 @@ public class FirebaseService extends Service {
                 Intent intent = new Intent();
                 intent.setAction(HSC_MOTION_DETECTED);
                 intent.putExtra("HSC_MOTION_DETECTED", motionData);
-                sendBroadcast(intent);
+                getAppContext().sendBroadcast(intent);
             }
 
             @Override
@@ -242,7 +157,7 @@ public class FirebaseService extends Service {
         };
     }
 
-    private ValueEventListener buildWanInfoValueEventListener() {
+    public ValueEventListener buildWanInfoValueEventListener() {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -270,7 +185,7 @@ public class FirebaseService extends Service {
                 Intent intent = new Intent();
                 intent.setAction(HSC_WAN_IP_CHANGED);
                 intent.putExtra("HSC_WAN_IP_CHANGED", wanInfoData);
-                sendBroadcast(intent);
+                getAppContext().sendBroadcast(intent);
             }
 
             @Override
@@ -280,7 +195,7 @@ public class FirebaseService extends Service {
         };
     }
 
-    private ValueEventListener buildOfflineDevicesValueEventListener() {
+    public ValueEventListener buildOfflineDevicesValueEventListener() {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -307,7 +222,7 @@ public class FirebaseService extends Service {
                         Intent intent = new Intent();
                         intent.setAction(HSC_DEVICE_REBOOT);
                         intent.putExtra("HSC_DEVICE_REBOOT", key);
-                        sendBroadcast(intent);
+                        getAppContext().sendBroadcast(intent);
                     }
 
                 }
@@ -320,7 +235,7 @@ public class FirebaseService extends Service {
         };
     }
 
-    private ValueEventListener buildPidValueEventListener() {
+    public ValueEventListener buildPidValueEventListener() {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -344,7 +259,7 @@ public class FirebaseService extends Service {
                     Intent intent = new Intent();
                     intent.setAction(HSC_SERVER_STARTED);
                     intent.putExtra("HSC_SERVER_STARTED", currentPid);
-                    sendBroadcast(intent);
+                    getAppContext().sendBroadcast(intent);
                 }
             }
 
@@ -353,72 +268,5 @@ public class FirebaseService extends Service {
                 Log.e(TAG, "Failed to subscribe to the offline devices");
             }
         };
-    }
-
-    private ValueEventListener buildSettingsRefValueEventListener() {
-        return new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                final Map<String, Object> settings = (Map<String, Object>) dataSnapshot.getValue();
-
-                if (settings == null) {
-                    return;
-                }
-
-                String cameraList = (String) settings.get("cameraList");
-                saveStringValueToSettings("CAMERA_LIST", cameraList);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, "Failed to fetch settings");
-            }
-        };
-    }
-
-    public void saveImage(Bitmap bitmap, String cameraName, String imageName) {
-        imageName = imageName + ".png";
-
-        FileOutputStream fos = null;
-
-        try {
-            final File directory = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/HomeSystemMotions/" + cameraName + "/");
-
-            if (!directory.exists()) {
-                if (!directory.mkdirs()) {
-                    Log.e(TAG, "could not create the directories");
-                }
-            }
-
-            final File motionImage = new File(directory, imageName);
-
-            if (!motionImage.exists()) {
-                motionImage.createNewFile();
-            }
-
-            fos = new FileOutputStream(motionImage);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-            fos.close();
-
-            Uri uri = Uri.fromFile(motionImage);
-            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri);
-            sendBroadcast(intent);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        } finally {
-            try {
-                if (fos != null) {
-                    fos.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private boolean cameraAvailable(List<String> cameras) {
-        return !cameras.get(0).equals("");
     }
 }

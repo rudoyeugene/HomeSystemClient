@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.rudyii.hsw.client.services.FirebaseService;
+import com.rudyii.hsw.client.services.FCMMessagingService;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 
@@ -19,7 +19,7 @@ public class Autorun extends BroadcastReceiver {
 
         Log.i(TAG, "Autorun executed");
 
-        Intent intent = new Intent(context, FirebaseService.class);
+        Intent intent = new Intent(context, FCMMessagingService.class);
         context.startService(intent);
     }
 }

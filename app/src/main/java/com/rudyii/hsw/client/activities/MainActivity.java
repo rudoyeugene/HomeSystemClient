@@ -1,7 +1,5 @@
 package com.rudyii.hsw.client.activities;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,7 +24,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.helpers.ToastDrawer;
 import com.rudyii.hsw.client.listeners.StatusesListener;
-import com.rudyii.hsw.client.services.FirebaseService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "Main Activity created");
 
         setContentView(R.layout.activity_main);
-
-        postUserData();
 
         Button resendHourlyReport = (Button) findViewById(R.id.resendHourly);
         resendHourlyReport.setOnClickListener(new View.OnClickListener() {
@@ -129,13 +124,6 @@ public class MainActivity extends AppCompatActivity {
         intentFilter.addAction(StatusesListener.HSC_STATUSES_UPDATED);
 
         registerReceiver(mainActivityBroadcastReceiver, intentFilter);
-
-        if (isMyServiceRunning(FirebaseService.class)) {
-            stopService(new Intent(getApplicationContext(), FirebaseService.class));
-            startService(new Intent(getApplicationContext(), FirebaseService.class));
-        } else {
-            startService(new Intent(getApplicationContext(), FirebaseService.class));
-        }
 
         updateData();
     }
@@ -245,36 +233,6 @@ public class MainActivity extends AppCompatActivity {
         statusesRef.addListenerForSingleValueEvent(buildStatusesValueEventListener());
 
         buttonsChangedInternally = false;
-    }
-
-    private void postUserData() {
-        AccountManager accountManager = AccountManager.get(getApplicationContext());
-        Account[] accounts = accountManager.getAccountsByType("com.google");
-        if (accounts.length > 0) {
-            final Account mainAccount = accounts[0];
-
-            final DatabaseReference accountsRef = getRootReference().child("/connectedClients");
-            accountsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Map<String, Long> connectedClients = (Map<String, Long>) dataSnapshot.getValue();
-
-                    if (connectedClients == null){
-                        connectedClients = new HashMap<>();
-                        connectedClients.put(mainAccount.name.split("@")[0].replace(".", ""), System.currentTimeMillis());
-                    } else {
-                        connectedClients.put(mainAccount.name.split("@")[0].replace(".", ""), System.currentTimeMillis());
-                    }
-
-                    accountsRef.setValue(connectedClients);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
     }
 
     private ValueEventListener buildInfoValueEventListener() {

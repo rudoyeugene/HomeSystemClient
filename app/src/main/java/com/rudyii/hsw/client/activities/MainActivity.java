@@ -31,7 +31,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
-import static com.rudyii.hsw.client.helpers.Utils.buildMainActivityButtonsStateMapFrom;
+import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDotsDelimFrom;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
@@ -279,13 +279,13 @@ public class MainActivity extends AppCompatActivity {
 
                 String armedMode = state.get("armedMode").toString();
                 String armedState = state.get("armedState").toString();
-                HashMap<String, Object> buttonsState = buildMainActivityButtonsStateMapFrom(armedMode, armedState);
+                Boolean portsOpen = Boolean.valueOf(state.get("portsOpen").toString());
+                HashMap<String, Object> buttonsState = buildDataForMainActivityFrom(armedMode, armedState, portsOpen);
 
                 buttonsChangedInternally = true;
                 updateModeStateButtons(buttonsState);
                 buttonsChangedInternally = false;
 
-                Boolean portsOpen = Boolean.valueOf(state.get("portsOpen").toString());
                 portsState.setChecked(portsOpen);
 
                 armedModeText = (TextView) findViewById(R.id.systemModeText);
@@ -359,7 +359,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateModeStateButtons(HashMap<String, Object> statusesData) {
         systemMode.setChecked((boolean) statusesData.get("systemModeChecked"));
-
         systemState.setChecked((boolean) statusesData.get("systemStateChecked"));
         systemState.setEnabled((boolean) statusesData.get("systemStateEnabled"));
     }

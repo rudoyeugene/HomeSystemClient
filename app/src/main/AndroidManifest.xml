@@ -75,6 +75,12 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".listeners.ServerShutdownListener" >
+            <intent-filter>
+                <action android:name="com.rudyii.hsw.client.HSC_SERVER_STOPPED" />
+            </intent-filter>
+        </receiver>
+
         <service android:name=".services.FCMService" />
 
         <service android:name=".services.FCMMessagingService">

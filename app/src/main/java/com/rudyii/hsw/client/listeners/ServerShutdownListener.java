@@ -15,22 +15,20 @@ import com.rudyii.hsw.client.activities.MainActivity;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 
 /**
- * Created by j-a-c on 19.12.2017.
+ * Created by j-a-c on 28.12.2017.
  */
 
-public class ServerStartupListener extends BroadcastReceiver {
-    public static String HSC_SERVER_STARTED = "com.rudyii.hsw.client.HSC_SERVER_STARTED";
+public class ServerShutdownListener extends BroadcastReceiver {
+    public static String HSC_SERVER_STOPPED = "com.rudyii.hsw.client.HSC_SERVER_STOPPED";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        String serverPid = (String) intent.getSerializableExtra("HSC_SERVER_STARTED");
-
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Server started with PID: " + serverPid)
+                .setContentTitle("Server shutdown procedure initiated")
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[]{0, 500})

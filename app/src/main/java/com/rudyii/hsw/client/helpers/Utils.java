@@ -10,7 +10,10 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
+import com.rudyii.hsw.client.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -89,8 +92,25 @@ public class Utils {
         return getStringValueFromSettings("SERVER_KEY");
     }
 
-    public static HashMap<String, Object> buildMainActivityButtonsStateMapFrom(String mode, String state) {
+    public static HashMap<String, Object> buildDataForMainActivityFrom(String mode, String state, Boolean portsState) {
         HashMap<String, Object> result = new HashMap<>();
+        result.put("systemModeText", mode);
+        result.put("systemStateText", state);
+        result.put("portsState", portsState);
+
+        if (mode.equalsIgnoreCase("auto")) {
+            result.put("systemModeTextColor", ContextCompat.getColor(getAppContext(), R.color.red));
+        } else {
+            result.put("systemModeTextColor", ContextCompat.getColor(getAppContext(), R.color.green));
+        }
+
+        if (state.equalsIgnoreCase("armed")) {
+            result.put("systemStateTextColor", ContextCompat.getColor(getAppContext(), R.color.red));
+        } else if (state.equalsIgnoreCase("disarmed")) {
+            result.put("systemStateTextColor", ContextCompat.getColor(getAppContext(), R.color.green));
+        } else {
+            result.put("systemStateTextColor", ContextCompat.getColor(getAppContext(), R.color.blue));
+        }
 
         if (mode.equalsIgnoreCase("automatic") && state.equalsIgnoreCase("armed")) {
             result.put("systemModeChecked", true);
@@ -117,7 +137,7 @@ public class Utils {
         return result;
     }
 
-    public static String getSimplifiedPrimaryAccountName(){
+    public static String getSimplifiedPrimaryAccountName() {
         AccountManager accountManager = AccountManager.get(getAppContext());
         Account[] accounts = accountManager.getAccountsByType("com.google");
         String simplifiedAccountName = "";

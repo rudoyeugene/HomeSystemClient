@@ -1,0 +1,34 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="arm"
+        android:enabled="true"
+        android:icon="@mipmap/arm"
+        android:shortcutShortLabel="@string/shortcut_arm">
+        <intent
+            android:action="com.rudyii.hsw.client.ARM"
+            android:targetPackage="com.rudyii.hsw.client"
+            android:targetClass="com.rudyii.hsw.client.activities.ShortcutsActionProcessor"/>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="disarm"
+        android:enabled="true"
+        android:icon="@mipmap/disarm"
+        android:shortcutShortLabel="@string/shortcut_disarm">
+        <intent
+            android:action="com.rudyii.hsw.client.DISARM"
+            android:targetPackage="com.rudyii.hsw.client"
+            android:targetClass="com.rudyii.hsw.client.activities.ShortcutsActionProcessor"/>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="auto"
+        android:enabled="true"
+        android:icon="@mipmap/auto"
+        android:shortcutShortLabel="@string/shortcut_auto">
+        <intent
+            android:action="com.rudyii.hsw.client.AUTO"
+            android:targetPackage="com.rudyii.hsw.client"
+            android:targetClass="com.rudyii.hsw.client.activities.ShortcutsActionProcessor"/>
+    </shortcut>
+</shortcuts>

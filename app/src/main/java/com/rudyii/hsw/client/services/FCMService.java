@@ -21,7 +21,7 @@ public class FCMService extends FirebaseInstanceIdService {
 
         String accountName = getSimplifiedPrimaryAccountName();
 
-        if (!accountName.equals("")) {
+        if (!"".equals(accountName)) {
             getRootReference().child("/connectedClients/" + accountName).setValue(refreshedToken);
         }
     }

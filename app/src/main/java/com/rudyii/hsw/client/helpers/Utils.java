@@ -98,13 +98,13 @@ public class Utils {
         result.put("systemStateText", state);
         result.put("portsState", portsState);
 
-        if (mode.equalsIgnoreCase("auto")) {
+        if ("auto".equalsIgnoreCase(mode)) {
             result.put("systemModeTextColor", ContextCompat.getColor(getAppContext(), R.color.red));
         } else {
             result.put("systemModeTextColor", ContextCompat.getColor(getAppContext(), R.color.green));
         }
 
-        if (state.equalsIgnoreCase("armed")) {
+        if ("armed".equalsIgnoreCase(state)) {
             result.put("systemStateTextColor", ContextCompat.getColor(getAppContext(), R.color.red));
         } else if (state.equalsIgnoreCase("disarmed")) {
             result.put("systemStateTextColor", ContextCompat.getColor(getAppContext(), R.color.green));
@@ -112,19 +112,19 @@ public class Utils {
             result.put("systemStateTextColor", ContextCompat.getColor(getAppContext(), R.color.blue));
         }
 
-        if (mode.equalsIgnoreCase("automatic") && state.equalsIgnoreCase("armed")) {
+        if ("automatic".equalsIgnoreCase(mode) && "armed".equalsIgnoreCase(state)) {
             result.put("systemModeChecked", true);
             result.put("systemStateChecked", true);
             result.put("systemStateEnabled", false);
-        } else if (mode.equalsIgnoreCase("automatic") && (state.equalsIgnoreCase("disarmed") || state.equalsIgnoreCase("auto"))) {
+        } else if ("automatic".equalsIgnoreCase(mode) && ("disarmed".equalsIgnoreCase(state) || state.equalsIgnoreCase("auto"))) {
             result.put("systemModeChecked", true);
             result.put("systemStateChecked", false);
             result.put("systemStateEnabled", false);
-        } else if (!mode.equalsIgnoreCase("automatic") && state.equalsIgnoreCase("armed")) {
+        } else if (!"automatic".equalsIgnoreCase(mode) && "armed".equalsIgnoreCase(state)) {
             result.put("systemModeChecked", false);
             result.put("systemStateChecked", true);
             result.put("systemStateEnabled", true);
-        } else if (!mode.equalsIgnoreCase("automatic") && state.equalsIgnoreCase("disarmed")) {
+        } else if (!"automatic".equalsIgnoreCase(mode) && "disarmed".equalsIgnoreCase(state)) {
             result.put("systemModeChecked", false);
             result.put("systemStateChecked", false);
             result.put("systemStateEnabled", true);

@@ -155,8 +155,14 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
 
-        if (itemId == R.id.settings) {
-            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+        switch (itemId){
+            case R.id.settings:
+                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                break;
+
+            case R.id.about:
+                startActivity(new Intent(getApplicationContext(), AboutActivity.class));
+                break;
         }
 
         return true;
@@ -290,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
 
                 armedModeText = (TextView) findViewById(R.id.systemModeText);
                 armedModeText.setText(armedMode);
-                if (armedMode.equalsIgnoreCase("auto")) {
+                if ("auto".equalsIgnoreCase(armedMode)) {
                     armedModeText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.red));
                 } else {
                     armedModeText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green));
@@ -298,9 +304,9 @@ public class MainActivity extends AppCompatActivity {
 
                 armedStateText = (TextView) findViewById(R.id.systemStateText);
                 armedStateText.setText(armedState);
-                if (armedState.equalsIgnoreCase("armed")) {
+                if ("armed".equalsIgnoreCase(armedState)) {
                     armedStateText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.red));
-                } else if (armedState.equalsIgnoreCase("disarmed")) {
+                } else if ("disarmed".equalsIgnoreCase(armedState)) {
                     armedStateText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green));
                 } else {
                     armedStateText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.blue));

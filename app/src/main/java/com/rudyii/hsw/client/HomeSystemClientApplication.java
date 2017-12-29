@@ -2,15 +2,11 @@ package com.rudyii.hsw.client;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.rudyii.hsw.client.services.FCMMessagingService;
-import com.rudyii.hsw.client.services.FCMService;
 
 import static com.rudyii.hsw.client.helpers.Utils.getSimplifiedPrimaryAccountName;
-import static com.rudyii.hsw.client.helpers.Utils.isMyServiceRunning;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
 
 /**
@@ -32,18 +28,10 @@ public class HomeSystemClientApplication extends Application {
 
         appContext = getApplicationContext();
 
-        if (!isMyServiceRunning(FCMMessagingService.class)) {
-            startService(new Intent(getApplicationContext(), FCMMessagingService.class));
-        }
-
-        if (!isMyServiceRunning(FCMService.class)) {
-            startService(new Intent(getApplicationContext(), FCMService.class));
-        }
-
         String token = FirebaseInstanceId.getInstance().getToken();
         String accountName = getSimplifiedPrimaryAccountName();
 
-        if (token != null && !accountName.equals("")) {
+        if (token != null && !"".equals(accountName)) {
             getRootReference().child("/connectedClients/" + accountName).setValue(token);
         }
     }

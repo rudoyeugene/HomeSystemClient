@@ -31,6 +31,8 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
 
         <activity
@@ -38,6 +40,14 @@
             android:label="@string/settings"
             android:parentActivityName=".activities.MainActivity">
         </activity>
+
+        <activity
+            android:name=".activities.AboutActivity"
+            android:label="@string/about"
+            android:parentActivityName=".activities.MainActivity">
+        </activity>
+
+        <activity android:name=".activities.ShortcutsActionProcessor" />
 
         <receiver android:name=".Autorun">
             <intent-filter>

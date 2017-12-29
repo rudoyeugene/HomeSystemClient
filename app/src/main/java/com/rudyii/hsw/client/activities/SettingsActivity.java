@@ -44,9 +44,9 @@ import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueTo
 
 public class SettingsActivity extends AppCompatActivity {
     static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
-    private final int QR_SCAN_CODE = 84695;
-    private final int INFORMATION_NOTIFICATION_SOUND_CODE = 35978;
-    private final int MOTION_NOTIFICATION_SOUND_CODE = 35949;
+    private final int QR_SCAN_CODE = 111;
+    private final int INFORMATION_NOTIFICATION_SOUND_CODE = 222;
+    private final int MOTION_NOTIFICATION_SOUND_CODE = 333;
     private Button pairServerButton, infoSoundButton, motionSoundButton;
 
     @Override
@@ -139,7 +139,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         pairServerButton = (Button) findViewById(R.id.SCAN_SECRET_QR);
-        pairServerButton.setText(isPaired() ? getResources().getString(R.string.server_paired) : getResources().getString(R.string.server_paired));
+        pairServerButton.setText(isPaired() ? getResources().getString(R.string.server_paired) : getResources().getString(R.string.server_unpaired));
         pairServerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

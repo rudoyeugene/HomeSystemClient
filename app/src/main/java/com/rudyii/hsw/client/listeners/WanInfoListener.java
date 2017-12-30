@@ -31,7 +31,7 @@ public class WanInfoListener extends BroadcastReceiver {
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle("ISP changed")
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText("Current ISP: "

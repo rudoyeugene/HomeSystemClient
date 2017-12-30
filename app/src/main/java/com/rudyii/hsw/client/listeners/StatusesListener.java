@@ -31,7 +31,7 @@ public class StatusesListener extends BroadcastReceiver {
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle("System state changed")
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText("System state is "

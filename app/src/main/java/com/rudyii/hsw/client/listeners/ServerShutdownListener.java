@@ -27,8 +27,8 @@ public class ServerShutdownListener extends BroadcastReceiver {
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Server shutdown procedure initiated")
+                .setSmallIcon(R.drawable.ic_stat_notification)
+                .setContentTitle("Server stopped")
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[]{0, 500})

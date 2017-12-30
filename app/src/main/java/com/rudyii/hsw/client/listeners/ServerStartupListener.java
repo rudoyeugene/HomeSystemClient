@@ -29,7 +29,7 @@ public class ServerStartupListener extends BroadcastReceiver {
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle("Server started with PID: " + serverPid)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)

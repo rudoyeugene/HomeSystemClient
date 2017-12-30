@@ -30,7 +30,7 @@ public class MotionListener extends BroadcastReceiver {
         HashMap<String, Object> motionData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_MOTION_DETECTED");
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle("Motion detected on camera: " + motionData.get("cameraName"))
                 .setContentText("Motion detected at " + getCurrentTimeAndDateDoubleDotsDelimFrom((Long) motionData.get("timeStamp")) + " with area " + motionData.get("motionArea") + "%")
                 .setStyle(new NotificationCompat.BigPictureStyle().bigPicture((Bitmap) motionData.get("image")))

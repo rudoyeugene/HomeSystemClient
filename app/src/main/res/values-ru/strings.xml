@@ -13,6 +13,7 @@
     <string name="system_mode_manual_text">Ручной</string>
     <string name="system_state_armed_text">Включен</string>
     <string name="system_state_disarmed_text">Выключен</string>
+    <string name="system_state_auto_text">Авто</string>
     <string name="ports_closed_text">Порты закрыты</string>
     <string name="ports_open_text">Порты открыты</string>
     <string name="camera_app_text">Приложение для камер</string>

@@ -22,6 +22,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -34,6 +35,7 @@ import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFro
  */
 
 public class Utils {
+    public static Locale currentLocale = getAppContext().getResources().getConfiguration().locale;
 
     public static String getCurrentTimeAndDateDoubleDotsDelimFrom(Long timeStamp) {
         if (timeStamp == null) {
@@ -41,7 +43,7 @@ public class Utils {
         }
 
         Date date = new Date(timeStamp);
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy");
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy", currentLocale);
         dateFormat.setTimeZone(TimeZone.getDefault());
 
         return dateFormat.format(date);
@@ -53,7 +55,7 @@ public class Utils {
         }
 
         Date date = new Date(timeStamp);
-        DateFormat dateFormat = new SimpleDateFormat("HH.mm.ss-dd.MM.yyyy");
+        DateFormat dateFormat = new SimpleDateFormat("HH.mm.ss-dd.MM.yyyy", currentLocale);
         dateFormat.setTimeZone(TimeZone.getDefault());
 
         return dateFormat.format(date);
@@ -81,8 +83,7 @@ public class Utils {
 
     public static boolean serverKeyIsValid(String serverKey) {
         try {
-            UUID.fromString(serverKey);
-            return true;
+            return null != UUID.fromString(serverKey);
         } catch (Exception e) {
             return false;
         }
@@ -94,8 +95,31 @@ public class Utils {
 
     public static HashMap<String, Object> buildDataForMainActivityFrom(String mode, String state, Boolean portsState) {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("systemModeText", mode);
-        result.put("systemStateText", state);
+        switch (mode.toLowerCase()) {
+            case "automatic":
+                result.put("systemModeText", getAppContext().getResources().getString(R.string.system_mode_automatic_text).toUpperCase());
+                break;
+            case "manual":
+                result.put("systemModeText", getAppContext().getResources().getString(R.string.system_mode_manual_text).toUpperCase());
+                break;
+            default:
+                result.put("systemModeText", "UNKNOWN_MODE");
+        }
+
+        switch (state.toLowerCase()) {
+            case "armed":
+                result.put("systemStateText", getAppContext().getResources().getString(R.string.system_state_armed_text).toUpperCase());
+                break;
+            case "disarmed":
+                result.put("systemStateText", getAppContext().getResources().getString(R.string.system_state_disarmed_text).toUpperCase());
+                break;
+            case "auto":
+                result.put("systemStateText", getAppContext().getResources().getString(R.string.system_state_auto_text).toUpperCase());
+                break;
+            default:
+                result.put("systemStateText", "UNKNOWN_STATE");
+        }
+
         result.put("portsState", portsState);
 
         if ("auto".equalsIgnoreCase(mode)) {

@@ -12,6 +12,7 @@
     <string name="system_mode_manual_text">Manual</string>
     <string name="system_state_armed_text">Armed</string>
     <string name="system_state_disarmed_text">Disarmed</string>
+    <string name="system_state_auto_text">Auto</string>
     <string name="ports_closed_text">Ports Closed</string>
     <string name="ports_open_text">Ports Open</string>
     <string name="camera_app_text">Camera app</string>

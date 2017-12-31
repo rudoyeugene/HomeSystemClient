@@ -260,6 +260,9 @@ public class MainActivity extends AppCompatActivity {
 
                 TextView serverLastPingTextValue = (TextView) findViewById(R.id.serverLastPingTextValue);
                 serverLastPingTextValue.setText(calculatePing(serverLastPing));
+                if (System.currentTimeMillis() - serverLastPing > 300000L){
+                    serverLastPingTextValue.setTextColor(getApplicationContext().getColor(R.color.red));
+                }
 
                 TextView serverUptimeTextValue = (TextView) findViewById(R.id.serverUptimeTextValue);
                 serverUptimeTextValue.setText(calculateUptime(serverUptime));

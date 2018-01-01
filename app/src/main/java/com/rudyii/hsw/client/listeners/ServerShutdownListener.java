@@ -28,7 +28,7 @@ public class ServerShutdownListener extends BroadcastReceiver {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle("Server stopped")
+                .setContentTitle(context.getResources().getString(R.string.notif_text_server_stopped))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[]{0, 500})

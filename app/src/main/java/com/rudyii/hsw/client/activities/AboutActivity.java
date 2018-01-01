@@ -31,6 +31,6 @@ public class AboutActivity extends AppCompatActivity {
         }
 
         TextView aboutTextView = (TextView) findViewById(R.id.aboutTextView);
-        aboutTextView.setText(String.format(getResources().getString(R.string.about_text), applicationVersion));
+        aboutTextView.setText(String.format(getResources().getString(R.string.text_about), applicationVersion));
     }
 }

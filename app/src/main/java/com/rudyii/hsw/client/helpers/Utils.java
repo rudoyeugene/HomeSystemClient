@@ -97,10 +97,10 @@ public class Utils {
         HashMap<String, Object> result = new HashMap<>();
         switch (mode.toLowerCase()) {
             case "automatic":
-                result.put("systemModeText", getAppContext().getResources().getString(R.string.system_mode_automatic_text).toUpperCase());
+                result.put("systemModeText", getAppContext().getResources().getString(R.string.toggle_button_system_mode_automatic_text).toUpperCase());
                 break;
             case "manual":
-                result.put("systemModeText", getAppContext().getResources().getString(R.string.system_mode_manual_text).toUpperCase());
+                result.put("systemModeText", getAppContext().getResources().getString(R.string.toggle_button_system_mode_manual_text).toUpperCase());
                 break;
             default:
                 result.put("systemModeText", "UNKNOWN_MODE");
@@ -108,13 +108,13 @@ public class Utils {
 
         switch (state.toLowerCase()) {
             case "armed":
-                result.put("systemStateText", getAppContext().getResources().getString(R.string.system_state_armed_text).toUpperCase());
+                result.put("systemStateText", getAppContext().getResources().getString(R.string.toggle_button_system_state_armed_text).toUpperCase());
                 break;
             case "disarmed":
-                result.put("systemStateText", getAppContext().getResources().getString(R.string.system_state_disarmed_text).toUpperCase());
+                result.put("systemStateText", getAppContext().getResources().getString(R.string.toggle_button_system_state_disarmed_text).toUpperCase());
                 break;
             case "auto":
-                result.put("systemStateText", getAppContext().getResources().getString(R.string.system_state_auto_text).toUpperCase());
+                result.put("systemStateText", getAppContext().getResources().getString(R.string.toggle_button_system_state_auto_text).toUpperCase());
                 break;
             default:
                 result.put("systemStateText", "UNKNOWN_STATE");

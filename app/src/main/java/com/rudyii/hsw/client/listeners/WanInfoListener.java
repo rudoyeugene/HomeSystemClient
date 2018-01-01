@@ -32,11 +32,11 @@ public class WanInfoListener extends BroadcastReceiver {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle("ISP changed")
+                .setContentTitle(context.getResources().getString(R.string.notif_text_isp_changed))
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("Current ISP: "
+                        .bigText(context.getResources().getString(R.string.notif_text_current_isp)
                                 + wanInfoData.get("isp")
-                                + ", current WAN IP address: "
+                                + context.getResources().getString(R.string.notif_text_current_ip)
                                 + wanInfoData.get("wanIp")))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)

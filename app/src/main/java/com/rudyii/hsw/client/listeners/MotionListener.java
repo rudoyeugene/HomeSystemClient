@@ -31,8 +31,8 @@ public class MotionListener extends BroadcastReceiver {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle("Motion detected on camera: " + motionData.get("cameraName"))
-                .setContentText("Motion detected at " + getCurrentTimeAndDateDoubleDotsDelimFrom((Long) motionData.get("timeStamp")) + " with area " + motionData.get("motionArea") + "%")
+                .setContentTitle(context.getResources().getString(R.string.notif_text_motion_detected_on_camera) + motionData.get("cameraName"))
+                .setContentText(context.getResources().getString(R.string.notif_text_motion_detected_at) + getCurrentTimeAndDateDoubleDotsDelimFrom((Long) motionData.get("timeStamp")) + " with area " + motionData.get("motionArea") + "%")
                 .setStyle(new NotificationCompat.BigPictureStyle().bigPicture((Bitmap) motionData.get("image")))
                 .setAutoCancel(true)
                 .setVibrate(new long[]{0, 200, 200, 200, 200, 200})

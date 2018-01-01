@@ -139,26 +139,26 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         pairServerButton = (Button) findViewById(R.id.SCAN_SECRET_QR);
-        pairServerButton.setText(isPaired() ? getResources().getString(R.string.server_paired) : getResources().getString(R.string.server_unpaired));
+        pairServerButton.setText(isPaired() ? getResources().getString(R.string.button_pair_server_unpair_server) : getResources().getString(R.string.button_pair_server_pair_server));
         pairServerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 if (isPaired()) {
                     AlertDialog.Builder unpairServerAlert = new AlertDialog.Builder(SettingsActivity.this);
-                    unpairServerAlert.setTitle(getResources().getString(R.string.server_unpair_alert_title));
-                    unpairServerAlert.setMessage(getResources().getString(R.string.server_unpair_alert_message));
+                    unpairServerAlert.setTitle(getResources().getString(R.string.dialog_server_unpair_alert_title));
+                    unpairServerAlert.setMessage(getResources().getString(R.string.dialog_server_unpair_alert_message));
 
-                    unpairServerAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    unpairServerAlert.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             deleteIdFromSettings("SERVER_KEY");
 
-                            new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.server_unpaired_failure) : getResources().getString(R.string.server_unpaired_success));
-                            pairServerButton.setText(R.string.server_unpaired);
+                            new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.toast_server_unpair_failure) : getResources().getString(R.string.toast_server_unpair_success));
+                            pairServerButton.setText(R.string.button_pair_server_pair_server);
                         }
                     });
 
-                    unpairServerAlert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    unpairServerAlert.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
 
                         }
@@ -181,8 +181,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void showDialogToDownloadQrCodeScanner(final Activity act) {
         AlertDialog.Builder downloadDialog = new AlertDialog.Builder(act);
-        downloadDialog.setTitle(getResources().getString(R.string.download_qr_scanner_title));
-        downloadDialog.setMessage(getResources().getString(R.string.download_qr_scanner_message));
+        downloadDialog.setTitle(getResources().getString(R.string.dialog_download_qr_scanner_title));
+        downloadDialog.setMessage(getResources().getString(R.string.dialog_download_qr_scanner_message));
         downloadDialog.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int i) {
                 Uri uri = Uri.parse("market://search?q=pname:" + "com.google.zxing.client.android");
@@ -207,7 +207,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private String getCameraAppName() {
-        String appName = getResources().getString(R.string.select_camera_app_text);
+        String appName = getResources().getString(R.string.settings_select_camera_app_text);
         try {
             appName = String.valueOf(getPackageManager().getApplicationLabel(getPackageManager().getApplicationInfo(getCameraAppPackageName(), PackageManager.GET_META_DATA)));
         } catch (PackageManager.NameNotFoundException e) {
@@ -231,10 +231,10 @@ public class SettingsActivity extends AppCompatActivity {
                 if (serverKeyIsValid(contents)) {
                     saveStringValueToSettings("SERVER_KEY", contents);
 
-                    new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.server_paired_success) : getResources().getString(R.string.server_paired_failure));
-                    pairServerButton.setText(R.string.server_paired);
+                    new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.toast_server_paired_success) : getResources().getString(R.string.toast_server_paired_failure));
+                    pairServerButton.setText(R.string.button_pair_server_unpair_server);
                 } else {
-                    new ToastDrawer().showToast(getResources().getString(R.string.server_paired_failure_detailed));
+                    new ToastDrawer().showToast(getResources().getString(R.string.toast_server_paired_failure_detailed));
                 }
 
                 break;
@@ -245,11 +245,11 @@ public class SettingsActivity extends AppCompatActivity {
                 if (soundUri == null) {
                     deleteIdFromSettings("INFO_SOUND");
                     soundName = getSoundNameBy(getStringValueFromSettings("INFO_SOUND"));
-                    new ToastDrawer().showToast(getResources().getString(R.string.info_sound_removed));
+                    new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_removed));
                 } else {
                     saveStringValueToSettings("INFO_SOUND", soundUri.toString());
                     soundName = getSoundNameBy(getStringValueFromSettings("INFO_SOUND"));
-                    new ToastDrawer().showToast(getResources().getString(R.string.info_sound_changed_to) + " " + soundName);
+                    new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_changed_to) + soundName);
                 }
                 infoSoundButton.setText(soundName);
                 break;
@@ -260,11 +260,11 @@ public class SettingsActivity extends AppCompatActivity {
                 if (soundUri == null) {
                     deleteIdFromSettings("MOTION_SOUND");
                     soundName = getSoundNameBy(getStringValueFromSettings("MOTION_SOUND"));
-                    new ToastDrawer().showToast(getResources().getString(R.string.motion_sound_removed));
+                    new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_removed));
                 } else {
                     saveStringValueToSettings("MOTION_SOUND", soundUri.toString());
                     soundName = getSoundNameBy(getStringValueFromSettings("MOTION_SOUND"));
-                    new ToastDrawer().showToast(getResources().getString(R.string.motion_sound_changed_to) + " " + soundName);
+                    new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_changed_to) + soundName);
                 }
                 motionSoundButton.setText(soundName);
                 break;

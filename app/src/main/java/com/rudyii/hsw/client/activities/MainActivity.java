@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
@@ -40,20 +41,23 @@ public class MainActivity extends AppCompatActivity {
     private Random random = new Random();
     private ToggleButton systemMode, systemState, portsState;
     private TextView armedModeText, armedStateText;
-    private boolean buttonsChangedInternally, uiIsActive;
+    private boolean buttonsChangedInternally;
     private MainActivityBroadcastReceiver mainActivityBroadcastReceiver = new MainActivityBroadcastReceiver();
     private Handler serverLastPingHandler, updateDataHandler;
     private Runnable serverLastPingRunnable, updateDataRunnable;
+    private ColorStateList defaultTextColor;
     private long serverLastPing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        uiIsActive = true;
 
         Log.i(TAG, "Main Activity created");
 
         setContentView(R.layout.activity_main);
+
+        TextView serverLastPingTextValue = (TextView) findViewById(R.id.serverVersionText);
+        defaultTextColor =  serverLastPingTextValue.getTextColors();
 
         Button resendHourlyReport = (Button) findViewById(R.id.resendHourly);
         resendHourlyReport.setOnClickListener(new View.OnClickListener() {
@@ -96,8 +100,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         systemMode = (ToggleButton) findViewById(R.id.systemMode);
-        systemMode.setTextOn(getString(R.string.system_mode_automatic_text));
-        systemMode.setTextOff(getString(R.string.system_mode_manual_text));
+        systemMode.setTextOn(getString(R.string.toggle_button_system_mode_automatic_text));
+        systemMode.setTextOff(getString(R.string.toggle_button_system_mode_manual_text));
         systemMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -106,8 +110,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         systemState = (ToggleButton) findViewById(R.id.systemState);
-        systemState.setTextOn(getString(R.string.system_state_armed_text));
-        systemState.setTextOff(getString(R.string.system_state_disarmed_text));
+        systemState.setTextOn(getString(R.string.toggle_button_system_state_armed_text));
+        systemState.setTextOff(getString(R.string.toggle_button_system_state_disarmed_text));
         systemState.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -115,44 +119,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        updateData();
-
-        buildHandlers();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         Log.i(TAG, "Main Activity resumed");
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(StatusesListener.HSC_STATUSES_UPDATED);
 
-        registerReceiver(mainActivityBroadcastReceiver, intentFilter);
-
         updateData();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        Log.i(TAG, "Main Activity stopped");
-
-        unregisterReceiver(mainActivityBroadcastReceiver);
+        buildHandlers();
+        registerReceiver(mainActivityBroadcastReceiver, intentFilter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
-        uiIsActive = false;
+        Log.i(TAG, "Main Activity paused");
 
         serverLastPingHandler.removeCallbacks(serverLastPingRunnable);
         updateDataHandler.removeCallbacks(updateDataRunnable);
-
-        Log.i(TAG, "Main Activity paused");
+        unregisterReceiver(mainActivityBroadcastReceiver);
     }
 
     @Override
@@ -183,10 +172,10 @@ public class MainActivity extends AppCompatActivity {
         String cameraAppPackageName = getCameraAppPackageName();
 
         if (cameraAppPackageName == null) {
-            new ToastDrawer().showToast(getResources().getString(R.string.choose_camera_app_text));
+            new ToastDrawer().showToast(getResources().getString(R.string.toast_choose_camera_app_text));
             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
         } else if (getPackageManager().getLaunchIntentForPackage(cameraAppPackageName) == null) {
-            new ToastDrawer().showToast(getResources().getString(R.string.choose_camera_app_error_text));
+            new ToastDrawer().showToast(getResources().getString(R.string.toast_choose_camera_app_error_text));
             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
         } else {
             Intent intent = getPackageManager().getLaunchIntentForPackage(cameraAppPackageName);
@@ -261,9 +250,6 @@ public class MainActivity extends AppCompatActivity {
 
                 TextView serverLastPingTextValue = (TextView) findViewById(R.id.serverLastPingTextValue);
                 serverLastPingTextValue.setText(calculatePing(serverLastPing));
-                if (System.currentTimeMillis() - serverLastPing > 300000L) {
-                    serverLastPingTextValue.setTextColor(getApplicationContext().getColor(R.color.red));
-                }
 
                 TextView serverUptimeTextValue = (TextView) findViewById(R.id.serverUptimeTextValue);
                 serverUptimeTextValue.setText(calculateUptime(serverUptime));
@@ -380,42 +366,38 @@ public class MainActivity extends AppCompatActivity {
         serverLastPingRunnable = new Runnable() {
             @Override
             public void run() {
-                if (uiIsActive && serverLastPing > 0 && (System.currentTimeMillis() - serverLastPing > 300000)) {
-                    try {
-                        Thread.sleep(1000L);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    TextView txt = (TextView) findViewById(R.id.serverLastPingTextValue);
-                    if (txt.getVisibility() == View.VISIBLE) {
-                        txt.setVisibility(View.INVISIBLE);
+                TextView serverLastPingTextValue = (TextView) findViewById(R.id.serverLastPingTextValue);
+                if (System.currentTimeMillis() - serverLastPing > 300000) {
+                    serverLastPingTextValue.setTextColor(getApplicationContext().getColor(R.color.red));
+                    if (serverLastPingTextValue.getVisibility() == View.VISIBLE) {
+                        serverLastPingTextValue.setVisibility(View.INVISIBLE);
                     } else {
-                        txt.setVisibility(View.VISIBLE);
+                        serverLastPingTextValue.setVisibility(View.VISIBLE);
                     }
-                    serverLastPingHandler.postDelayed(this, 1000);
+                } else {
+                    serverLastPingTextValue.setTextColor(defaultTextColor);
+                    serverLastPingTextValue.setVisibility(View.VISIBLE);
                 }
+                serverLastPingHandler.postDelayed(this, 1000);
             }
         };
 
         updateDataRunnable = new Runnable() {
             @Override
             public void run() {
-                if (uiIsActive) {
-                    buttonsChangedInternally = true;
+                buttonsChangedInternally = true;
 
-                    DatabaseReference infoRef = getRootReference().child("/info");
-                    infoRef.addListenerForSingleValueEvent(buildInfoValueEventListener());
+                DatabaseReference infoRef = getRootReference().child("/info");
+                infoRef.addListenerForSingleValueEvent(buildInfoValueEventListener());
 
-                    buttonsChangedInternally = false;
+                buttonsChangedInternally = false;
 
-                    updateDataHandler.postDelayed(this, 60000);
-                }
+                updateDataHandler.postDelayed(this, 60000);
             }
         };
 
-        serverLastPingHandler.post(serverLastPingRunnable);
-        updateDataHandler.post(updateDataRunnable);
+        serverLastPingHandler.postDelayed(serverLastPingRunnable, 1000);
+        updateDataHandler.postDelayed(updateDataRunnable, 1000);
     }
 
     public class MainActivityBroadcastReceiver extends BroadcastReceiver {

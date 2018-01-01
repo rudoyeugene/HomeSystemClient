@@ -32,12 +32,12 @@ public class StatusesListener extends BroadcastReceiver {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle("System state changed")
+                .setContentTitle(context.getResources().getString(R.string.notif_text_system_state_changed))
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("System state is "
+                        .bigText(context.getResources().getString(R.string.notif_text_system_state_is)
                                 + statusesData.get("systemModeText")
                                 + ":" + statusesData.get("systemStateText")
-                                + ", ports are " + ((boolean) statusesData.get("portsState") ? "open" : "closed")))
+                                + ", " + ((boolean) statusesData.get("portsState") ? context.getResources().getString(R.string.notif_text_ports_open_text) : context.getResources().getString(R.string.notif_text_ports_closed_text))))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[]{0, 500})

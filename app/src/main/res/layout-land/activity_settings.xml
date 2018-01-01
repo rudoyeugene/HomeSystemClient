@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/server_unpaired"
+        android:text="@string/button_pair_server_pair_server"
         android:textAllCaps="false"
         app:layout_constraintStart_toEndOf="@+id/motionSound"
         app:layout_constraintTop_toBottomOf="@+id/motionSoundTesxt"

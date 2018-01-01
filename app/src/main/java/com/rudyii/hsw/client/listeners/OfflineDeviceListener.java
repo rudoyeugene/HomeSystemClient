@@ -30,7 +30,7 @@ public class OfflineDeviceListener extends BroadcastReceiver {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle("Camera " + offlineDevice + " is rebooting")
+                .setContentTitle(offlineDevice + context.getResources().getString(R.string.notif_text_camera_is_rebooting))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[]{0, 500})

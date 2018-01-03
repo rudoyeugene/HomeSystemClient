@@ -367,7 +367,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 TextView serverLastPingTextValue = (TextView) findViewById(R.id.serverLastPingTextValue);
-                if (System.currentTimeMillis() - serverLastPing > 300000) {
+                if (serverLastPing > 0 && System.currentTimeMillis() - serverLastPing > 300000) {
                     serverLastPingTextValue.setTextColor(getApplicationContext().getColor(R.color.red));
                     if (serverLastPingTextValue.getVisibility() == View.VISIBLE) {
                         serverLastPingTextValue.setVisibility(View.INVISIBLE);

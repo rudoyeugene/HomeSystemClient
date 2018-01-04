@@ -97,7 +97,7 @@ public class Utils {
         HashMap<String, Object> result = new HashMap<>();
         switch (mode.toLowerCase()) {
             case "automatic":
-                result.put("systemModeText", getAppContext().getResources().getString(R.string.toggle_button_system_mode_automatic_text).toUpperCase());
+                result.put("systemModeText", getAppContext().getResources().getString(R.string.toggle_button_system_mode_state_automatic_text).toUpperCase());
                 break;
             case "manual":
                 result.put("systemModeText", getAppContext().getResources().getString(R.string.toggle_button_system_mode_manual_text).toUpperCase());
@@ -114,7 +114,7 @@ public class Utils {
                 result.put("systemStateText", getAppContext().getResources().getString(R.string.toggle_button_system_state_disarmed_text).toUpperCase());
                 break;
             case "auto":
-                result.put("systemStateText", getAppContext().getResources().getString(R.string.toggle_button_system_state_auto_text).toUpperCase());
+                result.put("systemStateText", getAppContext().getResources().getString(R.string.toggle_button_system_mode_state_automatic_text).toUpperCase());
                 break;
             default:
                 result.put("systemStateText", "UNKNOWN_STATE");

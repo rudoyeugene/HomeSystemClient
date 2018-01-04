@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         systemMode = (Switch) findViewById(R.id.switchSystemMode);
-        systemMode.setTextOn(getString(R.string.toggle_button_system_mode_automatic_text));
+        systemMode.setTextOn(getString(R.string.toggle_button_system_mode_state_automatic_text));
         systemMode.setTextOff(getString(R.string.toggle_button_system_mode_manual_text));
         systemMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -456,7 +456,7 @@ public class MainActivity extends AppCompatActivity {
             armedStateText.setText((String) statusesData.get("systemStateText"));
             armedStateText.setTextColor((int) statusesData.get("systemStateTextColor"));
 
-            switchPorts.setChecked((boolean) statusesData.get("switchPorts"));
+            switchPorts.setChecked((boolean) statusesData.get("portsState"));
 
             updateModeStateButtons(statusesData);
 

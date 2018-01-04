@@ -8,11 +8,10 @@
     <string name="toast_server_unpair_success">Отсоединение удалось</string>
     <string name="toast_server_unpair_failure">Отсоединение не удалось</string>
     <string name="label_settings">Настройки</string>
-    <string name="toggle_button_system_mode_automatic_text">Автоматический</string>
+    <string name="toggle_button_system_mode_state_automatic_text">Авто</string>
     <string name="toggle_button_system_mode_manual_text">Ручной</string>
     <string name="toggle_button_system_state_armed_text">Включен</string>
     <string name="toggle_button_system_state_disarmed_text">Выключен</string>
-    <string name="toggle_button_system_state_auto_text">Авто</string>
     <string name="notif_text_ports_closed_text">Порты закрыты</string>
     <string name="notif_text_ports_open_text">Порты открыты</string>
     <string name="text_camera_app_text">Приложение для камер</string>

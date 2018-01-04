@@ -7,11 +7,10 @@
     <string name="toast_server_unpair_success">Unpairing success</string>
     <string name="toast_server_unpair_failure">Unpairing failed</string>
     <string name="label_settings">Settings</string>
-    <string name="toggle_button_system_mode_automatic_text">Automatic</string>
+    <string name="toggle_button_system_mode_state_automatic_text">Auto</string>
     <string name="toggle_button_system_mode_manual_text">Manual</string>
     <string name="toggle_button_system_state_armed_text">Armed</string>
     <string name="toggle_button_system_state_disarmed_text">Disarmed</string>
-    <string name="toggle_button_system_state_auto_text">Auto</string>
     <string name="notif_text_ports_closed_text">Ports Closed</string>
     <string name="notif_text_ports_open_text">Ports Open</string>
     <string name="text_camera_app_text">Camera app</string>

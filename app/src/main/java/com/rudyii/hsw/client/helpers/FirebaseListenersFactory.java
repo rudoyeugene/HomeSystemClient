@@ -24,16 +24,8 @@ import static com.rudyii.hsw.client.listeners.MotionListener.HSC_MOTION_DETECTED
  */
 
 public class FirebaseListenersFactory {
-    private static FirebaseListenersFactory instance;
 
-    public static FirebaseListenersFactory getInstance() {
-        if (instance == null) {
-            instance = new FirebaseListenersFactory();
-        }
-        return instance;
-    }
-
-    public ValueEventListener buildMotionRefValueEventListener() {
+    public static ValueEventListener buildMotionRefValueEventListener() {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

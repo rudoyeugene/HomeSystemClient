@@ -7,13 +7,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.rudyii.hsw.client.helpers.FirebaseListenersFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
+import static com.rudyii.hsw.client.helpers.FirebaseListenersFactory.buildMotionRefValueEventListener;
 import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
 import static com.rudyii.hsw.client.helpers.Utils.getServerKey;
 import static com.rudyii.hsw.client.listeners.OfflineDeviceListener.HSC_DEVICE_REBOOT;
@@ -27,7 +27,6 @@ import static com.rudyii.hsw.client.listeners.WanInfoListener.HSC_WAN_IP_CHANGED
  */
 
 public class FCMMessagingService extends FirebaseMessagingService {
-    private FirebaseListenersFactory listenersFactory = FirebaseListenersFactory.getInstance();
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
     @Override
@@ -50,7 +49,7 @@ public class FCMMessagingService extends FirebaseMessagingService {
             case "motionDetected":
                 Long motionId = Long.valueOf(messageData.get("motionId"));
                 DatabaseReference motionsRef = firebaseDatabase.getReference(getServerKey() + "/motions/" + motionId);
-                motionsRef.addListenerForSingleValueEvent(listenersFactory.buildMotionRefValueEventListener());
+                motionsRef.addListenerForSingleValueEvent(buildMotionRefValueEventListener());
                 break;
 
             case "ispChanged":

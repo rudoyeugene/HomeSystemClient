@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
@@ -13,10 +15,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,7 +41,8 @@ import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootRe
 
 public class MainActivity extends AppCompatActivity {
     private Random random = new Random();
-    private ToggleButton systemMode, systemState, portsState;
+    private Switch systemMode, systemState, switchPorts;
+    private ImageButton buttonResendHourlyReport, buttonResendWeeklyReport, buttonCameraApp;
     private TextView armedModeText, armedStateText;
     private boolean buttonsChangedInternally;
     private MainActivityBroadcastReceiver mainActivityBroadcastReceiver = new MainActivityBroadcastReceiver();
@@ -57,26 +60,56 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         TextView serverLastPingTextValue = (TextView) findViewById(R.id.serverVersionText);
-        defaultTextColor =  serverLastPingTextValue.getTextColors();
+        defaultTextColor = serverLastPingTextValue.getTextColors();
 
-        Button resendHourlyReport = (Button) findViewById(R.id.resendHourly);
-        resendHourlyReport.setOnClickListener(new View.OnClickListener() {
+        buttonResendHourlyReport = (ImageButton) findViewById(R.id.buttonResendHourly);
+        buttonResendHourlyReport.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                new ToastDrawer().showToast(getResources().getString(R.string.text_resend_hourly_text));
+                return false;
+            }
+        });
+        buttonResendHourlyReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getRootReference().child("requests/resendHourly").setValue(random.nextInt(999));
             }
         });
 
-        Button resendHourlyWeekly = (Button) findViewById(R.id.resendWeekly);
-        resendHourlyWeekly.setOnClickListener(new View.OnClickListener() {
+        buttonResendWeeklyReport = (ImageButton) findViewById(R.id.buttonResendWeekly);
+        buttonResendWeeklyReport.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                new ToastDrawer().showToast(getResources().getString(R.string.text_resend_weekly_text));
+                return false;
+            }
+        });
+        buttonResendWeeklyReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getRootReference().child("requests/resendWeekly").setValue(random.nextInt(999));
             }
         });
 
-        portsState = (ToggleButton) findViewById(R.id.portsState);
-        portsState.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        buttonCameraApp = (ImageButton) findViewById(R.id.buttonCameraApp);
+        buttonCameraApp.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                new ToastDrawer().showToast(getResources().getString(R.string.text_camera_app_text));
+                return false;
+            }
+        });
+        refreshCameraAppIcon();
+        buttonCameraApp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openCameraApp();
+            }
+        });
+
+        switchPorts = (Switch) findViewById(R.id.switchPorts);
+        switchPorts.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (buttonsChangedInternally) {
@@ -91,15 +124,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button cameras = (Button) findViewById(R.id.cameras);
-        cameras.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openCameraApp();
-            }
-        });
-
-        systemMode = (ToggleButton) findViewById(R.id.systemMode);
+        systemMode = (Switch) findViewById(R.id.switchSystemMode);
         systemMode.setTextOn(getString(R.string.toggle_button_system_mode_automatic_text));
         systemMode.setTextOff(getString(R.string.toggle_button_system_mode_manual_text));
         systemMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -109,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        systemState = (ToggleButton) findViewById(R.id.systemState);
+        systemState = (Switch) findViewById(R.id.switchSystemState);
         systemState.setTextOn(getString(R.string.toggle_button_system_state_armed_text));
         systemState.setTextOff(getString(R.string.toggle_button_system_state_disarmed_text));
         systemState.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -131,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
 
         updateData();
         buildHandlers();
+        refreshCameraAppIcon();
         registerReceiver(mainActivityBroadcastReceiver, intentFilter);
     }
 
@@ -183,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void calculateSystemStateBasedOn(ToggleButton systemMode, ToggleButton systemState) {
+    private void calculateSystemStateBasedOn(Switch systemMode, Switch systemState) {
         Map<String, String> stateRequest = new HashMap<>();
 
         if (buttonsChangedInternally) {
@@ -280,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
 
                 buttonsChangedInternally = true;
                 updateModeStateButtons(buttonsState);
-                portsState.setChecked(portsOpen);
+                switchPorts.setChecked(portsOpen);
                 buttonsChangedInternally = false;
 
 
@@ -400,6 +426,17 @@ public class MainActivity extends AppCompatActivity {
         updateDataHandler.postDelayed(updateDataRunnable, 1000);
     }
 
+    private void refreshCameraAppIcon() {
+        try {
+            Drawable icon = getPackageManager().getApplicationIcon(getStringValueFromSettings("CAMERA_APP"));
+            if (icon !=null){
+                buttonCameraApp.setImageDrawable(icon);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public class MainActivityBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -419,8 +456,7 @@ public class MainActivity extends AppCompatActivity {
             armedStateText.setText((String) statusesData.get("systemStateText"));
             armedStateText.setTextColor((int) statusesData.get("systemStateTextColor"));
 
-            portsState = (ToggleButton) findViewById(R.id.portsState);
-            portsState.setChecked((boolean) statusesData.get("portsState"));
+            switchPorts.setChecked((boolean) statusesData.get("switchPorts"));
 
             updateModeStateButtons(statusesData);
 

@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -35,12 +36,14 @@ import static android.media.RingtoneManager.EXTRA_RINGTONE_TITLE;
 import static android.media.RingtoneManager.EXTRA_RINGTONE_TYPE;
 import static android.media.RingtoneManager.TYPE_NOTIFICATION;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
+import static com.rudyii.hsw.client.helpers.Utils.getSimplifiedPrimaryAccountName;
 import static com.rudyii.hsw.client.helpers.Utils.getSoundNameBy;
 import static com.rudyii.hsw.client.helpers.Utils.isPaired;
 import static com.rudyii.hsw.client.helpers.Utils.serverKeyIsValid;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.deleteIdFromSettings;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueToSettings;
+import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
 
 public class SettingsActivity extends AppCompatActivity {
     static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
@@ -70,6 +73,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         Spinner appsList = (Spinner) findViewById(R.id.appsList);
         final ActivityAdapter arrayAdapter = new ActivityAdapter(getApplicationContext(), android.R.layout.simple_spinner_item, infoWrappers) {
+            @NonNull
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 if (convertView == null)
@@ -151,6 +155,11 @@ public class SettingsActivity extends AppCompatActivity {
 
                     unpairServerAlert.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            String accountName = getSimplifiedPrimaryAccountName();
+                            if (!"".equals(accountName)) {
+                                getRootReference().child("/connectedClients/" + accountName).removeValue();
+                            }
+
                             deleteIdFromSettings("SERVER_KEY");
 
                             new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.toast_server_unpair_failure) : getResources().getString(R.string.toast_server_unpair_success));
@@ -296,6 +305,7 @@ public class SettingsActivity extends AppCompatActivity {
             mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
+        @NonNull
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             final ResolveInfoWrapper info = getItem(position);

@@ -26,13 +26,14 @@ public class StatusesListener extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         HashMap<String, Object> statusesData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_STATUSES_UPDATED");
+        String serverName = (String) statusesData.get("serverName");
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle(context.getResources().getString(R.string.notif_text_system_state_changed))
+                .setContentTitle(serverName + ": " + context.getResources().getString(R.string.notif_text_system_state_changed))
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(context.getResources().getString(R.string.notif_text_system_state_is)
                                 + statusesData.get("systemModeText")

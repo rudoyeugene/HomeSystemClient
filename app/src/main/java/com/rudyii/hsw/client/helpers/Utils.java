@@ -5,6 +5,7 @@ import android.accounts.AccountManager;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -13,6 +14,8 @@ import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
 import com.rudyii.hsw.client.R;
 
 import java.io.File;
@@ -20,15 +23,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueToSettings;
+import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getCustomReference;
 
 /**
  * Created by j-a-c on 18.12.2017.
@@ -77,8 +84,9 @@ public class Utils {
     }
 
     public static boolean isPaired() {
-        String serverKey = getStringValueFromSettings("SERVER_KEY");
-        return serverKeyIsValid(serverKey);
+        String activeServerAlias = getActiveServerAlias();
+        String activeServerKey = getServerKeyFromAlias(activeServerAlias);
+        return serverKeyIsValid(activeServerKey);
     }
 
     public static boolean serverKeyIsValid(String serverKey) {
@@ -89,8 +97,8 @@ public class Utils {
         }
     }
 
-    public static String getServerKey() {
-        return getStringValueFromSettings("SERVER_KEY");
+    public static String getServerKeyFromAlias(String serverAlias) {
+        return getMapWithServers().get(serverAlias);
     }
 
     public static HashMap<String, Object> buildDataForMainActivityFrom(String mode, String state, Boolean portsState) {
@@ -175,6 +183,100 @@ public class Utils {
         return simplifiedAccountName;
     }
 
+    public static void registerTokenOnServers(String token) {
+        if (getMapWithServers() != null) {
+            for (Map.Entry<String, String> entry : getMapWithServers().entrySet()) {
+                String serverKey = entry.getValue();
+                registerTokenOnServer(token, serverKey);
+            }
+        }
+    }
+
+    public static void registerTokenOnServer(String token, String ref) {
+        String accountName = getSimplifiedPrimaryAccountName();
+        if (token == null) {
+            token = FirebaseInstanceId.getInstance().getToken();
+
+            if (token != null && !stringIsEmptyOrNull(accountName)) {
+                getCustomReference(ref).child("/connectedClients/" + accountName).setValue(token);
+            }
+        } else {
+            if (!stringIsEmptyOrNull(accountName)) {
+                getCustomReference(ref).child("/connectedClients/" + accountName).setValue(token);
+            }
+        }
+    }
+
+    public static boolean stringIsEmptyOrNull(String string) {
+        return string == null || string.equalsIgnoreCase("");
+    }
+
+    public static boolean switchActiveServerTo(String serverAlias) {
+        HashMap<String, String> serverListMap = getMapWithServers();
+
+        if (serverListMap.containsKey(serverAlias)) {
+            saveStringValueToSettings("ACTIVE_SERVER", serverAlias);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean removeServerFromServersList(String serverAlias) {
+        HashMap<String, String> serverListMap = getMapWithServers();
+
+        if (serverListMap.containsKey(serverAlias)) {
+            serverListMap.remove(serverAlias);
+
+            Gson gson = new Gson();
+            saveStringValueToSettings("SERVER_LIST", gson.toJson(serverListMap));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static String getActiveServerAlias() {
+        return getStringValueFromSettings("ACTIVE_SERVER");
+    }
+
+    public static String getActiveServerKey() {
+        HashMap<String, String> availableServers = getMapWithServers();
+        String activeServerAlias = getActiveServerAlias();
+        return availableServers.get(activeServerAlias) == null ? "" : availableServers.get(activeServerAlias);
+    }
+
+    public static ArrayList<String> getServersList() {
+        ArrayList<String> serversList = new ArrayList<>();
+
+        if (getMapWithServers() != null) {
+            for (Map.Entry<String, String> entry : getMapWithServers().entrySet()) {
+                serversList.add(entry.getKey());
+            }
+        }
+        return serversList;
+    }
+
+    private static HashMap<String, String> getMapWithServers() {
+        String serverList = getStringValueFromSettings("SERVER_LIST");
+        Gson gson = new Gson();
+        return gson.fromJson(serverList, HashMap.class) == null ? new HashMap<String, String>() : new HashMap<>(gson.fromJson(serverList, HashMap.class));
+    }
+
+    public static String getCurrentFcmToken() {
+        return FirebaseInstanceId.getInstance().getToken();
+    }
+
+    public static String[] retrievePermissions() {
+        try {
+            return getAppContext()
+                    .getPackageManager()
+                    .getPackageInfo(getAppContext().getPackageName(), PackageManager.GET_PERMISSIONS)
+                    .requestedPermissions;
+        } catch (PackageManager.NameNotFoundException e) {
+            throw new RuntimeException("This should have never happened.", e);
+        }
+    }
 
     public static void saveImageFromCamera(Bitmap bitmap, String cameraName, String imageName) {
         imageName = imageName + ".png";

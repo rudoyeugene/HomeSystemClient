@@ -28,10 +28,11 @@ public class MotionListener extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         HashMap<String, Object> motionData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_MOTION_DETECTED");
+        String serverName = (String) motionData.get("serverName");
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle(context.getResources().getString(R.string.notif_text_motion_detected_on_camera) + motionData.get("cameraName"))
+                .setContentTitle(serverName + ": " + context.getResources().getString(R.string.notif_text_motion_detected_on_camera) + motionData.get("cameraName"))
                 .setContentText(context.getResources().getString(R.string.notif_text_motion_detected_at) + getCurrentTimeAndDateDoubleDotsDelimFrom((Long) motionData.get("timeStamp")) + " with area " + motionData.get("motionArea") + "%")
                 .setStyle(new NotificationCompat.BigPictureStyle().bigPicture((Bitmap) motionData.get("image")))
                 .setAutoCancel(true)

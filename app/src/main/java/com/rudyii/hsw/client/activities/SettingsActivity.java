@@ -22,11 +22,14 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.helpers.ToastDrawer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import static android.media.RingtoneManager.ACTION_RINGTONE_PICKER;
@@ -36,10 +39,15 @@ import static android.media.RingtoneManager.EXTRA_RINGTONE_TITLE;
 import static android.media.RingtoneManager.EXTRA_RINGTONE_TYPE;
 import static android.media.RingtoneManager.TYPE_NOTIFICATION;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
+import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
+import static com.rudyii.hsw.client.helpers.Utils.getCurrentFcmToken;
 import static com.rudyii.hsw.client.helpers.Utils.getSimplifiedPrimaryAccountName;
 import static com.rudyii.hsw.client.helpers.Utils.getSoundNameBy;
 import static com.rudyii.hsw.client.helpers.Utils.isPaired;
+import static com.rudyii.hsw.client.helpers.Utils.registerTokenOnServer;
+import static com.rudyii.hsw.client.helpers.Utils.removeServerFromServersList;
 import static com.rudyii.hsw.client.helpers.Utils.serverKeyIsValid;
+import static com.rudyii.hsw.client.helpers.Utils.stringIsEmptyOrNull;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.deleteIdFromSettings;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueToSettings;
@@ -50,7 +58,7 @@ public class SettingsActivity extends AppCompatActivity {
     private final int QR_SCAN_CODE = 111;
     private final int INFORMATION_NOTIFICATION_SOUND_CODE = 222;
     private final int MOTION_NOTIFICATION_SOUND_CODE = 333;
-    private Button pairServerButton, infoSoundButton, motionSoundButton;
+    private Button pairServerButton, unpairServerButton, infoSoundButton, motionSoundButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -142,48 +150,52 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        pairServerButton = (Button) findViewById(R.id.SCAN_SECRET_QR);
-        pairServerButton.setText(isPaired() ? getResources().getString(R.string.button_pair_server_unpair_server) : getResources().getString(R.string.button_pair_server_pair_server));
+        pairServerButton = (Button) findViewById(R.id.pairServer);
+        pairServerButton.setText(getResources().getString(R.string.button_pair_server_pair_server));
         pairServerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (isPaired()) {
-                    AlertDialog.Builder unpairServerAlert = new AlertDialog.Builder(SettingsActivity.this);
-                    unpairServerAlert.setTitle(getResources().getString(R.string.dialog_server_unpair_alert_title));
-                    unpairServerAlert.setMessage(getResources().getString(R.string.dialog_server_unpair_alert_message));
-
-                    unpairServerAlert.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            String accountName = getSimplifiedPrimaryAccountName();
-                            if (!"".equals(accountName)) {
-                                getRootReference().child("/connectedClients/" + accountName).removeValue();
-                            }
-
-                            deleteIdFromSettings("SERVER_KEY");
-
-                            new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.toast_server_unpair_failure) : getResources().getString(R.string.toast_server_unpair_success));
-                            pairServerButton.setText(R.string.button_pair_server_pair_server);
-                        }
-                    });
-
-                    unpairServerAlert.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                        }
-                    });
-
-                    unpairServerAlert.show();
-
-                } else {
-                    try {
-                        Intent intent = new Intent(ACTION_SCAN);
-                        intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-                        startActivityForResult(intent, QR_SCAN_CODE);
-                    } catch (ActivityNotFoundException anfe) {
-                        showDialogToDownloadQrCodeScanner(SettingsActivity.this);
-                    }
+                try {
+                    Intent intent = new Intent(ACTION_SCAN);
+                    intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+                    startActivityForResult(intent, QR_SCAN_CODE);
+                } catch (ActivityNotFoundException anfe) {
+                    showDialogToDownloadQrCodeScanner(SettingsActivity.this);
                 }
+            }
+        });
+
+        unpairServerButton = (Button) findViewById(R.id.unpairServer);
+        unpairServerButton.setText(getResources().getString(R.string.button_pair_server_unpair_server));
+        unpairServerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder unpairServerAlert = new AlertDialog.Builder(SettingsActivity.this);
+                unpairServerAlert.setTitle(getResources().getString(R.string.dialog_server_unpair_alert_title));
+                unpairServerAlert.setMessage(getResources().getString(R.string.dialog_server_unpair_alert_message));
+
+                unpairServerAlert.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String accountName = getSimplifiedPrimaryAccountName();
+                        if (!stringIsEmptyOrNull(accountName)) {
+                            getRootReference().child("/connectedClients/" + accountName).removeValue();
+                        }
+
+                        removeServerFromServersList(getActiveServerAlias());
+                        deleteIdFromSettings("ACTIVE_SERVER");
+
+                        new ToastDrawer().showToast(isPaired() ? getActiveServerAlias() + ": " + getResources().getString(R.string.toast_server_unpair_failure) : getActiveServerAlias() + ": " + getResources().getString(R.string.toast_server_unpair_success));
+                        pairServerButton.setText(R.string.button_pair_server_pair_server);
+                    }
+                });
+
+                unpairServerAlert.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+
+                unpairServerAlert.show();
             }
         });
     }
@@ -236,9 +248,28 @@ public class SettingsActivity extends AppCompatActivity {
         switch (requestCode) {
             case QR_SCAN_CODE:
                 contents = intent.getStringExtra("SCAN_RESULT");
+                ArrayList<String> serverData = new ArrayList<>(Arrays.asList(contents.split(":")));
 
-                if (serverKeyIsValid(contents)) {
-                    saveStringValueToSettings("SERVER_KEY", contents);
+                String serverAlias = serverData.get(0);
+                String serverKey = serverData.get(1);
+
+                String serverList = getStringValueFromSettings("SERVER_LIST");
+                Gson gson = new Gson();
+                HashMap<String, String> serverListMap;
+
+                if (stringIsEmptyOrNull(serverList)) {
+                    serverListMap = new HashMap<>();
+                    serverListMap.put(serverAlias, serverKey);
+                    saveStringValueToSettings("SERVER_LIST", gson.toJson(serverListMap));
+                } else {
+                    serverListMap = gson.fromJson(serverList, HashMap.class);
+                    serverListMap.put(serverAlias, serverKey);
+                    saveStringValueToSettings("SERVER_LIST", gson.toJson(serverListMap));
+                }
+
+                if (serverKeyIsValid(serverKey)) {
+                    saveStringValueToSettings("ACTIVE_SERVER", serverAlias);
+                    registerTokenOnServer(getCurrentFcmToken(), serverKey);
 
                     new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.toast_server_paired_success) : getResources().getString(R.string.toast_server_paired_failure));
                     pairServerButton.setText(R.string.button_pair_server_unpair_server);

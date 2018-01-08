@@ -12,6 +12,8 @@ import android.support.v4.app.NotificationCompat;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.activities.MainActivity;
 
+import java.util.HashMap;
+
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 
 /**
@@ -23,12 +25,15 @@ public class ServerShutdownListener extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        HashMap<String, Object> startupData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_SERVER_STOPPED");
+        String serverName = (String) startupData.get("serverName");
+
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle(context.getResources().getString(R.string.notif_text_server_stopped))
+                .setContentTitle(serverName + ": " + context.getResources().getString(R.string.notif_text_server_stopped))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[]{0, 500})

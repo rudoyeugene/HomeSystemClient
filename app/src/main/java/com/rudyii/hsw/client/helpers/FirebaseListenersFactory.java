@@ -25,7 +25,7 @@ import static com.rudyii.hsw.client.listeners.MotionListener.HSC_MOTION_DETECTED
 
 public class FirebaseListenersFactory {
 
-    public static ValueEventListener buildMotionRefValueEventListener() {
+    public static ValueEventListener buildMotionRefValueEventListener(final String serverName) {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -42,12 +42,13 @@ public class FirebaseListenersFactory {
                 motionData.put("cameraName", motion.get("cameraName"));
                 motionData.put("timeStamp", motion.get("timeStamp"));
                 motionData.put("motionArea", motion.get("motionArea"));
+                motionData.put("serverName", serverName);
 
                 String imageString = (String) motion.get("image");
                 byte[] decodedImageString = Base64.decode(imageString, Base64.DEFAULT);
                 Bitmap bitmap = BitmapFactory.decodeByteArray(decodedImageString, 0, decodedImageString.length);
 
-                saveImageFromCamera(bitmap, motionData.get("cameraName").toString(), getCurrentTimeAndDateSingleDotDelimFrom(motionTimeStamp).toString());
+                saveImageFromCamera(bitmap, motionData.get("cameraName").toString(), getCurrentTimeAndDateSingleDotDelimFrom(motionTimeStamp));
 
                 while (bitmap.getByteCount() > 512000) {
                     int srcWidth = bitmap.getWidth();

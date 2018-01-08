@@ -15,7 +15,7 @@ import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.helpers.FirebaseListenersFactory.buildMotionRefValueEventListener;
 import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
-import static com.rudyii.hsw.client.helpers.Utils.getServerKey;
+import static com.rudyii.hsw.client.helpers.Utils.getServerKeyFromAlias;
 import static com.rudyii.hsw.client.listeners.OfflineDeviceListener.HSC_DEVICE_REBOOT;
 import static com.rudyii.hsw.client.listeners.ServerShutdownListener.HSC_SERVER_STOPPED;
 import static com.rudyii.hsw.client.listeners.ServerStartupListener.HSC_SERVER_STARTED;
@@ -33,6 +33,10 @@ public class FCMMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage message) {
         Log.i(TAG, "Received new message with data" + message.getData().toString());
         Map<String, String> messageData = message.getData();
+        HashMap<String, Object> extraData = new HashMap<>();
+        String serverName = messageData.get("serverName");
+        extraData.put("serverName", serverName);
+
         Intent intent = new Intent();
 
         switch (message.getData().get("reason")) {
@@ -42,35 +46,37 @@ public class FCMMessagingService extends FirebaseMessagingService {
                 Boolean portsOpen = Boolean.valueOf(messageData.get("portsOpen"));
 
                 intent.setAction(HSC_STATUSES_UPDATED);
-                intent.putExtra("HSC_STATUSES_UPDATED", buildDataForMainActivityFrom(armedMode, armedState, portsOpen));
+                extraData.putAll(buildDataForMainActivityFrom(armedMode, armedState, portsOpen));
+                intent.putExtra("HSC_STATUSES_UPDATED", extraData);
                 getAppContext().sendBroadcast(intent);
                 break;
 
             case "motionDetected":
                 Long motionId = Long.valueOf(messageData.get("motionId"));
-                DatabaseReference motionsRef = firebaseDatabase.getReference(getServerKey() + "/motions/" + motionId);
-                motionsRef.addListenerForSingleValueEvent(buildMotionRefValueEventListener());
+                DatabaseReference motionsRef = firebaseDatabase.getReference(getServerKeyFromAlias(serverName) + "/motions/" + motionId);
+                motionsRef.addListenerForSingleValueEvent(buildMotionRefValueEventListener(serverName));
                 break;
 
             case "ispChanged":
                 String currentIsp = messageData.get("isp");
                 String currentWanIp = messageData.get("ip");
 
-                HashMap<String, Object> wanInfoData = new HashMap<>();
-
-                wanInfoData.put("wanIp", currentWanIp);
-                wanInfoData.put("isp", currentIsp);
+                extraData.put("wanIp", currentWanIp);
+                extraData.put("isp", currentIsp);
 
                 intent = new Intent();
                 intent.setAction(HSC_WAN_IP_CHANGED);
-                intent.putExtra("HSC_WAN_IP_CHANGED", wanInfoData);
+                intent.putExtra("HSC_WAN_IP_CHANGED", extraData);
                 getAppContext().sendBroadcast(intent);
                 break;
 
             case "cameraReboot":
                 String cameraInReboot = messageData.get("cameraName");
+
+                extraData.put("cameraName", cameraInReboot);
+
                 intent.setAction(HSC_DEVICE_REBOOT);
-                intent.putExtra("HSC_DEVICE_REBOOT", cameraInReboot);
+                intent.putExtra("HSC_DEVICE_REBOOT", extraData);
                 getAppContext().sendBroadcast(intent);
                 break;
 
@@ -79,13 +85,15 @@ public class FCMMessagingService extends FirebaseMessagingService {
 
                 switch (action) {
                     case "starting":
-                        String currentPid = messageData.get("pid");
+                        String serverPid = messageData.get("pid");
+                        extraData.put("serverPid", serverPid);
                         intent.setAction(HSC_SERVER_STARTED);
-                        intent.putExtra("HSC_SERVER_STARTED", currentPid);
+                        intent.putExtra("HSC_SERVER_STARTED", extraData);
                         break;
 
                     case "stopping":
                         intent.setAction(HSC_SERVER_STOPPED);
+                        intent.putExtra("HSC_SERVER_STOPPED", extraData);
                         break;
 
                     default:

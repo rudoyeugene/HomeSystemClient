@@ -6,8 +6,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
-import static com.rudyii.hsw.client.helpers.Utils.getSimplifiedPrimaryAccountName;
-import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
+import static com.rudyii.hsw.client.helpers.Utils.registerTokenOnServers;
 
 /**
  * Created by j-a-c on 26.12.2017.
@@ -19,10 +18,6 @@ public class FCMService extends FirebaseInstanceIdService {
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, "Refreshed token: " + refreshedToken);
 
-        String accountName = getSimplifiedPrimaryAccountName();
-
-        if (!"".equals(accountName)) {
-            getRootReference().child("/connectedClients/" + accountName).setValue(refreshedToken);
-        }
+        registerTokenOnServers(refreshedToken);
     }
 }

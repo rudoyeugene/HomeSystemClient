@@ -26,13 +26,14 @@ public class WanInfoListener extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         HashMap<String, Object> wanInfoData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_WAN_IP_CHANGED");
+        String serverName = (String) wanInfoData.get("serverName");
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle(context.getResources().getString(R.string.notif_text_isp_changed))
+                .setContentTitle(serverName + ": " + context.getResources().getString(R.string.notif_text_isp_changed))
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(context.getResources().getString(R.string.notif_text_current_isp)
                                 + wanInfoData.get("isp")

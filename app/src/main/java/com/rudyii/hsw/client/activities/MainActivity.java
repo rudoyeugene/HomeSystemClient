@@ -12,11 +12,15 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -28,6 +32,7 @@ import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.helpers.ToastDrawer;
 import com.rudyii.hsw.client.listeners.StatusesListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -35,7 +40,11 @@ import java.util.concurrent.TimeUnit;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
+import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDotsDelimFrom;
+import static com.rudyii.hsw.client.helpers.Utils.getServersList;
+import static com.rudyii.hsw.client.helpers.Utils.retrievePermissions;
+import static com.rudyii.hsw.client.helpers.Utils.switchActiveServerTo;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
 
@@ -50,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private Runnable serverLastPingRunnable, updateDataRunnable;
     private ColorStateList defaultTextColor;
     private long serverLastPing;
+    private boolean init;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        requestPermissions();
     }
 
     @Override
@@ -153,6 +164,8 @@ public class MainActivity extends AppCompatActivity {
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(StatusesListener.HSC_STATUSES_UPDATED);
+
+        buildServersList();
 
         updateData();
         buildHandlers();
@@ -426,14 +439,69 @@ public class MainActivity extends AppCompatActivity {
         updateDataHandler.postDelayed(updateDataRunnable, 1000);
     }
 
+    private void buildServersList() {
+        Spinner serversList = (Spinner) findViewById(R.id.serverList);
+        ArrayAdapter<String> serversArray = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, getServersList());
+        serversArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        serversList.setAdapter(serversArray);
+        serversList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View convertView, int selected, long current) {
+                if (!init) {
+                    init = true;
+
+                    if (convertView == null)
+                        convertView = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_spinner_item, parent, false);
+
+                    ((TextView) convertView).setText(getActiveServerAlias());
+
+                    return;
+                }
+
+                String serverName = (String) parent.getItemAtPosition(selected);
+
+                if (convertView == null)
+                    convertView = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_spinner_item, parent, false);
+
+                ((TextView) convertView).setText(serverName);
+
+                switchActiveServerTo(serverName);
+
+                updateData();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
     private void refreshCameraAppIcon() {
         try {
             Drawable icon = getPackageManager().getApplicationIcon(getStringValueFromSettings("CAMERA_APP"));
-            if (icon !=null){
+            if (icon != null) {
                 buttonCameraApp.setImageDrawable(icon);
             }
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void requestPermissions() {
+        ArrayList<String> permissionsToBeRequested = new ArrayList<>();
+
+        for (String permission : retrievePermissions()) {
+            if (shouldShowRequestPermissionRationale(permission)) {
+                permissionsToBeRequested.add(permission);
+            }
+        }
+
+        if (permissionsToBeRequested.size() > 0) {
+            String[] permissionsArray = new String[permissionsToBeRequested.size()];
+            permissionsToBeRequested.toArray(permissionsArray);
+            requestPermissions(permissionsArray, random.nextInt(999));
         }
     }
 

@@ -64,4 +64,5 @@
     <string name="notif_text_isp_changed">Провайдер изменен</string>
     <string name="notif_text_current_isp">Текущий провайдер:\u0020</string>
     <string name="notif_text_current_ip">, текущий IP адрес:\\u0020</string>
+    <string name="text_current_server">Текущий сервер:</string>
 </resources>

@@ -12,6 +12,8 @@ import android.support.v4.app.NotificationCompat;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.activities.MainActivity;
 
+import java.util.HashMap;
+
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 
 /**
@@ -23,14 +25,16 @@ public class ServerStartupListener extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        String serverPid = (String) intent.getSerializableExtra("HSC_SERVER_STARTED");
+        HashMap<String, Object> startupData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_SERVER_STARTED");
+        String serverName = (String) startupData.get("serverName");
+        String serverPid = (String) startupData.get("serverPid");
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle(context.getResources().getString(R.string.notif_text_server_started) + serverPid)
+                .setContentTitle(serverName + ": " + context.getResources().getString(R.string.notif_text_server_started) + serverPid)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[]{0, 500})

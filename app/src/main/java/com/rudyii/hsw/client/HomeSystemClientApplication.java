@@ -4,10 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import com.google.firebase.iid.FirebaseInstanceId;
-
-import static com.rudyii.hsw.client.helpers.Utils.getSimplifiedPrimaryAccountName;
-import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
+import static com.rudyii.hsw.client.helpers.Utils.getCurrentFcmToken;
+import static com.rudyii.hsw.client.helpers.Utils.registerTokenOnServers;
 
 /**
  * Created by j-a-c on 16.12.2017.
@@ -28,11 +26,6 @@ public class HomeSystemClientApplication extends Application {
 
         appContext = getApplicationContext();
 
-        String token = FirebaseInstanceId.getInstance().getToken();
-        String accountName = getSimplifiedPrimaryAccountName();
-
-        if (token != null && !"".equals(accountName)) {
-            getRootReference().child("/connectedClients/" + accountName).setValue(token);
-        }
+        registerTokenOnServers(getCurrentFcmToken());
     }
 }

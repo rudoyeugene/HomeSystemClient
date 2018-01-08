@@ -12,6 +12,8 @@ import android.support.v4.app.NotificationCompat;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.activities.MainActivity;
 
+import java.util.HashMap;
+
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 
 /**
@@ -23,14 +25,16 @@ public class OfflineDeviceListener extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        String offlineDevice = (String) intent.getSerializableExtra("HSC_DEVICE_REBOOT");
+        HashMap<String, Object> offlineDeviceData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_DEVICE_REBOOT");
+        String offlineDevice = (String) offlineDeviceData.get("cameraName");
+        String serverName = (String) offlineDeviceData.get("serverName");
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle(offlineDevice + context.getResources().getString(R.string.notif_text_camera_is_rebooting))
+                .setContentTitle(serverName + ": " + offlineDevice + context.getResources().getString(R.string.notif_text_camera_is_rebooting))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[]{0, 500})

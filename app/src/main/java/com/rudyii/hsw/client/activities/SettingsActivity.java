@@ -174,7 +174,7 @@ public class SettingsActivity extends AppCompatActivity {
                 unpairServerAlert.setTitle(getResources().getString(R.string.dialog_server_unpair_alert_title));
                 unpairServerAlert.setMessage(getResources().getString(R.string.dialog_server_unpair_alert_message));
 
-                unpairServerAlert.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                unpairServerAlert.setPositiveButton(getResources().getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String accountName = getSimplifiedPrimaryAccountName();
                         if (!stringIsEmptyOrNull(accountName)) {
@@ -189,7 +189,7 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 });
 
-                unpairServerAlert.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                unpairServerAlert.setNegativeButton(getResources().getString(R.string.dialog_no), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                     }
@@ -204,7 +204,7 @@ public class SettingsActivity extends AppCompatActivity {
         AlertDialog.Builder downloadDialog = new AlertDialog.Builder(act);
         downloadDialog.setTitle(getResources().getString(R.string.dialog_download_qr_scanner_title));
         downloadDialog.setMessage(getResources().getString(R.string.dialog_download_qr_scanner_message));
-        downloadDialog.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+        downloadDialog.setPositiveButton(getResources().getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int i) {
                 Uri uri = Uri.parse("market://search?q=pname:" + "com.google.zxing.client.android");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -215,7 +215,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
-        downloadDialog.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+        downloadDialog.setNegativeButton(getResources().getString(R.string.dialog_no), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int i) {
 
             }
@@ -228,7 +228,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private String getCameraAppName() {
-        String appName = getResources().getString(R.string.settings_select_camera_app_text);
+        String appName = getResources().getString(R.string.text_settings_select_camera_app);
         try {
             appName = String.valueOf(getPackageManager().getApplicationLabel(getPackageManager().getApplicationInfo(getCameraAppPackageName(), PackageManager.GET_META_DATA)));
         } catch (PackageManager.NameNotFoundException e) {

@@ -1,68 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
-    <string name="label_app_name">Home System Client</string>
     <string name="button_pair_server_pair_server">Pair with server</string>
     <string name="button_pair_server_unpair_server">Unpair server</string>
-    <string name="toast_server_paired_success">Pairing success</string>
-    <string name="toast_server_paired_failure">Pairing failed</string>
-    <string name="toast_server_unpair_success">Unpairing success</string>
-    <string name="toast_server_unpair_failure">Unpairing failed</string>
+
+    <string name="dialog_download_qr_scanner_message">Download QR Code Scanner from Play Store?</string>
+    <string name="dialog_download_qr_scanner_title">No QR Code Scanner Found</string>
+    <string name="dialog_no">No</string>
+    <string name="dialog_server_unpair_alert_message">Are you sure? This can\'t be reverted, later you can pair with another server.</string>
+    <string name="dialog_server_unpair_alert_title">Unpair current server</string>
+    <string name="dialog_yes">Yes</string>
+
+    <string name="label_about">About</string>
+    <string name="label_app_name">Home System Client</string>
     <string name="label_settings">Settings</string>
-    <string name="toggle_button_system_mode_state_automatic_text">Auto</string>
-    <string name="toggle_button_system_mode_manual_text">Manual</string>
-    <string name="toggle_button_system_state_armed_text">Armed</string>
-    <string name="toggle_button_system_state_disarmed_text">Disarmed</string>
+
+    <string name="notif_text_camera_is_rebooting">\u0020 camera is rebooting</string>
+    <string name="notif_text_current_ip">, current WAN IP address:\\u0020</string>
+    <string name="notif_text_current_isp">Current ISP:\u0020</string>
+    <string name="notif_text_isp_changed">ISP changed</string>
+    <string name="notif_text_motion_detected_at">Motion detected at\u0020</string>
+    <string name="notif_text_motion_detected_on_camera">Motion detected on camera:\u0020</string>
+    <string name="notif_text_ports_are">Ports are\u0020</string>
     <string name="notif_text_ports_closed_text">Ports Closed</string>
     <string name="notif_text_ports_open_text">Ports Open</string>
-    <string name="text_camera_app_text">Camera app</string>
-    <string name="settings_select_camera_app_text">Select Camera app</string>
-    <string name="toast_choose_camera_app_text">Camera application is not selected. Select new Camera application</string>
-    <string name="toast_choose_camera_app_error_text">Camera application unavailable. Select new Camera application</string>
-    <string name="text_resend_hourly_text">Resend hourly report</string>
-    <string name="text_resend_weekly_text">Resend weekly report</string>
-    <string name="text_settings">Settings</string>
-    <string name="text_server_version">Server version:</string>
-    <string name="text_server_ping">Last time online:</string>
-    <string name="text_server_uptime">Server uptime:</string>
-    <string name="text_info_sound">Info sound</string>
-    <string name="text_motion_sound">Motion sound</string>
-    <string name="text_retrieving_data">retrieving data</string>
-    <string name="text_armed_mode">ARMED MODE</string>
-    <string name="text_armed_state">ARMED STATE</string>
-    <string name="toast_info_sound_changed_to">Info sound changed to:\u0020</string>
-    <string name="toast_motion_sound_changed_to">Motion sound changed to:\u0020</string>
-    <string name="toast_info_sound_removed">Info sound removed</string>
-    <string name="toast_motion_sound_removed">Motion sound removed</string>
-    <string name="text_no_sound">No sound</string>
-    <string name="dialog_server_unpair_alert_title">Unpair current server</string>
-    <string name="dialog_server_unpair_alert_message">Are you sure? This can\'t be reverted, later you can pair with another server.</string>
-    <string name="dialog_download_qr_scanner_title">No QR Code Scanner Found</string>
-    <string name="dialog_download_qr_scanner_message">Download QR Code Scanner from Play Store?</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="toast_server_paired_failure_detailed">Pairing failed, server key unrecognized, please try again</string>
-    <string name="label_about">About</string>
+    <string name="notif_text_server_started">Server started with PID:\u0020</string>
+    <string name="notif_text_server_stopped">Server stopped</string>
+    <string name="notif_text_system_state_changed">System state changed</string>
+    <string name="notif_text_system_state_is">System state is\u0020</string>
+
+    <string name="shortcut_arm">Arm</string>
+    <string name="shortcut_arm_activity_text">Requested system switch to MANUAL:ARM, you\'ll be notified</string>
+    <string name="shortcut_auto">Auto</string>
+    <string name="shortcut_auto_activity_text">Requested system switch to AUTOMATIC:AUTO, you\'ll be notified</string>
+    <string name="shortcut_disarm">Disarm</string>
+    <string name="shortcut_disarm_activity_text">Requested system switch to MANUAL:DISARM, you\'ll be notified</string>
+
     <string name="text_about">Home System Client version %s\n\n
         This Application is provided as-is, Author have no any responsibility if something goes wrong due to this application.\n
         This Application purpose is NOT to protect your property but to catch the event was trying to disserve your property.\n
         Every user of this Application have personal responsibility for the Application usage and the usages were applied to this Application.\n
         This Application can contain some bugs, as soon you'll report them to the Author as soon they will be fixed.
     </string>
-    <string name="shortcut_arm">Arm</string>
-    <string name="shortcut_disarm">Disarm</string>
-    <string name="shortcut_auto">Auto</string>
-    <string name="shortcut_arm_activity_text">Requested system switch to MANUAL:ARM, you\'ll be notified</string>
-    <string name="shortcut_disarm_activity_text">Requested system switch to MANUAL:DISARM, you\'ll be notified</string>
-    <string name="shortcut_auto_activity_text">Requested system switch to AUTOMATIC:AUTO, you\'ll be notified</string>
-    <string name="notif_text_motion_detected_on_camera">Motion detected on camera:\u0020</string>
-    <string name="notif_text_motion_detected_at">Motion detected at\u0020</string>
-    <string name="notif_text_camera_is_rebooting">\u0020 camera is rebooting</string>
-    <string name="notif_text_server_stopped">Server stopped</string>
-    <string name="notif_text_server_started">Server started with PID:\u0020</string>
-    <string name="notif_text_system_state_changed">System state changed</string>
-    <string name="notif_text_system_state_is">System state is\u0020</string>
-    <string name="notif_text_ports_are">Ports are\u0020</string>
-    <string name="notif_text_isp_changed">ISP changed</string>
-    <string name="notif_text_current_isp">Current ISP:\u0020</string>
-    <string name="notif_text_current_ip">, current WAN IP address:\\u0020</string>
+    <string name="text_armed_mode">ARMED MODE</string>
+    <string name="text_armed_state">ARMED STATE</string>
+    <string name="text_camera_app_text">Camera app</string>
     <string name="text_current_server">Current server:</string>
+    <string name="text_day">day</string>
+    <string name="text_days">days</string>
+    <string name="text_info_sound">Info sound</string>
+    <string name="text_motion_sound">Motion sound</string>
+    <string name="text_no_sound">No sound</string>
+    <string name="text_resend_hourly_text">Resend hourly report</string>
+    <string name="text_resend_weekly_text">Resend weekly report</string>
+    <string name="text_retrieving_data">retrieving data</string>
+    <string name="text_server_ping">Last time online:</string>
+    <string name="text_server_uptime">Server uptime:</string>
+    <string name="text_server_version">Server version:</string>
+    <string name="text_settings">Settings</string>
+    <string name="text_settings_select_camera_app">Select Camera app</string>
+
+    <string name="toast_choose_camera_app_error_text">Camera application unavailable. Select new Camera application</string>
+    <string name="toast_choose_camera_app_text">Camera application is not selected. Select new Camera application</string>
+    <string name="toast_info_sound_changed_to">Info sound changed to:\u0020</string>
+    <string name="toast_info_sound_removed">Info sound removed</string>
+    <string name="toast_motion_sound_changed_to">Motion sound changed to:\u0020</string>
+    <string name="toast_motion_sound_removed">Motion sound removed</string>
+    <string name="toast_server_paired_failure">Pairing failed</string>
+    <string name="toast_server_paired_failure_detailed">Pairing failed, server key unrecognized, please try again</string>
+    <string name="toast_server_paired_success">Pairing success</string>
+    <string name="toast_server_unpair_failure">Unpairing failed</string>
+    <string name="toast_server_unpair_success">Unpairing success</string>
+
+    <string name="toggle_button_system_mode_manual_text">Manual</string>
+    <string name="toggle_button_system_mode_state_automatic_text">Auto</string>
+    <string name="toggle_button_system_state_armed_text">Armed</string>
+    <string name="toggle_button_system_state_disarmed_text">Disarmed</string>
 </resources>

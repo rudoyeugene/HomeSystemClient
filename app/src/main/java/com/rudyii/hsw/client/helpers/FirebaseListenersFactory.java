@@ -48,7 +48,7 @@ public class FirebaseListenersFactory {
                 byte[] decodedImageString = Base64.decode(imageString, Base64.DEFAULT);
                 Bitmap bitmap = BitmapFactory.decodeByteArray(decodedImageString, 0, decodedImageString.length);
 
-                saveImageFromCamera(bitmap, motionData.get("cameraName").toString(), getCurrentTimeAndDateSingleDotDelimFrom(motionTimeStamp));
+                saveImageFromCamera(bitmap, motionData.get("serverName").toString(), motionData.get("cameraName").toString(), getCurrentTimeAndDateSingleDotDelimFrom(motionTimeStamp));
 
                 while (bitmap.getByteCount() > 512000) {
                     int srcWidth = bitmap.getWidth();

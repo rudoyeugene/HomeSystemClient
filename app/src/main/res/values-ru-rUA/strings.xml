@@ -1,68 +1,77 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="label_app_name">Home System Client</string>
     <string name="button_pair_server_pair_server">Соединить с сервером</string>
     <string name="button_pair_server_unpair_server">Отсоединить сервер</string>
-    <string name="toast_server_paired_success">Соединение удалось</string>
-    <string name="toast_server_paired_failure">Соединение не удалось</string>
-    <string name="toast_server_unpair_success">Отсоединение удалось</string>
-    <string name="toast_server_unpair_failure">Отсоединение не удалось</string>
+
+    <string name="dialog_download_qr_scanner_message">Загрузить Сканер QR Кодов с Play Store?</string>
+    <string name="dialog_download_qr_scanner_title">Сканер QR Кодов не найден</string>
+    <string name="dialog_no">Нет</string>
+    <string name="dialog_server_unpair_alert_message">Вы уверены? Данное действие нельзя отменить, позже вы сможете соединить с другим сервером</string>
+    <string name="dialog_server_unpair_alert_title">Отсоединить текущий сервер</string>
+    <string name="dialog_yes">Да</string>
+
+    <string name="label_about">О приложении</string>
+    <string name="label_app_name">Home System Client</string>
     <string name="label_settings">Настройки</string>
-    <string name="toggle_button_system_mode_state_automatic_text">Авто</string>
-    <string name="toggle_button_system_mode_manual_text">Ручной</string>
-    <string name="toggle_button_system_state_armed_text">Включен</string>
-    <string name="toggle_button_system_state_disarmed_text">Выключен</string>
+
+    <string name="notif_text_camera_is_rebooting">\u0020 камера перезагружается</string>
+    <string name="notif_text_current_ip">, текущий IP адрес:\\u0020</string>
+    <string name="notif_text_current_isp">Текущий провайдер:\u0020</string>
+    <string name="notif_text_isp_changed">Провайдер изменен</string>
+    <string name="notif_text_motion_detected_at">Движение обнаружено в\u0020</string>
+    <string name="notif_text_motion_detected_on_camera">ww</string>
+    <string name="notif_text_ports_are">Порты\u0020</string>
     <string name="notif_text_ports_closed_text">Порты закрыты</string>
     <string name="notif_text_ports_open_text">Порты открыты</string>
-    <string name="text_camera_app_text">Приложение для камер</string>
-    <string name="settings_select_camera_app_text">Выберите приложение для камер</string>
-    <string name="toast_choose_camera_app_text">Приложение для камер не выбрано, выберите желаемое</string>
-    <string name="toast_choose_camera_app_error_text">Приложение для камер не доступно, выберите желаемое</string>
-    <string name="text_resend_hourly_text">Получить ежечасный отчет</string>
-    <string name="text_resend_weekly_text">Получить еженедельный отчет</string>
-    <string name="text_settings">Настройки</string>
-    <string name="text_server_version">Версия:</string>
-    <string name="text_server_ping">В сети:</string>
-    <string name="text_server_uptime">В работе:</string>
-    <string name="text_info_sound">Звук уведомления</string>
-    <string name="text_motion_sound">Звук движения</string>
-    <string name="text_retrieving_data">получаем данные</string>
-    <string name="text_armed_mode">Режим</string>
-    <string name="text_armed_state">Состояние</string>
-    <string name="toast_info_sound_changed_to">Звук уведомлений изменен на:\u0020</string>
-    <string name="toast_motion_sound_changed_to">Звук движений изменен на:\u0020</string>
-    <string name="toast_info_sound_removed">Звук уведомлений удален</string>
-    <string name="toast_motion_sound_removed">Звук движений удален</string>
-    <string name="text_no_sound">Без звука</string>
-    <string name="dialog_server_unpair_alert_title">Отсоединить текущий сервер</string>
-    <string name="dialog_server_unpair_alert_message">Вы уверены? Данное действие нельзя отменить, позже вы сможете соединить с другим сервером</string>
-    <string name="dialog_download_qr_scanner_title">Сканер QR Кодов не найден</string>
-    <string name="dialog_download_qr_scanner_message">Загрузить Сканер QR Кодов с Play Store?</string>
-    <string name="yes">Да</string>
-    <string name="no">Нет</string>
-    <string name="toast_server_paired_failure_detailed">Соединение не удалось, ключ сервера не распознан, попробуйте снова</string>
-    <string name="label_about">О приложении</string>
+    <string name="notif_text_server_started">Сервер запущен, ID процесса:\u0020</string>
+    <string name="notif_text_server_stopped">Сервер остановлен</string>
+    <string name="notif_text_system_state_changed">Состояние системы изменилось</string>
+    <string name="notif_text_system_state_is">Система в\u0020</string>
+
+    <string name="shortcut_arm">Включить</string>
+    <string name="shortcut_arm_activity_text">Запрошено переключение в РУЧНОЙ:ВКЛЮЧЕН режим, Вы будете уведомлены</string>
+    <string name="shortcut_auto">Автомат</string>
+    <string name="shortcut_auto_activity_text">Запрошено переключение в АВТОМАТИЧЕСКИЙ:АВТО режим, Вы будете уведомлены</string>
+    <string name="shortcut_disarm">Выключить</string>
+    <string name="shortcut_disarm_activity_text">Запрошено переключение в РУЧНОЙ:ВЫКЛЮЧЕН режим, Вы будете уведомлены</string>
+
     <string name="text_about">Home System Client версия %s\n\n
         Данное Приложение распространяется как-есть, Автор не несет никакой ответственности в случае если по вине данного Приложения случилось проишествие.\n
         Главная цель данного Приложения НЕ защитить Вашу собственность а зафиксировать момент проишествия.\n
         Каждый пользователь данного Приложения несет личную ответственность за любое использование данного Приложения.\n
         Это Приложение может содержать некоторые ошибки, чем раньше Вы сообщите о них Автору тем быстрее Автор их исправит.</string>
-    <string name="shortcut_arm">Включить</string>
-    <string name="shortcut_disarm">Выключить</string>
-    <string name="shortcut_auto">Автомат</string>
-    <string name="shortcut_arm_activity_text">Запрошено переключение в РУЧНОЙ:ВКЛЮЧЕН режим, Вы будете уведомлены</string>
-    <string name="shortcut_disarm_activity_text">Запрошено переключение в РУЧНОЙ:ВЫКЛЮЧЕН режим, Вы будете уведомлены</string>
-    <string name="shortcut_auto_activity_text">Запрошено переключение в АВТОМАТИЧЕСКИЙ:АВТО режим, Вы будете уведомлены</string>
-    <string name="notif_text_motion_detected_on_camera">ww</string>
-    <string name="notif_text_motion_detected_at">Движение обнаружено в\u0020</string>
-    <string name="notif_text_camera_is_rebooting">\u0020 камера перезагружается</string>
-    <string name="notif_text_server_stopped">Сервер остановлен</string>
-    <string name="notif_text_server_started">Сервер запущен, ID процесса:\u0020</string>
-    <string name="notif_text_system_state_changed">Состояние системы изменилось</string>
-    <string name="notif_text_system_state_is">Система в\u0020</string>
-    <string name="notif_text_ports_are">Порты\u0020</string>
-    <string name="notif_text_isp_changed">Провайдер изменен</string>
-    <string name="notif_text_current_isp">Текущий провайдер:\u0020</string>
-    <string name="notif_text_current_ip">, текущий IP адрес:\\u0020</string>
+    <string name="text_armed_mode">Режим</string>
+    <string name="text_armed_state">Состояние</string>
+    <string name="text_camera_app_text">Приложение для камер</string>
     <string name="text_current_server">Текущий сервер:</string>
+    <string name="text_day">день</string>
+    <string name="text_days">дней</string>
+    <string name="text_info_sound">Звук уведомления</string>
+    <string name="text_motion_sound">Звук движения</string>
+    <string name="text_no_sound">Без звука</string>
+    <string name="text_resend_hourly_text">Получить ежечасный отчет</string>
+    <string name="text_resend_weekly_text">Получить еженедельный отчет</string>
+    <string name="text_retrieving_data">получаем данные</string>
+    <string name="text_server_ping">В сети:</string>
+    <string name="text_server_uptime">В работе:</string>
+    <string name="text_server_version">Версия:</string>
+    <string name="text_settings">Настройки</string>
+    <string name="text_settings_select_camera_app">Выберите приложение для камер</string>
+
+    <string name="toast_choose_camera_app_error_text">Приложение для камер не доступно, выберите желаемое</string>
+    <string name="toast_choose_camera_app_text">Приложение для камер не выбрано, выберите желаемое</string>
+    <string name="toast_info_sound_changed_to">Звук уведомлений изменен на:\u0020</string>
+    <string name="toast_info_sound_removed">Звук уведомлений удален</string>
+    <string name="toast_motion_sound_changed_to">Звук движений изменен на:\u0020</string>
+    <string name="toast_motion_sound_removed">Звук движений удален</string>
+    <string name="toast_server_paired_failure">Соединение не удалось</string>
+    <string name="toast_server_paired_failure_detailed">Соединение не удалось, ключ сервера не распознан, попробуйте снова</string>
+    <string name="toast_server_paired_success">Соединение удалось</string>
+    <string name="toast_server_unpair_failure">Отсоединение не удалось</string>
+    <string name="toast_server_unpair_success">Отсоединение удалось</string>
+
+    <string name="toggle_button_system_mode_manual_text">Ручной</string>
+    <string name="toggle_button_system_mode_state_automatic_text">Авто</string>
+    <string name="toggle_button_system_state_armed_text">Включен</string>
+    <string name="toggle_button_system_state_disarmed_text">Выключен</string>
 </resources>

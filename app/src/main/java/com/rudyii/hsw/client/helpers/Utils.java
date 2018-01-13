@@ -278,13 +278,13 @@ public class Utils {
         }
     }
 
-    public static void saveImageFromCamera(Bitmap bitmap, String cameraName, String imageName) {
+    public static void saveImageFromCamera(Bitmap bitmap, String serverName, String cameraName, String imageName) {
         imageName = imageName + ".png";
 
         FileOutputStream fos = null;
 
         try {
-            final File directory = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/HomeSystemMotions/" + cameraName + "/");
+            final File directory = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/HomeSystemMotions/" + serverName + "/" + cameraName + "/");
 
             if (!directory.exists()) {
                 if (!directory.mkdirs()) {

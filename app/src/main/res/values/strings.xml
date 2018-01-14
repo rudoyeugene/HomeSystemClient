@@ -45,8 +45,8 @@
     <string name="text_armed_state">ARMED STATE</string>
     <string name="text_camera_app_text">Camera app</string>
     <string name="text_current_server">Current server:</string>
-    <string name="text_day">day</string>
-    <string name="text_days">days</string>
+    <string name="text_day">\u0020day\u0020</string>
+    <string name="text_days">\u0020days\u0020</string>
     <string name="text_info_sound">Info sound</string>
     <string name="text_motion_sound">Motion sound</string>
     <string name="text_no_sound">No sound</string>

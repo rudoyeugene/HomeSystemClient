@@ -44,8 +44,8 @@
     <string name="text_armed_state">Состояние</string>
     <string name="text_camera_app_text">Приложение для камер</string>
     <string name="text_current_server">Текущий сервер:</string>
-    <string name="text_day">день</string>
-    <string name="text_days">дней</string>
+    <string name="text_day">\u0020день\u0020</string>
+    <string name="text_days">\u0020дней\u0020</string>
     <string name="text_info_sound">Звук уведомления</string>
     <string name="text_motion_sound">Звук движения</string>
     <string name="text_no_sound">Без звука</string>

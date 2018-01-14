@@ -11,23 +11,23 @@
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/text_server_version"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/currentServerText" />
 
     <TextView
         android:id="@+id/serverVersionTextValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/text_retrieving_data"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/serverVersionText"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/serverList" />
 
     <TextView
         android:id="@+id/serverLastPingText"
@@ -74,6 +74,28 @@
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/serverUptimeText"
         app:layout_constraintTop_toBottomOf="@+id/serverLastPingTextValue" />
+
+    <TextView
+        android:id="@+id/currentServerText"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/text_current_server"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/text_current_server" />
+
+    <Spinner
+        android:id="@+id/serverList"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/currentServerText"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/buttonResendHourly"

@@ -362,9 +362,9 @@ public class MainActivity extends AppCompatActivity {
         StringBuilder builder = new StringBuilder();
 
         if (days == 1) {
-            builder.append((String.format("%s " + getResources().getString(R.string.text_day), days)));
+            builder.append(days).append(getResources().getString(R.string.text_day));
         } else if (days > 1) {
-            builder.append((String.format("%s " + getResources().getString(R.string.text_days), days)));
+            builder.append(days).append(getResources().getString(R.string.text_days));
         }
 
         if (hours < 10) {

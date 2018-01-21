@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,6 +38,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import static com.rudyii.hsw.client.HomeSystemClientApplication.HSC_SERVER_CHANGED;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
 import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private Runnable serverLastPingRunnable, updateDataRunnable;
     private ColorStateList defaultTextColor;
     private long serverLastPing;
-    private boolean init;
+    private boolean initComplete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -461,30 +461,30 @@ public class MainActivity extends AppCompatActivity {
         serversArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         serversList.setAdapter(serversArray);
+
+        final int[] currentItem = new int[1];
+        try {
+            currentItem[0] = serversArray.getPosition(getActiveServerAlias());
+        } catch (IndexOutOfBoundsException e) {
+            Log.w(TAG, "No paired servers");
+        }
+
+        serversList.setSelection(currentItem[0]);
         serversList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View convertView, int selected, long current) {
-                if (!init) {
-                    init = true;
+                String selectedServerName = (String) parent.getItemAtPosition(selected);
 
-                    if (convertView == null)
-                        convertView = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_spinner_item, parent, false);
+                if (currentItem[0] != selected) {
+                    currentItem[0] = selected;
+                    switchActiveServerTo(selectedServerName);
+                    ((TextView) convertView).setText(selectedServerName);
+                    updateData();
 
-                    ((TextView) convertView).setText(getActiveServerAlias());
-
-                    return;
+                    Intent intent = new Intent();
+                    intent.setAction(HSC_SERVER_CHANGED);
+                    sendBroadcast(intent);
                 }
-
-                String serverName = (String) parent.getItemAtPosition(selected);
-
-                if (convertView == null)
-                    convertView = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_spinner_item, parent, false);
-
-                ((TextView) convertView).setText(serverName);
-
-                switchActiveServerTo(serverName);
-
-                updateData();
             }
 
             @Override

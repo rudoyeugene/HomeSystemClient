@@ -211,6 +211,10 @@ public class Utils {
         return string == null || string.equalsIgnoreCase("");
     }
 
+    public static boolean stringIsNotEmptyOrNull(String string) {
+        return !stringIsEmptyOrNull(string);
+    }
+
     public static boolean switchActiveServerTo(String serverAlias) {
         HashMap<String, String> serverListMap = getMapWithServers();
 

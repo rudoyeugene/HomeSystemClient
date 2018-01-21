@@ -33,6 +33,7 @@ import com.rudyii.hsw.client.helpers.ToastDrawer;
 import com.rudyii.hsw.client.listeners.StatusesListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -51,7 +52,7 @@ import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootRe
 public class MainActivity extends AppCompatActivity {
     private Random random = new Random();
     private Switch systemMode, systemState, switchPorts;
-    private ImageButton buttonResendHourlyReport, buttonResendWeeklyReport, buttonCameraApp;
+    private ImageButton buttonResendHourlyReport, buttonResendWeeklyReport, buttonSystemLog, buttonCameraApp;
     private TextView armedModeText, armedStateText;
     private boolean buttonsChangedInternally;
     private MainActivityBroadcastReceiver mainActivityBroadcastReceiver = new MainActivityBroadcastReceiver();
@@ -73,50 +74,65 @@ public class MainActivity extends AppCompatActivity {
         defaultTextColor = serverLastPingTextValue.getTextColors();
 
         buttonResendHourlyReport = (ImageButton) findViewById(R.id.buttonResendHourly);
-        buttonResendHourlyReport.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                new ToastDrawer().showToast(getResources().getString(R.string.text_resend_hourly_text));
-                return false;
-            }
-        });
         buttonResendHourlyReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getRootReference().child("requests/resendHourly").setValue(random.nextInt(999));
             }
         });
-
-        buttonResendWeeklyReport = (ImageButton) findViewById(R.id.buttonResendWeekly);
-        buttonResendWeeklyReport.setOnLongClickListener(new View.OnLongClickListener() {
+        buttonResendHourlyReport.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                new ToastDrawer().showToast(getResources().getString(R.string.text_resend_weekly_text));
-                return false;
+                new ToastDrawer().showToast(getResources().getString(R.string.text_resend_hourly_text));
+                return true;
             }
         });
+
+        buttonResendWeeklyReport = (ImageButton) findViewById(R.id.buttonResendWeekly);
         buttonResendWeeklyReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getRootReference().child("requests/resendWeekly").setValue(random.nextInt(999));
             }
         });
-
-        buttonCameraApp = (ImageButton) findViewById(R.id.buttonCameraApp);
-        buttonCameraApp.setOnLongClickListener(new View.OnLongClickListener() {
+        buttonResendWeeklyReport.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                new ToastDrawer().showToast(getResources().getString(R.string.text_camera_app_text));
-                return false;
+                new ToastDrawer().showToast(getResources().getString(R.string.text_resend_weekly_text));
+                return true;
             }
         });
-        refreshCameraAppIcon();
+
+        buttonSystemLog = (ImageButton) findViewById(R.id.buttonSystemLog);
+        buttonSystemLog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), SystemLogActivity.class));
+            }
+        });
+        buttonSystemLog.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                new ToastDrawer().showToast(getResources().getString(R.string.text_system_log_text));
+                return true;
+            }
+        });
+
+        buttonCameraApp = (ImageButton) findViewById(R.id.buttonCameraApp);
         buttonCameraApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openCameraApp();
             }
         });
+        buttonCameraApp.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                new ToastDrawer().showToast(getResources().getString(R.string.text_camera_app_text));
+                return true;
+            }
+        });
+        refreshCameraAppIcon();
 
         switchPorts = (Switch) findViewById(R.id.switchPorts);
         switchPorts.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -436,7 +452,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         serverLastPingHandler.postDelayed(serverLastPingRunnable, 1000);
-        updateDataHandler.postDelayed(updateDataRunnable, 1000);
+        updateDataHandler.post(updateDataRunnable);
     }
 
     private void buildServersList() {
@@ -492,11 +508,7 @@ public class MainActivity extends AppCompatActivity {
     private void requestPermissions() {
         ArrayList<String> permissionsToBeRequested = new ArrayList<>();
 
-        for (String permission : retrievePermissions()) {
-            if (shouldShowRequestPermissionRationale(permission)) {
-                permissionsToBeRequested.add(permission);
-            }
-        }
+        permissionsToBeRequested.addAll(Arrays.asList(retrievePermissions()));
 
         if (permissionsToBeRequested.size() > 0) {
             String[] permissionsArray = new String[permissionsToBeRequested.size()];

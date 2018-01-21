@@ -47,6 +47,12 @@
             android:parentActivityName=".activities.MainActivity">
         </activity>
 
+        <activity
+            android:name=".activities.SystemLogActivity"
+            android:label="@string/label_system_log"
+            android:parentActivityName=".activities.MainActivity">
+        </activity>
+
         <activity android:name=".activities.ShortcutsActionProcessor"
             android:theme="@android:style/Theme.Material.Light.Dialog.Alert">
         </activity>
@@ -101,6 +107,15 @@
             </intent-filter>
         </service>
 
+        <provider
+            android:name=".helpers.GenericFileProvider"
+            android:authorities="${applicationId}.com.rudyii.hsc"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
     </application>
 
 </manifest>

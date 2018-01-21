@@ -115,13 +115,15 @@
         android:id="@+id/buttonResendHourly"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/text_resend_hourly_text"
         android:drawableTop="@mipmap/button_hourly"
         android:longClickable="true"
         android:textAllCaps="false"
+        app:layout_constraintEnd_toStartOf="@+id/buttonResendWeekly"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/space1"
         app:srcCompat="@mipmap/button_hourly" />
@@ -138,26 +140,42 @@
         android:drawableTop="@mipmap/button_weekly"
         android:longClickable="true"
         android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/buttonSystemLog"
+        app:layout_constraintStart_toEndOf="@+id/buttonResendHourly"
         app:layout_constraintTop_toBottomOf="@+id/space1"
         app:srcCompat="@mipmap/button_weekly" />
+
+    <ImageButton
+        android:id="@+id/buttonSystemLog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
+        android:drawableTop="@mipmap/button_log"
+        app:layout_constraintEnd_toStartOf="@+id/buttonCameraApp"
+        app:layout_constraintStart_toEndOf="@+id/buttonResendWeekly"
+        app:layout_constraintTop_toTopOf="@+id/space1"
+        app:srcCompat="@mipmap/button_log" />
 
     <ImageButton
         android:id="@+id/buttonCameraApp"
         style="@android:style/TextAppearance.Material.Widget.TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/text_camera_app_text"
-        android:drawableTop="@mipmap/no_camera_app"
+        android:drawableTop="@mipmap/image_warning"
         android:longClickable="true"
         android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonSystemLog"
         app:layout_constraintTop_toBottomOf="@+id/space1"
-        app:srcCompat="@mipmap/no_camera_app" />
+        app:srcCompat="@mipmap/image_warning" />
 
     <Space
         android:id="@+id/space2"

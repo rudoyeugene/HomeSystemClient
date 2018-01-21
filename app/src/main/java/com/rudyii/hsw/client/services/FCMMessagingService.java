@@ -53,7 +53,7 @@ public class FCMMessagingService extends FirebaseMessagingService {
 
             case "motionDetected":
                 Long motionId = Long.valueOf(messageData.get("motionId"));
-                DatabaseReference motionsRef = firebaseDatabase.getReference(getServerKeyFromAlias(serverName) + "/motions/" + motionId);
+                DatabaseReference motionsRef = firebaseDatabase.getReference(getServerKeyFromAlias(serverName) + "/log/" + motionId);
                 motionsRef.addListenerForSingleValueEvent(buildMotionRefValueEventListener(serverName));
                 break;
 

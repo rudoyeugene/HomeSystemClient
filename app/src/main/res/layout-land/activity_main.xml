@@ -128,6 +128,19 @@
         app:srcCompat="@mipmap/button_weekly" />
 
     <ImageButton
+        android:id="@+id/buttonSystemLog"
+        style="@android:style/TextAppearance.Material.Widget.TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/text_system_log_text"
+        app:layout_constraintStart_toEndOf="@+id/buttonResendWeekly"
+        app:layout_constraintTop_toBottomOf="@+id/serverUptimeTextValue"
+        app:srcCompat="@mipmap/button_log" />
+
+    <ImageButton
         android:id="@+id/buttonCameraApp"
         style="@android:style/TextAppearance.Material.Widget.TextView"
         android:layout_width="wrap_content"
@@ -136,12 +149,12 @@
         android:layout_marginTop="16dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/text_camera_app_text"
-        android:drawableTop="@mipmap/no_camera_app"
+        android:drawableTop="@mipmap/image_warning"
         android:longClickable="true"
         android:textAllCaps="false"
-        app:layout_constraintStart_toEndOf="@+id/buttonResendWeekly"
-        app:layout_constraintTop_toBottomOf="@+id/serverUptimeText"
-        app:srcCompat="@mipmap/no_camera_app" />
+        app:layout_constraintStart_toEndOf="@+id/buttonSystemLog"
+        app:layout_constraintTop_toBottomOf="@+id/serverUptimeTextValue"
+        app:srcCompat="@mipmap/image_warning" />
 
     <TextView
         android:id="@+id/systemModeText"

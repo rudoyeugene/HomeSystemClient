@@ -23,9 +23,8 @@ public class AboutActivity extends AppCompatActivity {
         try {
             PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
             String appVersion = pInfo.versionName;
-            int codeVersion = pInfo.versionCode;
 
-            applicationVersion = appVersion + "." + codeVersion;
+            applicationVersion = appVersion;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }

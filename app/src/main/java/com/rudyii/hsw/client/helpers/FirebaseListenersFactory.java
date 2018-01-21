@@ -36,11 +36,11 @@ public class FirebaseListenersFactory {
                     return;
                 }
 
-                Long motionTimeStamp = (Long) motion.get("timeStamp");
+                Long motionTimeStamp = Long.valueOf(dataSnapshot.getKey());
 
                 HashMap<String, Object> motionData = new HashMap<>();
                 motionData.put("cameraName", motion.get("cameraName"));
-                motionData.put("timeStamp", motion.get("timeStamp"));
+                motionData.put("timeStamp", motionTimeStamp);
                 motionData.put("motionArea", motion.get("motionArea"));
                 motionData.put("serverName", serverName);
 

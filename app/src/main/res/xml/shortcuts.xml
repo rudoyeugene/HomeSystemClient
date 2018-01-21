@@ -2,7 +2,7 @@
     <shortcut
         android:shortcutId="arm"
         android:enabled="true"
-        android:icon="@mipmap/arm"
+        android:icon="@mipmap/shortcut_arm"
         android:shortcutShortLabel="@string/shortcut_arm">
         <intent
             android:action="com.rudyii.hsw.client.ARM"
@@ -13,7 +13,7 @@
     <shortcut
         android:shortcutId="disarm"
         android:enabled="true"
-        android:icon="@mipmap/disarm"
+        android:icon="@mipmap/shortcut_disarm"
         android:shortcutShortLabel="@string/shortcut_disarm">
         <intent
             android:action="com.rudyii.hsw.client.DISARM"
@@ -24,7 +24,7 @@
     <shortcut
         android:shortcutId="auto"
         android:enabled="true"
-        android:icon="@mipmap/auto"
+        android:icon="@mipmap/shortcut_auto"
         android:shortcutShortLabel="@string/shortcut_auto">
         <intent
             android:action="com.rudyii.hsw.client.AUTO"

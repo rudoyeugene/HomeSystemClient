@@ -12,6 +12,7 @@
     <application
         android:name=".HomeSystemClientApplication"
         android:allowBackup="true"
+        android:resizeableActivity="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/label_app_name"
         android:theme="@style/AppTheme">

@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -68,16 +69,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_settings);
 
-        Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
-        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        List<ResolveInfo> pkgAppsList = getPackageManager().queryIntentActivities(mainIntent, 0);
-
-        Collections.sort(pkgAppsList, new ResolveInfo.DisplayNameComparator(getPackageManager()));
-
         final ArrayList<ResolveInfoWrapper> infoWrappers = new ArrayList<>();
-        for (ResolveInfo resolveInfo : pkgAppsList) {
-            infoWrappers.add(new ResolveInfoWrapper(resolveInfo));
-        }
 
         Spinner appsList = (Spinner) findViewById(R.id.appsList);
         final ActivityAdapter arrayAdapter = new ActivityAdapter(getApplicationContext(), android.R.layout.simple_spinner_item, infoWrappers) {
@@ -91,10 +83,28 @@ public class SettingsActivity extends AppCompatActivity {
 
                 return convertView;
             }
-
-
         };
+
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+                mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+                List<ResolveInfo> pkgAppsList = getPackageManager().queryIntentActivities(mainIntent, 0);
+
+                Collections.sort(pkgAppsList, new ResolveInfo.DisplayNameComparator(getPackageManager()));
+
+                for (ResolveInfo resolveInfo : pkgAppsList) {
+                    infoWrappers.add(new ResolveInfoWrapper(resolveInfo));
+                }
+
+                arrayAdapter.notifyDataSetChanged();
+            }
+        });
+
         appsList.setAdapter(arrayAdapter);
         appsList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             boolean init;

@@ -1,269 +1,276 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.rudyii.hsw.client.activities.MainActivity">
+    tools:context=".activities.MainActivity">
 
-    <TextView
-        android:id="@+id/currentServerText"
-        android:layout_width="150dp"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/text_current_server"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/text_current_server" />
+        android:orientation="vertical">
 
-    <Spinner
-        android:id="@+id/serverList"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/currentServerText"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/currentServerText"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/text_current_server"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/text_current_server" />
 
-    <TextView
-        android:id="@+id/serverVersionText"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/text_server_version"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/currentServerText" />
+        <Spinner
+            android:id="@+id/serverList"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/currentServerText"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/serverVersionTextValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/text_retrieving_data"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/serverVersionText"
-        app:layout_constraintTop_toBottomOf="@+id/serverList" />
+        <TextView
+            android:id="@+id/serverVersionText"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/text_server_version"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/currentServerText" />
 
-    <TextView
-        android:id="@+id/serverLastPingText"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/text_server_ping"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/serverVersionText" />
+        <TextView
+            android:id="@+id/serverVersionTextValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/text_retrieving_data"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/serverVersionText"
+            app:layout_constraintTop_toBottomOf="@+id/serverList" />
 
-    <TextView
-        android:id="@+id/serverLastPingTextValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/text_retrieving_data"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/serverLastPingText"
-        app:layout_constraintTop_toBottomOf="@+id/serverVersionTextValue" />
+        <TextView
+            android:id="@+id/serverLastPingText"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/text_server_ping"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/serverVersionText" />
 
-    <TextView
-        android:id="@+id/serverUptimeText"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/text_server_uptime"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/serverLastPingText" />
+        <TextView
+            android:id="@+id/serverLastPingTextValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/text_retrieving_data"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/serverLastPingText"
+            app:layout_constraintTop_toBottomOf="@+id/serverVersionTextValue" />
 
-    <TextView
-        android:id="@+id/serverUptimeTextValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/text_retrieving_data"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/serverUptimeText"
-        app:layout_constraintTop_toBottomOf="@+id/serverLastPingTextValue" />
+        <TextView
+            android:id="@+id/serverUptimeText"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/text_server_uptime"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/serverLastPingText" />
 
-    <Space
-        android:id="@+id/space1"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/serverUptimeText" />
+        <TextView
+            android:id="@+id/serverUptimeTextValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/text_retrieving_data"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/serverUptimeText"
+            app:layout_constraintTop_toBottomOf="@+id/serverLastPingTextValue" />
 
-    <ImageButton
-        android:id="@+id/buttonResendHourly"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/text_resend_hourly_text"
-        android:drawableTop="@mipmap/button_hourly"
-        android:longClickable="true"
-        android:textAllCaps="false"
-        app:layout_constraintEnd_toStartOf="@+id/buttonResendWeekly"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/space1"
-        app:srcCompat="@mipmap/button_hourly" />
+        <Space
+            android:id="@+id/space1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/serverUptimeText" />
 
-    <ImageButton
-        android:id="@+id/buttonResendWeekly"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/text_resend_weekly_text"
-        android:drawableTop="@mipmap/button_weekly"
-        android:longClickable="true"
-        android:textAllCaps="false"
-        app:layout_constraintEnd_toStartOf="@+id/buttonSystemLog"
-        app:layout_constraintStart_toEndOf="@+id/buttonResendHourly"
-        app:layout_constraintTop_toBottomOf="@+id/space1"
-        app:srcCompat="@mipmap/button_weekly" />
+        <ImageButton
+            android:id="@+id/buttonResendHourly"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/text_resend_hourly_text"
+            android:drawableTop="@mipmap/button_hourly"
+            android:longClickable="true"
+            android:textAllCaps="false"
+            app:layout_constraintEnd_toStartOf="@+id/buttonResendWeekly"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/space1"
+            app:srcCompat="@mipmap/button_hourly" />
 
-    <ImageButton
-        android:id="@+id/buttonSystemLog"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@android:color/transparent"
-        android:drawableTop="@mipmap/button_log"
-        app:layout_constraintEnd_toStartOf="@+id/buttonCameraApp"
-        app:layout_constraintStart_toEndOf="@+id/buttonResendWeekly"
-        app:layout_constraintTop_toTopOf="@+id/space1"
-        app:srcCompat="@mipmap/button_log" />
+        <ImageButton
+            android:id="@+id/buttonResendWeekly"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/text_resend_weekly_text"
+            android:drawableTop="@mipmap/button_weekly"
+            android:longClickable="true"
+            android:textAllCaps="false"
+            app:layout_constraintEnd_toStartOf="@+id/buttonSystemLog"
+            app:layout_constraintStart_toEndOf="@+id/buttonResendHourly"
+            app:layout_constraintTop_toBottomOf="@+id/space1"
+            app:srcCompat="@mipmap/button_weekly" />
 
-    <ImageButton
-        android:id="@+id/buttonCameraApp"
-        style="@android:style/TextAppearance.Material.Widget.TextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/text_camera_app_text"
-        android:drawableTop="@mipmap/image_warning"
-        android:longClickable="true"
-        android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonSystemLog"
-        app:layout_constraintTop_toBottomOf="@+id/space1"
-        app:srcCompat="@mipmap/image_warning" />
+        <ImageButton
+            android:id="@+id/buttonSystemLog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            android:drawableTop="@mipmap/button_log"
+            app:layout_constraintEnd_toStartOf="@+id/buttonCameraApp"
+            app:layout_constraintStart_toEndOf="@+id/buttonResendWeekly"
+            app:layout_constraintTop_toTopOf="@+id/space1"
+            app:srcCompat="@mipmap/button_log" />
 
-    <Space
-        android:id="@+id/space2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonResendWeekly" />
+        <ImageButton
+            android:id="@+id/buttonCameraApp"
+            style="@android:style/TextAppearance.Material.Widget.TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/text_camera_app_text"
+            android:drawableTop="@mipmap/image_warning"
+            android:longClickable="true"
+            android:textAllCaps="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/buttonSystemLog"
+            app:layout_constraintTop_toBottomOf="@+id/space1"
+            app:srcCompat="@mipmap/image_warning" />
 
-    <TextView
-        android:id="@+id/systemModeText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:text="@string/text_armed_mode"
-        android:textAllCaps="false"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/space2" />
+        <Space
+            android:id="@+id/space2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonResendWeekly" />
 
-    <Switch
-        android:id="@+id/switchSystemMode"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
-        android:textOff="|"
-        android:textOn="0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/systemModeText" />
+        <TextView
+            android:id="@+id/systemModeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/text_armed_mode"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/space2" />
 
-    <TextView
-        android:id="@+id/systemStateText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/text_armed_state"
-        android:textAllCaps="false"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintHorizontal_bias="0.465"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/space2" />
+        <Switch
+            android:id="@+id/switchSystemMode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:textOff="|"
+            android:textOn="0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/systemModeText" />
 
-    <Switch
-        android:id="@+id/switchSystemState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textOff="|"
-        android:textOn="0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/systemStateText" />
+        <TextView
+            android:id="@+id/systemStateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/text_armed_state"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintHorizontal_bias="0.465"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/space2" />
 
-    <TextView
-        android:id="@+id/portsStateText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="24dp"
-        android:text="@string/notif_text_ports_are"
-        android:textAllCaps="false"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/space2" />
+        <Switch
+            android:id="@+id/switchSystemState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textOff="|"
+            android:textOn="0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/systemStateText" />
 
-    <Switch
-        android:id="@+id/switchPorts"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
-        android:textOff="|"
-        android:textOn="0"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/portsStateText" />
+        <TextView
+            android:id="@+id/portsStateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/notif_text_ports_are"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/space2" />
 
-</android.support.constraint.ConstraintLayout>
+        <Switch
+            android:id="@+id/switchPorts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:textOff="|"
+            android:textOn="0"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/portsStateText" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>

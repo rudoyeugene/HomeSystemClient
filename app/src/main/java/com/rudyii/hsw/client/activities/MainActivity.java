@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 getRootReference().child("requests/resendHourly").setValue(random.nextInt(999));
+                new ToastDrawer().showToast(getResources().getString(R.string.text_resend_hourly_request_text));
             }
         });
         buttonResendHourlyReport.setOnLongClickListener(new View.OnLongClickListener() {
@@ -93,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 getRootReference().child("requests/resendWeekly").setValue(random.nextInt(999));
+                new ToastDrawer().showToast(getResources().getString(R.string.text_resend_weekly_request_text));
             }
         });
         buttonResendWeeklyReport.setOnLongClickListener(new View.OnLongClickListener() {

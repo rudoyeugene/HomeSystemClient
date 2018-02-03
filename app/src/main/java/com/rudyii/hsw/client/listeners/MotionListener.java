@@ -33,7 +33,7 @@ public class MotionListener extends BroadcastReceiver {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle(serverName + ": " + context.getResources().getString(R.string.notif_text_motion_detected_on_camera) + motionData.get("cameraName"))
-                .setContentText(context.getResources().getString(R.string.notif_text_motion_detected_at) + getCurrentTimeAndDateDoubleDotsDelimFrom((Long) motionData.get("timeStamp")) + " with area " + motionData.get("motionArea") + "%")
+                .setContentText(getCurrentTimeAndDateDoubleDotsDelimFrom((Long) motionData.get("timeStamp")) + context.getResources().getString(R.string.notif_text_area_size) + motionData.get("motionArea") + "%")
                 .setStyle(new NotificationCompat.BigPictureStyle().bigPicture((Bitmap) motionData.get("image")))
                 .setAutoCancel(true)
                 .setVibrate(new long[]{0, 200, 200, 200, 200, 200})

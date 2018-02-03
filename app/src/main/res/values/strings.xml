@@ -15,11 +15,11 @@
     <string name="label_settings">Settings</string>
     <string name="label_system_log">System log</string>
 
+    <string name="notif_text_area_size">\u0020, motion area size:\u0020</string>
     <string name="notif_text_camera_is_rebooting">\u0020 camera is rebooting</string>
     <string name="notif_text_current_ip">, current WAN IP address:\\u0020</string>
     <string name="notif_text_current_isp">Current ISP:\u0020</string>
     <string name="notif_text_isp_changed">ISP changed</string>
-    <string name="notif_text_motion_detected_at">Motion detected at\u0020</string>
     <string name="notif_text_motion_detected_on_camera">Motion detected on camera:\u0020</string>
     <string name="notif_text_ports_are">Ports are\u0020</string>
     <string name="notif_text_ports_closed_text">Ports Closed</string>
@@ -50,8 +50,11 @@
     <string name="text_days">\u0020days\u0020</string>
     <string name="text_info_sound">Info sound</string>
     <string name="text_motion_sound">Motion sound</string>
+    <string name="text_no_server">NO SERVER</string>
     <string name="text_no_sound">No sound</string>
+    <string name="text_resend_hourly_request_text">Hourly report requested</string>
     <string name="text_resend_hourly_text">Resend hourly report</string>
+    <string name="text_resend_weekly_request_text">Weekly report requested</string>
     <string name="text_resend_weekly_text">Resend weekly report</string>
     <string name="text_retrieving_data">retrieving data</string>
     <string name="text_server_ping">Last time online:</string>

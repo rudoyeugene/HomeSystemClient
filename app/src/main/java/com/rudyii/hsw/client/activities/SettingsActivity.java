@@ -194,7 +194,7 @@ public class SettingsActivity extends AppCompatActivity {
                         removeServerFromServersList(getActiveServerAlias());
                         deleteIdFromSettings("ACTIVE_SERVER");
 
-                        new ToastDrawer().showToast(isPaired() ? getActiveServerAlias() + ": " + getResources().getString(R.string.toast_server_unpair_failure) : getActiveServerAlias() + ": " + getResources().getString(R.string.toast_server_unpair_success));
+                        new ToastDrawer().showToast(isPaired() ? getActiveServerAlias() + ": " + getResources().getString(R.string.toast_server_unpair_failure) : getResources().getString(R.string.toast_server_unpair_success));
                         pairServerButton.setText(R.string.button_pair_server_pair_server);
                     }
                 });

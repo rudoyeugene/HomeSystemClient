@@ -15,11 +15,11 @@
     <string name="label_settings">Настройки</string>
     <string name="label_system_log">Журнал событий</string>
 
+    <string name="notif_text_area_size">\u0020, размер зоны:\u0020</string>
     <string name="notif_text_camera_is_rebooting">\u0020 камера перезагружается</string>
     <string name="notif_text_current_ip">, текущий IP адрес:\\u0020</string>
     <string name="notif_text_current_isp">Текущий провайдер:\u0020</string>
     <string name="notif_text_isp_changed">Провайдер изменен</string>
-    <string name="notif_text_motion_detected_at">Движение обнаружено в\u0020</string>
     <string name="notif_text_motion_detected_on_camera">Обнаружено движение на камере:\u0020</string>
     <string name="notif_text_ports_are">Порты\u0020</string>
     <string name="notif_text_ports_closed_text">Порты закрыты</string>
@@ -49,8 +49,11 @@
     <string name="text_days">\u0020дней\u0020</string>
     <string name="text_info_sound">Звук уведомления</string>
     <string name="text_motion_sound">Звук движения</string>
+    <string name="text_no_server">НЕТ СЕРВЕРА</string>
     <string name="text_no_sound">Без звука</string>
+    <string name="text_resend_hourly_request_text">Запрос на ежечасный отчет отправлен</string>
     <string name="text_resend_hourly_text">Получить ежечасный отчет</string>
+    <string name="text_resend_weekly_request_text">Запрос на еженедельный отчет отправлен</string>
     <string name="text_resend_weekly_text">Получить еженедельный отчет</string>
     <string name="text_retrieving_data">получаем данные</string>
     <string name="text_server_ping">В сети:</string>

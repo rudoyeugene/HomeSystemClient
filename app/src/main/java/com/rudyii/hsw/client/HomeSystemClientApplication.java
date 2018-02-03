@@ -18,6 +18,7 @@ import java.util.List;
 import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentFcmToken;
 import static com.rudyii.hsw.client.helpers.Utils.registerTokenOnServers;
+import static com.rudyii.hsw.client.helpers.Utils.stringIsEmptyOrNull;
 
 /**
  * Created by j-a-c on 16.12.2017.
@@ -55,7 +56,7 @@ public class HomeSystemClientApplication extends Application {
             List<ShortcutInfo> scInfoFromXml = shortcutManager.getDynamicShortcuts();
 
             ShortcutInfo serverName = new ShortcutInfo.Builder(this, "serverName")
-                    .setShortLabel(getActiveServerAlias())
+                    .setShortLabel(stringIsEmptyOrNull(getActiveServerAlias()) ? appContext.getResources().getString(R.string.text_no_server) : getActiveServerAlias())
                     .setIcon(Icon.createWithResource(this, R.mipmap.shortcut_server))
                     .setIntent(new Intent(Intent.ACTION_MAIN, Uri.EMPTY))
                     .build();

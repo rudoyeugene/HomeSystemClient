@@ -17,7 +17,7 @@
 
     <string name="notif_text_area_size">\u0020, motion area size:\u0020</string>
     <string name="notif_text_camera_is_rebooting">\u0020 camera is rebooting</string>
-    <string name="notif_text_current_ip">, current WAN IP address:\\u0020</string>
+    <string name="notif_text_current_ip">, current WAN IP address:\u0020</string>
     <string name="notif_text_current_isp">Current ISP:\u0020</string>
     <string name="notif_text_isp_changed">ISP changed</string>
     <string name="notif_text_motion_detected_on_camera">Motion detected on camera:\u0020</string>

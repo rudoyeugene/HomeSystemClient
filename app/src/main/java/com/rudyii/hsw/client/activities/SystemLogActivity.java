@@ -281,7 +281,7 @@ public class SystemLogActivity extends AppCompatActivity {
 
             case "ispChanged":
                 image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_isp);
-                description = logRecordData.get("isp") + ":" + logRecordData.get("wanIp");
+                description = logRecordData.get("isp") + ":" + logRecordData.get("ip");
                 break;
 
             case "cameraReboot":

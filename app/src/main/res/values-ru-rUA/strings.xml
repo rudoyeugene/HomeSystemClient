@@ -17,7 +17,7 @@
 
     <string name="notif_text_area_size">\u0020, размер зоны:\u0020</string>
     <string name="notif_text_camera_is_rebooting">\u0020 камера перезагружается</string>
-    <string name="notif_text_current_ip">, текущий IP адрес:\\u0020</string>
+    <string name="notif_text_current_ip">, текущий IP адрес:\u0020</string>
     <string name="notif_text_current_isp">Текущий провайдер:\u0020</string>
     <string name="notif_text_isp_changed">Провайдер изменен</string>
     <string name="notif_text_motion_detected_on_camera">ww</string>

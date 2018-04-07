@@ -20,7 +20,7 @@
     <string name="notif_text_current_ip">, текущий IP адрес:\u0020</string>
     <string name="notif_text_current_isp">Текущий провайдер:\u0020</string>
     <string name="notif_text_isp_changed">Провайдер изменен</string>
-    <string name="notif_text_motion_detected_on_camera">ww</string>
+    <string name="notif_text_motion_detected_on_camera">Обнаружено движение на камере:\u0020</string>
     <string name="notif_text_ports_are">Порты\u0020</string>
     <string name="notif_text_ports_closed_text">Порты закрыты</string>
     <string name="notif_text_ports_open_text">Порты открыты</string>

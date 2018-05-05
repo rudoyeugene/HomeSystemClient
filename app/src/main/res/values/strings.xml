@@ -14,6 +14,7 @@
     <string name="label_app_name">Home System Client</string>
     <string name="label_settings">Settings</string>
     <string name="label_system_log">System log</string>
+    <string name="label_usage_chart">Usage chart</string>
 
     <string name="notif_text_area_size">\u0020, motion area size:\u0020</string>
     <string name="notif_text_camera_is_rebooting">\u0020 camera is rebooting</string>
@@ -54,8 +55,7 @@
     <string name="text_no_sound">No sound</string>
     <string name="text_resend_hourly_request_text">Hourly report requested</string>
     <string name="text_resend_hourly_text">Resend hourly report</string>
-    <string name="text_resend_weekly_request_text">Weekly report requested</string>
-    <string name="text_resend_weekly_text">Resend weekly report</string>
+    <string name="text_resend_weekly_text">Open usage chart</string>
     <string name="text_retrieving_data">retrieving data</string>
     <string name="text_server_ping">Last time online:</string>
     <string name="text_server_uptime">Server uptime:</string>
@@ -64,6 +64,7 @@
     <string name="text_settings_select_camera_app">Select Camera app</string>
     <string name="text_system_log_clear_log">Clear log</string>
     <string name="text_system_log_text">Open System Log</string>
+    <string name="text_usage_for">for %x %s</string>
 
     <string name="toast_choose_camera_app_error_text">Camera application unavailable. Select new Camera application</string>
     <string name="toast_choose_camera_app_text">Camera application is not selected. Select new Camera application</string>

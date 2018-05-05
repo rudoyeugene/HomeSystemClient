@@ -14,6 +14,7 @@
     <string name="label_app_name">Home System Client</string>
     <string name="label_settings">Настройки</string>
     <string name="label_system_log">Журнал событий</string>
+    <string name="label_usage_chart">График использования</string>
 
     <string name="notif_text_area_size">\u0020, размер зоны:\u0020</string>
     <string name="notif_text_camera_is_rebooting">\u0020 камера перезагружается</string>
@@ -53,8 +54,7 @@
     <string name="text_no_sound">Без звука</string>
     <string name="text_resend_hourly_request_text">Запрос на ежечасный отчет отправлен</string>
     <string name="text_resend_hourly_text">Получить ежечасный отчет</string>
-    <string name="text_resend_weekly_request_text">Запрос на еженедельный отчет отправлен</string>
-    <string name="text_resend_weekly_text">Получить еженедельный отчет</string>
+    <string name="text_resend_weekly_text">Открыть график использования</string>
     <string name="text_retrieving_data">получаем данные</string>
     <string name="text_server_ping">В сети:</string>
     <string name="text_server_uptime">В работе:</string>
@@ -63,6 +63,7 @@
     <string name="text_settings_select_camera_app">Выберите приложение для камер</string>
     <string name="text_system_log_clear_log">Очистить журнал</string>
     <string name="text_system_log_text">Открыть системный журнал</string>
+    <string name="text_usage_for">за %x %s</string>
 
     <string name="toast_choose_camera_app_error_text">Приложение для камер не доступно, выберите желаемое</string>
     <string name="toast_choose_camera_app_text">Приложение для камер не выбрано, выберите желаемое</string>

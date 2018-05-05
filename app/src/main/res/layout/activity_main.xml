@@ -128,13 +128,13 @@
             android:drawableTop="@mipmap/button_hourly"
             android:longClickable="true"
             android:textAllCaps="false"
-            app:layout_constraintEnd_toStartOf="@+id/buttonResendWeekly"
+            app:layout_constraintEnd_toStartOf="@+id/buttonUsageChart"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/space1"
             app:srcCompat="@mipmap/button_hourly" />
 
         <ImageButton
-            android:id="@+id/buttonResendWeekly"
+            android:id="@+id/buttonUsageChart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -142,13 +142,13 @@
             android:layout_marginTop="8dp"
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/text_resend_weekly_text"
-            android:drawableTop="@mipmap/button_weekly"
+            android:drawableTop="@mipmap/button_chart"
             android:longClickable="true"
             android:textAllCaps="false"
             app:layout_constraintEnd_toStartOf="@+id/buttonSystemLog"
             app:layout_constraintStart_toEndOf="@+id/buttonResendHourly"
             app:layout_constraintTop_toBottomOf="@+id/space1"
-            app:srcCompat="@mipmap/button_weekly" />
+            app:srcCompat="@mipmap/button_chart" />
 
         <ImageButton
             android:id="@+id/buttonSystemLog"
@@ -160,7 +160,7 @@
             android:background="?android:selectableItemBackground"
             android:drawableTop="@mipmap/button_log"
             app:layout_constraintEnd_toStartOf="@+id/buttonCameraApp"
-            app:layout_constraintStart_toEndOf="@+id/buttonResendWeekly"
+            app:layout_constraintStart_toEndOf="@+id/buttonUsageChart"
             app:layout_constraintTop_toTopOf="@+id/space1"
             app:srcCompat="@mipmap/button_log" />
 
@@ -192,7 +192,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonResendWeekly" />
+            app:layout_constraintTop_toBottomOf="@+id/buttonUsageChart" />
 
         <TextView
             android:id="@+id/systemModeText"

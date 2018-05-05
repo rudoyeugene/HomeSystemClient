@@ -93,6 +93,16 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/text_current_server" />
 
+        <Space
+            android:id="@+id/space"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonResendHourly" />
+
         <Spinner
             android:id="@+id/serverList"
             android:layout_width="0dp"
@@ -118,19 +128,19 @@
             app:srcCompat="@mipmap/button_hourly" />
 
         <ImageButton
-            android:id="@+id/buttonResendWeekly"
+            android:id="@+id/buttonUsageChart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/text_resend_weekly_text"
-            android:drawableTop="@mipmap/button_weekly"
+            android:drawableTop="@mipmap/button_chart"
             android:longClickable="true"
             android:textAllCaps="false"
             app:layout_constraintStart_toEndOf="@+id/buttonResendHourly"
             app:layout_constraintTop_toBottomOf="@+id/serverUptimeText"
-            app:srcCompat="@mipmap/button_weekly" />
+            app:srcCompat="@mipmap/button_chart" />
 
         <ImageButton
             android:id="@+id/buttonSystemLog"
@@ -141,7 +151,7 @@
             android:layout_marginTop="16dp"
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/text_system_log_text"
-            app:layout_constraintStart_toEndOf="@+id/buttonResendWeekly"
+            app:layout_constraintStart_toEndOf="@+id/buttonUsageChart"
             app:layout_constraintTop_toBottomOf="@+id/serverUptimeTextValue"
             app:srcCompat="@mipmap/button_log" />
 
@@ -165,7 +175,6 @@
             android:id="@+id/systemModeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="@string/text_armed_mode"
@@ -174,7 +183,7 @@
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonResendHourly" />
+            app:layout_constraintTop_toBottomOf="@+id/space" />
 
         <Switch
             android:id="@+id/switchSystemMode"
@@ -198,7 +207,7 @@
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/systemModeText"
-            app:layout_constraintTop_toBottomOf="@+id/buttonResendWeekly" />
+            app:layout_constraintTop_toBottomOf="@+id/space" />
 
         <Switch
             android:id="@+id/switchSystemState"
@@ -222,7 +231,7 @@
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/systemStateText"
-            app:layout_constraintTop_toBottomOf="@+id/buttonCameraApp" />
+            app:layout_constraintTop_toBottomOf="@+id/space" />
 
         <Switch
             android:id="@+id/switchPorts"

@@ -54,6 +54,12 @@
             android:parentActivityName=".activities.MainActivity">
         </activity>
 
+        <activity
+            android:name=".activities.UsageChartActivity"
+            android:label="@string/label_usage_chart"
+            android:parentActivityName=".activities.MainActivity">
+        </activity>
+
         <activity android:name=".activities.ShortcutsActionProcessor"
             android:theme="@android:style/Theme.Material.Light.Dialog.Alert">
         </activity>

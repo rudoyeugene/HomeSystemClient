@@ -32,13 +32,12 @@ import com.rudyii.hsw.client.helpers.LogListAdapter;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
-import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDotsDelimFrom;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateSingleDotDelimFrom;
 import static com.rudyii.hsw.client.helpers.Utils.saveImageFromCamera;
@@ -66,7 +65,7 @@ public class SystemLogActivity extends AppCompatActivity {
         Log.i(TAG, "SystemLog Activity created");
 
         setContentView(R.layout.activity_system_log);
-        setTitle(getActiveServerAlias() + ":" + getResources().getString(R.string.label_system_log));
+        setTitle(getResources().getString(R.string.label_system_log));
 
         logRef = getRootReference().child("/log");
 
@@ -164,21 +163,21 @@ public class SystemLogActivity extends AppCompatActivity {
         logRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final Map<String, Map<String, Object>> logMap = (Map<String, Map<String, Object>>) dataSnapshot.getValue();
+                final HashMap<String, Map<String, Object>> logMap = (HashMap<String, Map<String, Object>>) dataSnapshot.getValue();
 
                 if (logMap == null) {
                     return;
                 }
 
-                System.out.println(logMap);
+                TreeMap<String, Map<String, Object>> treeMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+                treeMap.putAll(logMap);
+
                 mSwipeRefreshLayout.setRefreshing(true);
                 systemLog.clear();
-
-                for (Map.Entry<String, Map<String, Object>> entry : logMap.entrySet()) {
+                for (Map.Entry<String, Map<String, Object>> entry : treeMap.entrySet()) {
                     systemLog.add(buildAndFillLogItem(Long.valueOf(entry.getKey()), entry.getValue()));
                 }
 
-                Collections.sort(systemLog, Collections.<LogItem>reverseOrder());
                 mSwipeRefreshLayout.setRefreshing(false);
                 mAdapter.notifyDataSetChanged();
             }

@@ -57,7 +57,6 @@ public class LogItem extends View implements Comparable<LogItem> {
     public void fireAction() {
     }
 
-
     @Override
     public int compareTo(@NonNull LogItem logItem) {
         if (this.timestamp > logItem.getTimestamp()) {
@@ -67,5 +66,10 @@ public class LogItem extends View implements Comparable<LogItem> {
         } else {
             return -1;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return timestamp.hashCode();
     }
 }

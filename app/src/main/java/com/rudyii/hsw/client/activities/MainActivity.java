@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
     private Runnable serverLastPingRunnable, updateDataRunnable;
     private ColorStateList defaultTextColor;
     private long serverLastPing;
-    private boolean initComplete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,12 +88,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        buttonResendWeeklyReport = (ImageButton) findViewById(R.id.buttonResendWeekly);
+        buttonResendWeeklyReport = (ImageButton) findViewById(R.id.buttonUsageChart);
         buttonResendWeeklyReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getRootReference().child("requests/resendWeekly").setValue(random.nextInt(999));
-                new ToastDrawer().showToast(getResources().getString(R.string.text_resend_weekly_request_text));
+                startActivity(new Intent(getApplicationContext(), UsageChartActivity.class));
             }
         });
         buttonResendWeeklyReport.setOnLongClickListener(new View.OnLongClickListener() {

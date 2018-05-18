@@ -27,6 +27,7 @@
 
         <activity
             android:name=".activities.MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/label_app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,18 +39,21 @@
 
         <activity
             android:name=".activities.SettingsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/label_settings"
             android:parentActivityName=".activities.MainActivity">
         </activity>
 
         <activity
             android:name=".activities.AboutActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/label_about"
             android:parentActivityName=".activities.MainActivity">
         </activity>
 
         <activity
             android:name=".activities.SystemLogActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/label_system_log"
             android:parentActivityName=".activities.MainActivity">
         </activity>
@@ -61,6 +65,7 @@
         </activity>
 
         <activity android:name=".activities.ShortcutsActionProcessor"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@android:style/Theme.Material.Light.Dialog.Alert">
         </activity>
 
@@ -123,6 +128,9 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"/>
         </provider>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="1ef5273b944120258ea1aa4084867d94711e5f14" />
     </application>
 
 </manifest>

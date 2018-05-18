@@ -12,8 +12,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+import com.google.firebase.FirebaseApp;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentFcmToken;
@@ -35,10 +40,12 @@ public class HomeSystemClientApplication extends Application {
 
     public void onCreate() {
         super.onCreate();
+        appContext = getApplicationContext();
+        Fabric.with(this, new Crashlytics());
+        FirebaseApp.initializeApp(getAppContext());
 
         Log.i(TAG, "HomeSystemClientApplication created");
 
-        appContext = getApplicationContext();
 
         registerTokenOnServers(getCurrentFcmToken());
 

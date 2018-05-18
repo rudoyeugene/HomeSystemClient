@@ -52,7 +52,7 @@ import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootRe
 public class MainActivity extends AppCompatActivity {
     private Random random = new Random();
     private Switch systemMode, systemState, switchPorts;
-    private ImageButton buttonResendHourlyReport, buttonResendWeeklyReport, buttonSystemLog, buttonCameraApp;
+    private ImageButton buttonResendHourlyReport, buttonUsageStats, buttonSystemLog, buttonCameraApp;
     private TextView armedModeText, armedStateText;
     private boolean buttonsChangedInternally;
     private MainActivityBroadcastReceiver mainActivityBroadcastReceiver = new MainActivityBroadcastReceiver();
@@ -88,14 +88,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        buttonResendWeeklyReport = (ImageButton) findViewById(R.id.buttonUsageChart);
-        buttonResendWeeklyReport.setOnClickListener(new View.OnClickListener() {
+        buttonUsageStats = (ImageButton) findViewById(R.id.buttonUsageChart);
+        buttonUsageStats.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), UsageChartActivity.class));
             }
         });
-        buttonResendWeeklyReport.setOnLongClickListener(new View.OnLongClickListener() {
+        buttonUsageStats.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 new ToastDrawer().showToast(getResources().getString(R.string.text_resend_weekly_text));

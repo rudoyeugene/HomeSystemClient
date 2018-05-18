@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.rudyii.hsw.client.R;
@@ -268,6 +269,7 @@ public class Utils {
     }
 
     public static String getCurrentFcmToken() {
+        FirebaseApp.initializeApp(getAppContext());
         return FirebaseInstanceId.getInstance().getToken();
     }
 

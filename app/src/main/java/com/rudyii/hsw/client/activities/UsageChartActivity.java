@@ -1,6 +1,7 @@
 package com.rudyii.hsw.client.activities;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -38,6 +39,9 @@ public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnS
         OnChartGestureListener, OnChartValueSelectedListener {
     private BarChart barChart;
     private TreeMap<String, Object> usageStats;
+    private DatabaseReference usageRef = getRootReference().child("/usageStats");
+    private Handler usageHandler;
+    private Runnable usageRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,32 +51,53 @@ public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnS
 
         setContentView(R.layout.activity_usage_chart);
 
-        barChart = (BarChart) findViewById(R.id.usageChart);
+        barChart = findViewById(R.id.usageChart);
         barChart.setOnChartGestureListener(this);
         barChart.setOnChartValueSelectedListener(this);
         barChart.setDrawGridBackground(false);
 
-        // no description text
         barChart.getDescription().setEnabled(false);
 
-        // enable touch gestures
         barChart.setTouchEnabled(true);
 
-        // enable scaling and dragging
         barChart.setDragEnabled(true);
-        barChart.setScaleEnabled(true);
-        // barChart.setScaleXEnabled(true);
-        // barChart.setScaleYEnabled(true);
+        barChart.setScaleXEnabled(true);
+        barChart.setScaleYEnabled(true);
+        barChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                String x = barChart.getXAxis().getValueFormatter().getFormattedValue(e.getX(), barChart.getXAxis());
+                String x2 = barChart.getXAxis().getValueFormatter().getFormattedValue(e.getX(), barChart.getXAxis());
+                new ToastDrawer().showToast(x);
+            }
 
-        // if disabled, scaling can be done on x- and y-axis separately
-        barChart.setPinchZoom(true);
+            @Override
+            public void onNothingSelected() {
 
+            }
+        });
+
+        barChart.animateX(1000);
         fillStatsFromFirebase();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        usageHandler.removeCallbacks(usageRunnable);
+    }
+
     private void fillStatsFromFirebase() {
-        DatabaseReference infoRef = getRootReference().child("/usageStats");
-        infoRef.addListenerForSingleValueEvent(buildInfoValueEventListener());
+        usageHandler = new Handler();
+        usageRunnable = new Runnable() {
+            @Override
+            public void run() {
+                usageRef.addListenerForSingleValueEvent(buildInfoValueEventListener());
+                usageHandler.postDelayed(this, 60000);
+            }
+        };
+
+        usageHandler.post(usageRunnable);
     }
 
     private ValueEventListener buildInfoValueEventListener() {
@@ -82,7 +107,7 @@ public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnS
                 HashMap<String, Object> tempData = (HashMap<String, Object>) dataSnapshot.getValue();
 
                 if (tempData == null) {
-                    new ToastDrawer().showToast("Stats empty");
+                    new ToastDrawer().showToast(getResources().getString(R.string.toast_usage_stats_empty));
                 } else {
                     usageStats = new TreeMap<>(tempData);
                     List<BarEntry> values = new ArrayList<>();
@@ -131,7 +156,10 @@ public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnS
 
                     barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
                     barChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+                    barChart.getXAxis().setAvoidFirstLastClipping(true);
                     barChart.getXAxis().setLabelCount(labels.size());
+                    barChart.getXAxis().setDrawLabels(false);
+                    barChart.getXAxis().setGranularity(1f);
 
                     barChart.getAxisRight().setEnabled(false);
                     barChart.getAxisLeft().setAxisMaximum(24f);

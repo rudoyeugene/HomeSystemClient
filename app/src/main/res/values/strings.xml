@@ -77,6 +77,7 @@
     <string name="toast_server_paired_success">Pairing success</string>
     <string name="toast_server_unpair_failure">Unpairing failed</string>
     <string name="toast_server_unpair_success">Unpairing success</string>
+    <string name="toast_usage_stats_empty">Usage stats unavailable</string>
 
     <string name="toggle_button_system_mode_manual_text">Manual</string>
     <string name="toggle_button_system_mode_state_automatic_text">Auto</string>

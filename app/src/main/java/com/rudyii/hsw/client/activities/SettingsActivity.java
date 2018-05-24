@@ -41,11 +41,10 @@ import static android.media.RingtoneManager.EXTRA_RINGTONE_TYPE;
 import static android.media.RingtoneManager.TYPE_NOTIFICATION;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
-import static com.rudyii.hsw.client.helpers.Utils.getCurrentFcmToken;
-import static com.rudyii.hsw.client.helpers.Utils.getSimplifiedPrimaryAccountName;
+import static com.rudyii.hsw.client.helpers.Utils.getDeviceId;
 import static com.rudyii.hsw.client.helpers.Utils.getSoundNameBy;
 import static com.rudyii.hsw.client.helpers.Utils.isPaired;
-import static com.rudyii.hsw.client.helpers.Utils.registerTokenOnServer;
+import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServer;
 import static com.rudyii.hsw.client.helpers.Utils.removeServerFromServersList;
 import static com.rudyii.hsw.client.helpers.Utils.serverKeyIsValid;
 import static com.rudyii.hsw.client.helpers.Utils.stringIsEmptyOrNull;
@@ -186,7 +185,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                 unpairServerAlert.setPositiveButton(getResources().getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        String accountName = getSimplifiedPrimaryAccountName();
+                        String accountName = getDeviceId();
                         if (!stringIsEmptyOrNull(accountName)) {
                             getRootReference().child("/connectedClients/" + accountName).removeValue();
                         }
@@ -279,7 +278,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                 if (serverKeyIsValid(serverKey)) {
                     saveStringValueToSettings("ACTIVE_SERVER", serverAlias);
-                    registerTokenOnServer(getCurrentFcmToken(), serverKey);
+                    registerUserDataOnServer(serverKey);
 
                     new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.toast_server_paired_success) : getResources().getString(R.string.toast_server_paired_failure));
                     pairServerButton.setText(R.string.button_pair_server_unpair_server);

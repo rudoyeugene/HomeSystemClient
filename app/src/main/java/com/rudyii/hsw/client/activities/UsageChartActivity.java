@@ -51,7 +51,7 @@ public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnS
 
         setContentView(R.layout.activity_usage_chart);
 
-        barChart = findViewById(R.id.usageChart);
+        barChart = (BarChart) findViewById(R.id.usageChart);
         barChart.setOnChartGestureListener(this);
         barChart.setOnChartValueSelectedListener(this);
         barChart.setDrawGridBackground(false);
@@ -67,7 +67,6 @@ public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnS
             @Override
             public void onValueSelected(Entry e, Highlight h) {
                 String x = barChart.getXAxis().getValueFormatter().getFormattedValue(e.getX(), barChart.getXAxis());
-                String x2 = barChart.getXAxis().getValueFormatter().getFormattedValue(e.getX(), barChart.getXAxis());
                 new ToastDrawer().showToast(x);
             }
 

@@ -21,8 +21,7 @@ import java.util.List;
 import io.fabric.sdk.android.Fabric;
 
 import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
-import static com.rudyii.hsw.client.helpers.Utils.getCurrentFcmToken;
-import static com.rudyii.hsw.client.helpers.Utils.registerTokenOnServers;
+import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServers;
 import static com.rudyii.hsw.client.helpers.Utils.stringIsEmptyOrNull;
 
 /**
@@ -47,7 +46,7 @@ public class HomeSystemClientApplication extends Application {
         Log.i(TAG, "HomeSystemClientApplication created");
 
 
-        registerTokenOnServers(getCurrentFcmToken());
+        registerUserDataOnServers();
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(HSC_SERVER_CHANGED);

@@ -1,17 +1,20 @@
 package com.rudyii.hsw.client.helpers;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
+import android.Manifest;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.google.firebase.FirebaseApp;
@@ -170,40 +173,61 @@ public class Utils {
         return result;
     }
 
-    public static String getSimplifiedPrimaryAccountName() {
-        AccountManager accountManager = AccountManager.get(getAppContext());
-        Account[] accounts = accountManager.getAccountsByType("com.google");
-        String simplifiedAccountName = "";
+    public static String getDeviceId() {
+        String serviceName = Context.TELEPHONY_SERVICE;
+        TelephonyManager m_telephonyManager = (TelephonyManager) getAppContext().getSystemService(serviceName);
+        String deviceId = null;
 
-        if (accounts.length > 0) {
-            Account mainAccount = accounts[0];
-            simplifiedAccountName = mainAccount.name.split("@")[0].replace(".", "");
-
+        if (ActivityCompat.checkSelfPermission(getAppContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            deviceId = Settings.Secure.getString(getAppContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        } else {
+            deviceId = m_telephonyManager.getDeviceId();
         }
 
-        return simplifiedAccountName;
+        return deviceId;
+//        IMSI = m_telephonyManager.getSubscriberId();
+//        return Settings.Secure.getString(getAppContext().getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
-    public static void registerTokenOnServers(String token) {
-        if (getMapWithServers() != null) {
+    public static void registerUserDataOnServers() {
+        if (!getMapWithServers().isEmpty()) {
             for (Map.Entry<String, String> entry : getMapWithServers().entrySet()) {
                 String serverKey = entry.getValue();
-                registerTokenOnServer(token, serverKey);
+                registerUserDataOnServer(serverKey);
             }
         }
     }
 
-    public static void registerTokenOnServer(String token, String ref) {
-        String accountName = getSimplifiedPrimaryAccountName();
+    public static void registerUserDataOnServer(String ref) {
+        String deviceId = getDeviceId();
+        String token = getCurrentFcmToken();
+        HashMap<String, Object> clientData = new HashMap<>();
+        clientData.put("notificationType", getStringValueFromSettings("NOTIFICATION_TYPE"));
+        clientData.put("lastUpdated", System.currentTimeMillis());
+        clientData.put("token", token);
+        clientData.put("device", android.os.Build.MODEL);
+
+        PackageInfo pInfo;
+        String version = "0.0.0";
+        try {
+            pInfo = getAppContext().getPackageManager().getPackageInfo(getAppContext().getPackageName(), 0);
+            version = pInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        clientData.put("appVersion", version);
+
         if (token == null) {
             token = FirebaseInstanceId.getInstance().getToken();
 
-            if (token != null && !stringIsEmptyOrNull(accountName)) {
-                getCustomReference(ref).child("/connectedClients/" + accountName).setValue(token);
+            if (token != null && !stringIsEmptyOrNull(deviceId)) {
+                clientData.put("token", token);
+
+                getCustomReference(ref).child("/connectedClients/" + deviceId).setValue(clientData);
             }
         } else {
-            if (!stringIsEmptyOrNull(accountName)) {
-                getCustomReference(ref).child("/connectedClients/" + accountName).setValue(token);
+            if (!stringIsEmptyOrNull(deviceId)) {
+                getCustomReference(ref).child("/connectedClients/" + deviceId).setValue(clientData);
             }
         }
     }

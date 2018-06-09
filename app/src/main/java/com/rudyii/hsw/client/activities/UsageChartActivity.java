@@ -135,7 +135,7 @@ public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnS
                         labels.add(entry.getKey());
                     }
 
-                    BarDataSet dataSet = new BarDataSet(values, String.format(getResources().getString(R.string.text_usage_for),
+                    BarDataSet dataSet = new BarDataSet(values, String.format(getResources().getString(R.string.text_bar_data_usage_for),
                             usageStats.size(), usageStats.size() > 1 ? getResources().getString(R.string.text_days) : getResources().getString(R.string.text_day)));
                     dataSet.setStackLabels(labels.toArray(new String[labels.size()]));
 

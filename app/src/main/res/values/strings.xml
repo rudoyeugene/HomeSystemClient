@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
-    <string name="button_pair_server_pair_server">Pair with server</string>
-    <string name="button_pair_server_unpair_server">Unpair server</string>
+    <string name="button_pair_server_pair_server">Add server</string>
+    <string name="button_pair_server_unpair_server">Remove server</string>
 
+    <string name="dialog_are_you_sure_cant_undo_alert_message">Are you sure? Undo is not possible.</string>
+    <string name="dialog_cleanup_log_title">Cleanup system log</string>
+    <string name="dialog_cleanup_usage_stats_title">Cleanup usage stats</string>
     <string name="dialog_download_qr_scanner_message">Download QR Code Scanner from Play Store?</string>
     <string name="dialog_download_qr_scanner_title">No QR Code Scanner Found</string>
     <string name="dialog_no">No</string>
@@ -22,7 +25,7 @@
     <string name="notif_text_current_isp">Current ISP:\u0020</string>
     <string name="notif_text_isp_changed">ISP changed</string>
     <string name="notif_text_motion_detected_on_camera">Motion detected on camera:\u0020</string>
-    <string name="notif_text_ports_are">Ports are\u0020</string>
+    <string name="notif_text_ports_are">Ports\u0020</string>
     <string name="notif_text_ports_closed_text">Ports Closed</string>
     <string name="notif_text_ports_open_text">Ports Open</string>
     <string name="notif_text_server_started">Server started with PID:\u0020</string>
@@ -45,11 +48,13 @@
     </string>
     <string name="text_armed_mode">ARMED MODE</string>
     <string name="text_armed_state">ARMED STATE</string>
+    <string name="text_bar_data_usage_for">for %02d %s</string>
     <string name="text_camera_app_text">Open camera application</string>
     <string name="text_current_server">Current server:</string>
     <string name="text_day">\u0020day\u0020</string>
     <string name="text_days">\u0020days\u0020</string>
     <string name="text_info_sound">Info sound</string>
+    <string name="text_menu_system_log_clear_log">Clear log</string>
     <string name="text_motion_sound">Motion sound</string>
     <string name="text_no_server">NO SERVER</string>
     <string name="text_no_sound">No sound</string>
@@ -61,13 +66,21 @@
     <string name="text_server_uptime">Server uptime:</string>
     <string name="text_server_version">Server version:</string>
     <string name="text_settings">Settings</string>
-    <string name="text_settings_select_camera_app">Select Camera app</string>
-    <string name="text_system_log_clear_log">Clear log</string>
     <string name="text_system_log_text">Open System Log</string>
-    <string name="text_usage_for">for %x %s</string>
+    <string name="text_textViewForSwitchCollectStats">Collect stats if ARMED</string>
+    <string name="text_textViewForSwitchHourlyReportEnabled">Send hourly report if ARMED</string>
+    <string name="text_textViewForSwitchHourlyReportForced">Always send hourly report</string>
+    <string name="text_textViewForSwitchMonitoringEnabled">Show devices state in hourly report</string>
+    <string name="text_textViewForSwitchShowMotionAreaEnabled">Show motion area in %</string>
+    <string name="text_textViewForSwitchVerboseOutputEnabled">Enable verbose output</string>
+    <string name="text_textViewForTextViewDelayedArmInterval">ARM delay, sec:</string>
+    <string name="text_textViewForTextViewKeepDays">Keep history for, days:</string>
+    <string name="text_textViewForTextViewRecordInterval">Record video for, sec:</string>
+    <string name="text_textViewSelectCameraApp">Camera app</string>
 
     <string name="toast_choose_camera_app_error_text">Camera application unavailable. Select new Camera application</string>
     <string name="toast_choose_camera_app_text">Camera application is not selected. Select new Camera application</string>
+    <string name="toast_failed_to_register_on_server">Failed to register on server, please try again later</string>
     <string name="toast_info_sound_changed_to">Info sound changed to:\u0020</string>
     <string name="toast_info_sound_removed">Info sound removed</string>
     <string name="toast_motion_sound_changed_to">Motion sound changed to:\u0020</string>
@@ -79,8 +92,8 @@
     <string name="toast_server_unpair_success">Unpairing success</string>
     <string name="toast_usage_stats_empty">Usage stats unavailable</string>
 
-    <string name="toggle_button_system_mode_manual_text">Manual</string>
-    <string name="toggle_button_system_mode_state_automatic_text">Auto</string>
-    <string name="toggle_button_system_state_armed_text">Armed</string>
-    <string name="toggle_button_system_state_disarmed_text">Disarmed</string>
+    <string name="toggle_button_text_system_mode_manual">Manual</string>
+    <string name="toggle_button_text_system_mode_state_automatic">Auto</string>
+    <string name="toggle_button_text_system_state_armed">Armed</string>
+    <string name="toggle_button_text_system_state_disarmed">Disarmed</string>
 </resources>

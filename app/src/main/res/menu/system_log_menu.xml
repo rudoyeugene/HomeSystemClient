@@ -3,5 +3,5 @@
 
     <item
         android:id="@+id/clear_log"
-        android:title="@string/text_system_log_clear_log" />
+        android:title="@string/text_menu_system_log_clear_log" />
 </menu>

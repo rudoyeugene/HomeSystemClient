@@ -2,6 +2,7 @@ package com.rudyii.hsw.client.activities;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -10,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -52,24 +54,24 @@ import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootRe
 public class MainActivity extends AppCompatActivity {
     private Random random = new Random();
     private Switch systemMode, systemState, switchPorts;
-    private ImageButton buttonResendHourlyReport, buttonUsageStats, buttonSystemLog, buttonCameraApp;
+    private ImageButton buttonResendHourlyReport, buttonUsageStats, buttonSystemLog, buttonNotificationType;
     private TextView armedModeText, armedStateText;
     private boolean buttonsChangedInternally;
     private MainActivityBroadcastReceiver mainActivityBroadcastReceiver = new MainActivityBroadcastReceiver();
-    private Handler serverLastPingHandler, updateDataHandler;
-    private Runnable serverLastPingRunnable, updateDataRunnable;
+    private Handler serverLastPingHandler;
+    private Runnable serverLastPingRunnable;
     private ColorStateList defaultTextColor;
+    private DatabaseReference infoRef, statusesRef;
+    private ValueEventListener infoValueEventListener, statusesValueEventListener;
     private long serverLastPing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.i(TAG, "Main Activity created");
-
         setContentView(R.layout.activity_main);
 
-        TextView serverLastPingTextValue = (TextView) findViewById(R.id.serverVersionText);
+        TextView serverLastPingTextValue = (TextView) findViewById(R.id.textViewServerVersion);
         defaultTextColor = serverLastPingTextValue.getTextColors();
 
         buttonResendHourlyReport = (ImageButton) findViewById(R.id.buttonResendHourly);
@@ -98,7 +100,24 @@ public class MainActivity extends AppCompatActivity {
         buttonUsageStats.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                new ToastDrawer().showToast(getResources().getString(R.string.text_resend_weekly_text));
+                AlertDialog.Builder cleanupLog = new AlertDialog.Builder(MainActivity.this);
+                cleanupLog.setTitle(getResources().getString(R.string.dialog_cleanup_usage_stats_title));
+                cleanupLog.setMessage(getResources().getString(R.string.dialog_are_you_sure_cant_undo_alert_message));
+
+                cleanupLog.setPositiveButton(getResources().getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        getRootReference().child("/usageStats").removeValue();
+                    }
+                });
+
+                cleanupLog.setNegativeButton(getResources().getString(R.string.dialog_no), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+
+                cleanupLog.show();
+
                 return true;
             }
         });
@@ -113,26 +132,36 @@ public class MainActivity extends AppCompatActivity {
         buttonSystemLog.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                new ToastDrawer().showToast(getResources().getString(R.string.text_system_log_text));
+                AlertDialog.Builder cleanupLog = new AlertDialog.Builder(MainActivity.this);
+                cleanupLog.setTitle(getResources().getString(R.string.dialog_cleanup_log_title));
+                cleanupLog.setMessage(getResources().getString(R.string.dialog_are_you_sure_cant_undo_alert_message));
+
+                cleanupLog.setPositiveButton(getResources().getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        getRootReference().child("/log").removeValue();
+                    }
+                });
+
+                cleanupLog.setNegativeButton(getResources().getString(R.string.dialog_no), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+
+                cleanupLog.show();
+
                 return true;
             }
+
         });
 
-        buttonCameraApp = (ImageButton) findViewById(R.id.buttonCameraApp);
-        buttonCameraApp.setOnClickListener(new View.OnClickListener() {
+        buttonNotificationType = (ImageButton) findViewById(R.id.buttonNotificationType);
+        buttonNotificationType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openCameraApp();
+                switchNotificationType();
             }
         });
-        buttonCameraApp.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                new ToastDrawer().showToast(getResources().getString(R.string.text_camera_app_text));
-                return true;
-            }
-        });
-        refreshCameraAppIcon();
 
         switchPorts = (Switch) findViewById(R.id.switchPorts);
         switchPorts.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -151,8 +180,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         systemMode = (Switch) findViewById(R.id.switchSystemMode);
-        systemMode.setTextOn(getString(R.string.toggle_button_system_mode_state_automatic_text));
-        systemMode.setTextOff(getString(R.string.toggle_button_system_mode_manual_text));
+        systemMode.setTextOn(getString(R.string.toggle_button_text_system_mode_state_automatic));
+        systemMode.setTextOff(getString(R.string.toggle_button_text_system_mode_manual));
         systemMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -161,8 +190,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         systemState = (Switch) findViewById(R.id.switchSystemState);
-        systemState.setTextOn(getString(R.string.toggle_button_system_state_armed_text));
-        systemState.setTextOff(getString(R.string.toggle_button_system_state_disarmed_text));
+        systemState.setTextOn(getString(R.string.toggle_button_text_system_state_armed));
+        systemState.setTextOff(getString(R.string.toggle_button_text_system_state_disarmed));
         systemState.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -176,27 +205,41 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i(TAG, "Main Activity resumed");
 
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(StatusesListener.HSC_STATUSES_UPDATED);
+        IntentFilter statusesUpdatedIntentFilter = new IntentFilter();
+        statusesUpdatedIntentFilter.addAction(StatusesListener.HSC_STATUSES_UPDATED);
+        registerReceiver(mainActivityBroadcastReceiver, statusesUpdatedIntentFilter);
+
+        subscribeFirebaseListeners();
 
         buildServersList();
 
-        updateData();
         buildHandlers();
-        refreshCameraAppIcon();
-        registerReceiver(mainActivityBroadcastReceiver, intentFilter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i(TAG, "Main Activity paused");
 
         serverLastPingHandler.removeCallbacks(serverLastPingRunnable);
-        updateDataHandler.removeCallbacks(updateDataRunnable);
         unregisterReceiver(mainActivityBroadcastReceiver);
+
+        unsubscribeFirebaseListeners();
+    }
+
+    private void subscribeFirebaseListeners() {
+        infoRef = getRootReference().child("/info");
+        infoValueEventListener = buildInfoValueEventListener();
+        infoRef.addValueEventListener(infoValueEventListener);
+
+        statusesRef = getRootReference().child("/statuses");
+        statusesValueEventListener = buildStatusesValueEventListener();
+        statusesRef.addValueEventListener(buildStatusesValueEventListener());
+    }
+
+    private void unsubscribeFirebaseListeners() {
+        infoRef.removeEventListener(infoValueEventListener);
+        statusesRef.removeEventListener(statusesValueEventListener);
     }
 
     @Override
@@ -223,19 +266,17 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void openCameraApp() {
-        String cameraAppPackageName = getCameraAppPackageName();
-
-        if (cameraAppPackageName == null) {
-            new ToastDrawer().showToast(getResources().getString(R.string.toast_choose_camera_app_text));
-            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-        } else if (getPackageManager().getLaunchIntentForPackage(cameraAppPackageName) == null) {
-            new ToastDrawer().showToast(getResources().getString(R.string.toast_choose_camera_app_error_text));
-            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-        } else {
-            Intent intent = getPackageManager().getLaunchIntentForPackage(cameraAppPackageName);
-            startActivity(intent);
+    private void switchNotificationType() {
+        try {
+            Drawable icon = getPackageManager().getApplicationIcon(getStringValueFromSettings("CAMERA_APP"));
+            if (icon != null) {
+                buttonNotificationType.setImageDrawable(icon);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
         }
+
+        new ToastDrawer().showToast("Switching...");
     }
 
     private void calculateSystemStateBasedOn(Switch systemMode, Switch systemState) {
@@ -274,16 +315,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void updateData() {
-        buttonsChangedInternally = true;
-
-        DatabaseReference infoRef = getRootReference().child("/info");
-        infoRef.addListenerForSingleValueEvent(buildInfoValueEventListener());
-
-        DatabaseReference statusesRef = getRootReference().child("/statuses");
-        statusesRef.addListenerForSingleValueEvent(buildStatusesValueEventListener());
-
-        buttonsChangedInternally = false;
+    public void refreshFirebaseListeners() {
+        unsubscribeFirebaseListeners();
+        subscribeFirebaseListeners();
     }
 
     private ValueEventListener buildInfoValueEventListener() {
@@ -300,13 +334,13 @@ public class MainActivity extends AppCompatActivity {
                 serverLastPing = (long) info.get("ping");
                 Long serverUptime = (long) info.get("uptime");
 
-                TextView serverVersionTextValue = (TextView) findViewById(R.id.serverVersionTextValue);
+                TextView serverVersionTextValue = (TextView) findViewById(R.id.textViewServerVersionValue);
                 serverVersionTextValue.setText(serverVersion);
 
-                TextView serverLastPingTextValue = (TextView) findViewById(R.id.serverLastPingTextValue);
+                TextView serverLastPingTextValue = (TextView) findViewById(R.id.textViewServerLastPingValue);
                 serverLastPingTextValue.setText(calculatePing(serverLastPing));
 
-                TextView serverUptimeTextValue = (TextView) findViewById(R.id.serverUptimeTextValue);
+                TextView serverUptimeTextValue = (TextView) findViewById(R.id.textViewServerUptimeValue);
                 serverUptimeTextValue.setText(calculateUptime(serverUptime));
 
             }
@@ -339,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
                 buttonsChangedInternally = false;
 
 
-                armedModeText = (TextView) findViewById(R.id.systemModeText);
+                armedModeText = (TextView) findViewById(R.id.textViewForSwitchSystemMode);
                 armedModeText.setText(buttonsState.get("systemModeText").toString());
                 if ("auto".equalsIgnoreCase(armedMode)) {
                     armedModeText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.red));
@@ -347,7 +381,7 @@ public class MainActivity extends AppCompatActivity {
                     armedModeText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green));
                 }
 
-                armedStateText = (TextView) findViewById(R.id.systemStateText);
+                armedStateText = (TextView) findViewById(R.id.textViewForSwitchSystemState);
                 armedStateText.setText(buttonsState.get("systemStateText").toString());
                 if ("armed".equalsIgnoreCase(armedState)) {
                     armedStateText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.red));
@@ -376,36 +410,19 @@ public class MainActivity extends AppCompatActivity {
         long seconds = TimeUnit.MILLISECONDS.toSeconds(serverUptime) % 60L;
 
         StringBuilder builder = new StringBuilder();
+        builder.append(days);
 
         if (days == 1) {
-            builder.append(days).append(getResources().getString(R.string.text_day));
+            builder.append(getResources().getString(R.string.text_day));
         } else if (days > 1) {
-            builder.append(days).append(getResources().getString(R.string.text_days));
+            builder.append(getResources().getString(R.string.text_days));
         }
 
-        if (hours < 10) {
-            builder.append((String.format("0%s:", hours)));
-        } else {
-            builder.append((String.format("%s:", hours)));
-        }
-
-        if (minutes < 10) {
-            builder.append((String.format("0%s:", minutes)));
-        } else {
-            builder.append((String.format("%s:", minutes)));
-        }
-
-        if (seconds < 10) {
-            builder.append((String.format("0%s", seconds)));
-        } else {
-            builder.append(String.format("%s", seconds));
-        }
+        builder.append(String.format("%01d:", hours))
+                .append(String.format("%02d:", minutes))
+                .append(String.format("%02d", seconds));
 
         return builder.toString();
-    }
-
-    private String getCameraAppPackageName() {
-        return getStringValueFromSettings("CAMERA_APP");
     }
 
     private void updateModeStateButtons(HashMap<String, Object> statusesData) {
@@ -416,12 +433,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void buildHandlers() {
         serverLastPingHandler = new Handler();
-        updateDataHandler = new Handler();
-
         serverLastPingRunnable = new Runnable() {
             @Override
             public void run() {
-                TextView serverLastPingTextValue = (TextView) findViewById(R.id.serverLastPingTextValue);
+                TextView serverLastPingTextValue = (TextView) findViewById(R.id.textViewServerLastPingValue);
                 if (serverLastPing > 0 && System.currentTimeMillis() - serverLastPing > 300000) {
                     serverLastPingTextValue.setTextColor(getApplicationContext().getColor(R.color.red));
                     if (serverLastPingTextValue.getVisibility() == View.VISIBLE) {
@@ -437,26 +452,11 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        updateDataRunnable = new Runnable() {
-            @Override
-            public void run() {
-                buttonsChangedInternally = true;
-
-                DatabaseReference infoRef = getRootReference().child("/info");
-                infoRef.addListenerForSingleValueEvent(buildInfoValueEventListener());
-
-                buttonsChangedInternally = false;
-
-                updateDataHandler.postDelayed(this, 60000);
-            }
-        };
-
         serverLastPingHandler.postDelayed(serverLastPingRunnable, 1000);
-        updateDataHandler.post(updateDataRunnable);
     }
 
     private void buildServersList() {
-        Spinner serversList = (Spinner) findViewById(R.id.serverList);
+        Spinner serversList = (Spinner) findViewById(R.id.spinnerServerList);
         ArrayAdapter<String> serversArray = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, getServersList());
         serversArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -479,7 +479,7 @@ public class MainActivity extends AppCompatActivity {
                     currentItem[0] = selected;
                     switchActiveServerTo(selectedServerName);
                     ((TextView) convertView).setText(selectedServerName);
-                    updateData();
+                    refreshFirebaseListeners();
 
                     Intent intent = new Intent();
                     intent.setAction(HSC_SERVER_CHANGED);
@@ -492,17 +492,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    private void refreshCameraAppIcon() {
-        try {
-            Drawable icon = getPackageManager().getApplicationIcon(getStringValueFromSettings("CAMERA_APP"));
-            if (icon != null) {
-                buttonCameraApp.setImageDrawable(icon);
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 
     private void requestPermissions() {
@@ -520,8 +509,6 @@ public class MainActivity extends AppCompatActivity {
     public class MainActivityBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateData();
-
             buttonsChangedInternally = true;
 
             HashMap<String, Object> statusesData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_STATUSES_UPDATED");

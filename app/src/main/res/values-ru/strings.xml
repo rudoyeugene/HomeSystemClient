@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="button_pair_server_pair_server">Соединить с сервером</string>
-    <string name="button_pair_server_unpair_server">Отсоединить сервер</string>
+    <string name="button_pair_server_pair_server">Добавить сервер</string>
+    <string name="button_pair_server_unpair_server">Удалить сервер</string>
 
+    <string name="dialog_are_you_sure_cant_undo_alert_message">Вы уверены? Это действие нельзя отменить.</string>
+    <string name="dialog_cleanup_log_title">Очистка системного журнала</string>
+    <string name="dialog_cleanup_usage_stats_title">Cleanup usage stats</string>
     <string name="dialog_download_qr_scanner_message">Загрузить Сканер QR Кодов с Play Store?</string>
     <string name="dialog_download_qr_scanner_title">Сканер QR Кодов не найден</string>
     <string name="dialog_no">Нет</string>
@@ -38,17 +41,19 @@
     <string name="shortcut_disarm_activity_text">Запрошено переключение в РУЧНОЙ:ВЫКЛЮЧЕН режим, Вы будете уведомлены</string>
 
     <string name="text_about">Home System Client версия %s\n\n
-        Данное Приложение распространяется как-есть, Автор не несет никакой ответственности в случае если по вине данного Приложения случилось проишествие.\n
-        Главная цель данного Приложения НЕ защитить Вашу собственность а зафиксировать момент проишествия.\n
+        Данное Приложение распространяется как-есть, Автор не несет никакой ответственности в случае если по вине данного Приложения случилось происшествие.\n
+        Главная цель данного Приложения НЕ защитить Вашу собственность а зафиксировать момент происшествия.\n
         Каждый пользователь данного Приложения несет личную ответственность за любое использование данного Приложения.\n
         Это Приложение может содержать некоторые ошибки, чем раньше Вы сообщите о них Автору тем быстрее Автор их исправит.</string>
     <string name="text_armed_mode">Режим</string>
     <string name="text_armed_state">Состояние</string>
+    <string name="text_bar_data_usage_for">за %02d %s</string>
     <string name="text_camera_app_text">Открыть приложение для камер</string>
     <string name="text_current_server">Текущий сервер:</string>
     <string name="text_day">\u0020день\u0020</string>
     <string name="text_days">\u0020дней\u0020</string>
     <string name="text_info_sound">Звук уведомления</string>
+    <string name="text_menu_system_log_clear_log">Очистить журнал</string>
     <string name="text_motion_sound">Звук движения</string>
     <string name="text_no_server">НЕТ СЕРВЕРА</string>
     <string name="text_no_sound">Без звука</string>
@@ -56,17 +61,25 @@
     <string name="text_resend_hourly_text">Получить ежечасный отчет</string>
     <string name="text_resend_weekly_text">Открыть график использования</string>
     <string name="text_retrieving_data">получаем данные</string>
-    <string name="text_server_ping">В сети:</string>
-    <string name="text_server_uptime">В работе:</string>
-    <string name="text_server_version">Версия:</string>
+    <string name="text_server_ping">Последний раз в сети:</string>
+    <string name="text_server_uptime">Время в работе:</string>
+    <string name="text_server_version">Версия сервера:</string>
     <string name="text_settings">Настройки</string>
-    <string name="text_settings_select_camera_app">Выберите приложение для камер</string>
-    <string name="text_system_log_clear_log">Очистить журнал</string>
     <string name="text_system_log_text">Открыть системный журнал</string>
-    <string name="text_usage_for">за %x %s</string>
+    <string name="text_textViewForSwitchCollectStats">Собирать статистику если ВКЛЮЧЕН</string>
+    <string name="text_textViewForSwitchHourlyReportEnabled">Отправлять ежечасный отчет если ВКЛЮЧЕН</string>
+    <string name="text_textViewForSwitchHourlyReportForced">Всегда отправлять ежечасный отчет</string>
+    <string name="text_textViewForSwitchMonitoringEnabled">Состояние устройств в ежечасном отчете</string>
+    <string name="text_textViewForSwitchShowMotionAreaEnabled">Отображать зону движения в %</string>
+    <string name="text_textViewForSwitchVerboseOutputEnabled">Включить расширеное логгирование</string>
+    <string name="text_textViewForTextViewDelayedArmInterval">Задержка включения, сек:</string>
+    <string name="text_textViewForTextViewKeepDays">Хранить историю, дней:</string>
+    <string name="text_textViewForTextViewRecordInterval">Запись видео, сек:</string>
+    <string name="text_textViewSelectCameraApp">Приложение для камер</string>
 
     <string name="toast_choose_camera_app_error_text">Приложение для камер не доступно, выберите желаемое</string>
     <string name="toast_choose_camera_app_text">Приложение для камер не выбрано, выберите желаемое</string>
+    <string name="toast_failed_to_register_on_server">Не удалось зарегестрироваться на сервере, попробуйте позже</string>
     <string name="toast_info_sound_changed_to">Звук уведомлений изменен на:\u0020</string>
     <string name="toast_info_sound_removed">Звук уведомлений удален</string>
     <string name="toast_motion_sound_changed_to">Звук движений изменен на:\u0020</string>
@@ -78,8 +91,8 @@
     <string name="toast_server_unpair_success">Отсоединение удалось</string>
     <string name="toast_usage_stats_empty">Статистика недоступна</string>
 
-    <string name="toggle_button_system_mode_manual_text">Ручной</string>
-    <string name="toggle_button_system_mode_state_automatic_text">Авто</string>
-    <string name="toggle_button_system_state_armed_text">Включен</string>
-    <string name="toggle_button_system_state_disarmed_text">Выключен</string>
+    <string name="toggle_button_text_system_mode_manual">Ручной</string>
+    <string name="toggle_button_text_system_mode_state_automatic">Авто</string>
+    <string name="toggle_button_text_system_state_armed">Включен</string>
+    <string name="toggle_button_text_system_state_disarmed">Выключен</string>
 </resources>

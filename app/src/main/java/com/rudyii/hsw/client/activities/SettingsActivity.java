@@ -13,6 +13,8 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,18 +22,27 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.helpers.ToastDrawer;
+import com.rudyii.hsw.client.helpers.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.media.RingtoneManager.ACTION_RINGTONE_PICKER;
 import static android.media.RingtoneManager.EXTRA_RINGTONE_EXISTING_URI;
@@ -58,7 +69,14 @@ public class SettingsActivity extends AppCompatActivity {
     private final int QR_SCAN_CODE = 111;
     private final int INFORMATION_NOTIFICATION_SOUND_CODE = 222;
     private final int MOTION_NOTIFICATION_SOUND_CODE = 333;
-    private Button pairServerButton, unpairServerButton, infoSoundButton, motionSoundButton;
+    private Button addServerButton, removeServerButton, infoSoundButton, motionSoundButton;
+    private Switch switchCollectStatsEnabled, switchMonitoringEnabled, switchHourlyReportEnabled, switchHourlyReportForced, switchVerboseOutputEnabled, switchShowMotionAreaEnabled;
+    private EditText editTextForDelayedArmInterval, editTextForTextViewKeepDays, editTextForTextViewRecordInterval;
+    private DatabaseReference optionsReference;
+    private ValueEventListener optionsValueEventListener;
+    private Map<String, Object> options;
+    private boolean optionsChanged = false;
+    private boolean buttonsChangedByUser = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,7 +88,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         final ArrayList<ResolveInfoWrapper> infoWrappers = new ArrayList<>();
 
-        Spinner appsList = (Spinner) findViewById(R.id.appsList);
+        Spinner appsList = (Spinner) findViewById(R.id.spinnerAppsList);
         final ActivityAdapter arrayAdapter = new ActivityAdapter(getApplicationContext(), android.R.layout.simple_spinner_item, infoWrappers) {
             @NonNull
             @Override
@@ -118,7 +136,7 @@ public class SettingsActivity extends AppCompatActivity {
                 ResolveInfoWrapper info = (ResolveInfoWrapper) parent.getItemAtPosition(selected);
                 String packageName = info.getInfo().activityInfo.packageName;
 
-                saveStringValueToSettings("CAMERA_APP", packageName);
+                saveStringValueToSettings(Utils.CAMERA_APP, packageName);
 
                 arrayAdapter.notifyDataSetChanged();
             }
@@ -129,8 +147,8 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        infoSoundButton = (Button) findViewById(R.id.infoSound);
-        infoSoundButton.setText(getSoundNameBy(getStringValueFromSettings("INFO_SOUND")));
+        infoSoundButton = (Button) findViewById(R.id.buttonInfoSound);
+        infoSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND)));
 
         infoSoundButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,8 +162,8 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        motionSoundButton = (Button) findViewById(R.id.motionSound);
-        motionSoundButton.setText(getSoundNameBy(getStringValueFromSettings("MOTION_SOUND")));
+        motionSoundButton = (Button) findViewById(R.id.buttonMotionSound);
+        motionSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND)));
 
         motionSoundButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,9 +177,9 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        pairServerButton = (Button) findViewById(R.id.pairServer);
-        pairServerButton.setText(getResources().getString(R.string.button_pair_server_pair_server));
-        pairServerButton.setOnClickListener(new View.OnClickListener() {
+        addServerButton = (Button) findViewById(R.id.buttonPairServer);
+        addServerButton.setText(getResources().getString(R.string.button_pair_server_pair_server));
+        addServerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
@@ -174,9 +192,9 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        unpairServerButton = (Button) findViewById(R.id.unpairServer);
-        unpairServerButton.setText(getResources().getString(R.string.button_pair_server_unpair_server));
-        unpairServerButton.setOnClickListener(new View.OnClickListener() {
+        removeServerButton = (Button) findViewById(R.id.buttonUnpairServer);
+        removeServerButton.setText(getResources().getString(R.string.button_pair_server_unpair_server));
+        removeServerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder unpairServerAlert = new AlertDialog.Builder(SettingsActivity.this);
@@ -191,10 +209,10 @@ public class SettingsActivity extends AppCompatActivity {
                         }
 
                         removeServerFromServersList(getActiveServerAlias());
-                        deleteIdFromSettings("ACTIVE_SERVER");
+                        deleteIdFromSettings(Utils.ACTIVE_SERVER);
 
                         new ToastDrawer().showToast(isPaired() ? getActiveServerAlias() + ": " + getResources().getString(R.string.toast_server_unpair_failure) : getResources().getString(R.string.toast_server_unpair_success));
-                        pairServerButton.setText(R.string.button_pair_server_pair_server);
+                        addServerButton.setText(R.string.button_pair_server_pair_server);
                     }
                 });
 
@@ -207,6 +225,221 @@ public class SettingsActivity extends AppCompatActivity {
                 unpairServerAlert.show();
             }
         });
+
+        resolveOptionsControls();
+        deactivateOptionsControls();
+        updateOptions();
+
+    }
+
+    private void resolveOptionsControls() {
+        switchCollectStatsEnabled = (Switch) findViewById(R.id.switchCollectStatsEnabled);
+        switchCollectStatsEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (buttonsChangedByUser) {
+                    optionsChanged = true;
+                    options.put("collectStatistics", isChecked);
+                }
+            }
+        });
+
+        switchMonitoringEnabled = (Switch) findViewById(R.id.switchMonitoringEnabled);
+        switchMonitoringEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (buttonsChangedByUser) {
+                    optionsChanged = true;
+                    options.put("monitoringEnabled", isChecked);
+                }
+            }
+        });
+
+        switchHourlyReportEnabled = (Switch) findViewById(R.id.switchHourlyReportEnabled);
+        switchHourlyReportEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (buttonsChangedByUser) {
+                    optionsChanged = true;
+                    options.put("hourlyReportEnabled", isChecked);
+                }
+            }
+        });
+
+        switchHourlyReportForced = (Switch) findViewById(R.id.switchHourlyReportForced);
+        switchHourlyReportForced.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (buttonsChangedByUser) {
+                    optionsChanged = true;
+                    options.put("hourlyReportForced", isChecked);
+                }
+            }
+        });
+
+        switchVerboseOutputEnabled = (Switch) findViewById(R.id.switchVerboseOutputEnabled);
+        switchVerboseOutputEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (buttonsChangedByUser) {
+                    optionsChanged = true;
+                    options.put("verboseOutputEnabled", isChecked);
+                }
+            }
+        });
+
+        switchShowMotionAreaEnabled = (Switch) findViewById(R.id.switchShowMotionAreaEnabled);
+        switchShowMotionAreaEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (buttonsChangedByUser) {
+                    optionsChanged = true;
+                    options.put("showMotionArea", isChecked);
+                }
+            }
+        });
+
+        editTextForDelayedArmInterval = (EditText) findViewById(R.id.editTextForDelayedArmInterval);
+        editTextForDelayedArmInterval.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                optionsChanged = true;
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        editTextForTextViewKeepDays = (EditText) findViewById(R.id.editTextForTextViewKeepDays);
+        editTextForTextViewKeepDays.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                optionsChanged = true;
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        editTextForTextViewRecordInterval = (EditText) findViewById(R.id.editTextForTextViewRecordInterval);
+        editTextForTextViewRecordInterval.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                optionsChanged = true;
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
+    private void deactivateOptionsControls() {
+        switchCollectStatsEnabled.setEnabled(false);
+        switchMonitoringEnabled.setEnabled(false);
+        switchHourlyReportEnabled.setEnabled(false);
+        switchHourlyReportForced.setEnabled(false);
+        switchVerboseOutputEnabled.setEnabled(false);
+        switchShowMotionAreaEnabled.setEnabled(false);
+        editTextForDelayedArmInterval.setEnabled(false);
+        editTextForTextViewKeepDays.setEnabled(false);
+        editTextForTextViewRecordInterval.setEnabled(false);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        optionsReference.removeEventListener(optionsValueEventListener);
+
+        if (optionsChanged) {
+            pushOptions();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        optionsReference.removeEventListener(optionsValueEventListener);
+
+        if (optionsChanged) {
+            pushOptions();
+        }
+    }
+
+    private void updateOptions() {
+        optionsValueEventListener = buildOptionsValueEventListener();
+        optionsReference = getRootReference().child("/options");
+        optionsReference.addValueEventListener(optionsValueEventListener);
+    }
+
+    private void pushOptions() {
+        options.put("delayedArmInterval", Long.valueOf(editTextForDelayedArmInterval.getText().toString()));
+        options.put("keepDays", Long.valueOf(editTextForTextViewKeepDays.getText().toString()));
+        options.put("recordInterval", Long.valueOf(editTextForTextViewRecordInterval.getText().toString()));
+
+        optionsReference.setValue(options);
+    }
+
+    private ValueEventListener buildOptionsValueEventListener() {
+        return new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                options = (Map<String, Object>) dataSnapshot.getValue();
+
+                buttonsChangedByUser = false;
+
+                switchCollectStatsEnabled.setChecked((boolean) options.get("collectStatistics"));
+                switchCollectStatsEnabled.setEnabled(true);
+
+                switchMonitoringEnabled.setChecked((boolean) options.get("monitoringEnabled"));
+                switchMonitoringEnabled.setEnabled(true);
+
+                switchHourlyReportEnabled.setChecked((boolean) options.get("hourlyReportEnabled"));
+                switchHourlyReportEnabled.setEnabled(true);
+
+                switchHourlyReportForced.setChecked((boolean) options.get("hourlyReportForced"));
+                switchHourlyReportForced.setEnabled(true);
+
+                switchVerboseOutputEnabled.setChecked((boolean) options.get("verboseOutputEnabled"));
+                switchVerboseOutputEnabled.setEnabled(true);
+
+                switchShowMotionAreaEnabled.setChecked((boolean) options.get("showMotionArea"));
+                switchShowMotionAreaEnabled.setEnabled(true);
+
+                editTextForDelayedArmInterval.setText("" + (long) options.get("delayedArmInterval"));
+                editTextForDelayedArmInterval.setEnabled(true);
+
+                editTextForTextViewKeepDays.setText("" + (long) options.get("keepDays"));
+                editTextForTextViewKeepDays.setEnabled(true);
+
+                editTextForTextViewRecordInterval.setText("" + (long) options.get("recordInterval"));
+                editTextForTextViewRecordInterval.setEnabled(true);
+
+
+                buttonsChangedByUser = true;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
     }
 
     private void showDialogToDownloadQrCodeScanner(final Activity act) {
@@ -233,11 +466,11 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private String getCameraAppPackageName() {
-        return getStringValueFromSettings("CAMERA_APP");
+        return getStringValueFromSettings(Utils.CAMERA_APP);
     }
 
     private String getCameraAppName() {
-        String appName = getResources().getString(R.string.text_settings_select_camera_app);
+        String appName = getResources().getString(R.string.text_textViewSelectCameraApp);
         try {
             appName = String.valueOf(getPackageManager().getApplicationLabel(getPackageManager().getApplicationInfo(getCameraAppPackageName(), PackageManager.GET_META_DATA)));
         } catch (PackageManager.NameNotFoundException e) {
@@ -262,26 +495,25 @@ public class SettingsActivity extends AppCompatActivity {
                 String serverAlias = serverData.get(0);
                 String serverKey = serverData.get(1);
 
-                String serverList = getStringValueFromSettings("SERVER_LIST");
+                String serverList = getStringValueFromSettings(Utils.SERVER_LIST);
                 Gson gson = new Gson();
                 HashMap<String, String> serverListMap;
 
                 if (stringIsEmptyOrNull(serverList)) {
                     serverListMap = new HashMap<>();
                     serverListMap.put(serverAlias, serverKey);
-                    saveStringValueToSettings("SERVER_LIST", gson.toJson(serverListMap));
+                    saveStringValueToSettings(Utils.SERVER_LIST, gson.toJson(serverListMap));
                 } else {
                     serverListMap = gson.fromJson(serverList, HashMap.class);
                     serverListMap.put(serverAlias, serverKey);
-                    saveStringValueToSettings("SERVER_LIST", gson.toJson(serverListMap));
+                    saveStringValueToSettings(Utils.SERVER_LIST, gson.toJson(serverListMap));
                 }
 
                 if (serverKeyIsValid(serverKey)) {
-                    saveStringValueToSettings("ACTIVE_SERVER", serverAlias);
+                    saveStringValueToSettings(Utils.ACTIVE_SERVER, serverAlias);
                     registerUserDataOnServer(serverKey);
 
                     new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.toast_server_paired_success) : getResources().getString(R.string.toast_server_paired_failure));
-                    pairServerButton.setText(R.string.button_pair_server_unpair_server);
                 } else {
                     new ToastDrawer().showToast(getResources().getString(R.string.toast_server_paired_failure_detailed));
                 }
@@ -292,12 +524,12 @@ public class SettingsActivity extends AppCompatActivity {
                 soundUri = (Uri) intent.getExtras().get("android.intent.extra.ringtone.PICKED_URI");
 
                 if (soundUri == null) {
-                    deleteIdFromSettings("INFO_SOUND");
-                    soundName = getSoundNameBy(getStringValueFromSettings("INFO_SOUND"));
+                    deleteIdFromSettings(Utils.INFO_SOUND);
+                    soundName = getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND));
                     new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_removed));
                 } else {
-                    saveStringValueToSettings("INFO_SOUND", soundUri.toString());
-                    soundName = getSoundNameBy(getStringValueFromSettings("INFO_SOUND"));
+                    saveStringValueToSettings(Utils.INFO_SOUND, soundUri.toString());
+                    soundName = getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND));
                     new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_changed_to) + soundName);
                 }
                 infoSoundButton.setText(soundName);
@@ -307,12 +539,12 @@ public class SettingsActivity extends AppCompatActivity {
                 soundUri = (Uri) intent.getExtras().get("android.intent.extra.ringtone.PICKED_URI");
 
                 if (soundUri == null) {
-                    deleteIdFromSettings("MOTION_SOUND");
-                    soundName = getSoundNameBy(getStringValueFromSettings("MOTION_SOUND"));
+                    deleteIdFromSettings(Utils.MOTION_SOUND);
+                    soundName = getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND));
                     new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_removed));
                 } else {
-                    saveStringValueToSettings("MOTION_SOUND", soundUri.toString());
-                    soundName = getSoundNameBy(getStringValueFromSettings("MOTION_SOUND"));
+                    saveStringValueToSettings(Utils.MOTION_SOUND, soundUri.toString());
+                    soundName = getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND));
                     new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_changed_to) + soundName);
                 }
                 motionSoundButton.setText(soundName);

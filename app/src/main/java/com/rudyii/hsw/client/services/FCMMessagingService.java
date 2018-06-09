@@ -31,7 +31,6 @@ public class FCMMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage message) {
-        Log.i(TAG, "Received new message with data" + message.getData().toString());
         Map<String, String> messageData = message.getData();
         HashMap<String, Object> extraData = new HashMap<>();
         String serverName = messageData.get("serverName");

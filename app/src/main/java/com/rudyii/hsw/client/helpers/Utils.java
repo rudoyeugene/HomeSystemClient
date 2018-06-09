@@ -1,6 +1,8 @@
 package com.rudyii.hsw.client.helpers;
 
 import android.Manifest;
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
@@ -46,6 +48,15 @@ import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getCustom
  */
 
 public class Utils {
+    public static final String SERVER_LIST = "SERVER_LIST";
+    public static final String NOTIFICATION_TYPES = "NOTIFICATION_TYPES";
+    public static final String ACTIVE_SERVER = "ACTIVE_SERVER";
+    public static final String INFO_SOUND = "INFO_SOUND";
+    public static final String MOTION_SOUND = "MOTION_SOUND";
+    public static final String CAMERA_APP = "CAMERA_APP";
+    public static final String NOTIFICATION_TYPE_MOTION_DETECTED = "motionDetected";
+    public static final String NOTIFICATION_TYPE_VIDEO_RECORDED = "videoRecorded";
+    public static final String NOTIFICATION_TYPE_BOTH = "both";
     public static Locale currentLocale = getAppContext().getResources().getConfiguration().locale;
 
     public static String getCurrentTimeAndDateDoubleDotsDelimFrom(Long timeStamp) {
@@ -109,10 +120,10 @@ public class Utils {
         HashMap<String, Object> result = new HashMap<>();
         switch (mode.toLowerCase()) {
             case "automatic":
-                result.put("systemModeText", getAppContext().getResources().getString(R.string.toggle_button_system_mode_state_automatic_text).toUpperCase());
+                result.put("systemModeText", getAppContext().getResources().getString(R.string.toggle_button_text_system_mode_state_automatic).toUpperCase());
                 break;
             case "manual":
-                result.put("systemModeText", getAppContext().getResources().getString(R.string.toggle_button_system_mode_manual_text).toUpperCase());
+                result.put("systemModeText", getAppContext().getResources().getString(R.string.toggle_button_text_system_mode_manual).toUpperCase());
                 break;
             default:
                 result.put("systemModeText", "UNKNOWN_MODE");
@@ -120,13 +131,13 @@ public class Utils {
 
         switch (state.toLowerCase()) {
             case "armed":
-                result.put("systemStateText", getAppContext().getResources().getString(R.string.toggle_button_system_state_armed_text).toUpperCase());
+                result.put("systemStateText", getAppContext().getResources().getString(R.string.toggle_button_text_system_state_armed).toUpperCase());
                 break;
             case "disarmed":
-                result.put("systemStateText", getAppContext().getResources().getString(R.string.toggle_button_system_state_disarmed_text).toUpperCase());
+                result.put("systemStateText", getAppContext().getResources().getString(R.string.toggle_button_text_system_state_disarmed).toUpperCase());
                 break;
             case "auto":
-                result.put("systemStateText", getAppContext().getResources().getString(R.string.toggle_button_system_mode_state_automatic_text).toUpperCase());
+                result.put("systemStateText", getAppContext().getResources().getString(R.string.toggle_button_text_system_mode_state_automatic).toUpperCase());
                 break;
             default:
                 result.put("systemStateText", "UNKNOWN_STATE");
@@ -176,7 +187,7 @@ public class Utils {
     public static String getDeviceId() {
         String serviceName = Context.TELEPHONY_SERVICE;
         TelephonyManager m_telephonyManager = (TelephonyManager) getAppContext().getSystemService(serviceName);
-        String deviceId = null;
+        String deviceId = "";
 
         if (ActivityCompat.checkSelfPermission(getAppContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             deviceId = Settings.Secure.getString(getAppContext().getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -185,8 +196,6 @@ public class Utils {
         }
 
         return deviceId;
-//        IMSI = m_telephonyManager.getSubscriberId();
-//        return Settings.Secure.getString(getAppContext().getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
     public static void registerUserDataOnServers() {
@@ -199,12 +208,13 @@ public class Utils {
     }
 
     public static void registerUserDataOnServer(String ref) {
+        String simplifiedPrimaryAccountName = getSimplifiedPrimaryAccountName();
         String deviceId = getDeviceId();
-        String token = getCurrentFcmToken();
+
         HashMap<String, Object> clientData = new HashMap<>();
-        clientData.put("notificationType", getStringValueFromSettings("NOTIFICATION_TYPE"));
+        clientData.put("notificationType", getStringValueFromSettings("NOTIFICATION_TYPE")); //TODO implement this!
         clientData.put("lastUpdated", System.currentTimeMillis());
-        clientData.put("token", token);
+        clientData.put("token", getCurrentFcmToken());
         clientData.put("device", android.os.Build.MODEL);
 
         PackageInfo pInfo;
@@ -217,23 +227,37 @@ public class Utils {
         }
         clientData.put("appVersion", version);
 
-        if (token == null) {
-            token = FirebaseInstanceId.getInstance().getToken();
-
-            if (token != null && !stringIsEmptyOrNull(deviceId)) {
-                clientData.put("token", token);
-
-                getCustomReference(ref).child("/connectedClients/" + deviceId).setValue(clientData);
+        if (stringIsNotEmptyOrNull(simplifiedPrimaryAccountName)) {
+            if (stringIsNotEmptyOrNull(deviceId)) {
+                getCustomReference(ref).child("/connectedClients/" + deviceId).removeValue();
             }
+            getCustomReference(ref).child("/connectedClients/" + simplifiedPrimaryAccountName).setValue(clientData);
+        } else if (stringIsNotEmptyOrNull(deviceId)) {
+            if (stringIsNotEmptyOrNull(simplifiedPrimaryAccountName)) {
+                getCustomReference(ref).child("/connectedClients/" + simplifiedPrimaryAccountName).removeValue();
+            }
+            getCustomReference(ref).child("/connectedClients/" + deviceId).setValue(clientData);
         } else {
-            if (!stringIsEmptyOrNull(deviceId)) {
-                getCustomReference(ref).child("/connectedClients/" + deviceId).setValue(clientData);
-            }
+            new ToastDrawer().showToast(getAppContext().getResources().getString(R.string.toast_failed_to_register_on_server));
         }
     }
 
+    private static String getSimplifiedPrimaryAccountName() {
+        AccountManager accountManager = AccountManager.get(getAppContext());
+        Account[] accounts = accountManager.getAccountsByType("com.google");
+        String simplifiedAccountName = "";
+
+        if (accounts.length > 0) {
+            Account mainAccount = accounts[0];
+            simplifiedAccountName = mainAccount.name.split("@")[0].replace(".", "");
+
+        }
+
+        return simplifiedAccountName;
+    }
+
     public static boolean stringIsEmptyOrNull(String string) {
-        return string == null || string.equalsIgnoreCase("");
+        return string == null || "".equalsIgnoreCase(string);
     }
 
     public static boolean stringIsNotEmptyOrNull(String string) {
@@ -244,7 +268,7 @@ public class Utils {
         HashMap<String, String> serverListMap = getMapWithServers();
 
         if (serverListMap.containsKey(serverAlias)) {
-            saveStringValueToSettings("ACTIVE_SERVER", serverAlias);
+            saveStringValueToSettings(ACTIVE_SERVER, serverAlias);
             return true;
         } else {
             return false;
@@ -258,7 +282,7 @@ public class Utils {
             serverListMap.remove(serverAlias);
 
             Gson gson = new Gson();
-            saveStringValueToSettings("SERVER_LIST", gson.toJson(serverListMap));
+            saveStringValueToSettings(SERVER_LIST, gson.toJson(serverListMap));
             return true;
         } else {
             return false;
@@ -266,7 +290,7 @@ public class Utils {
     }
 
     public static String getActiveServerAlias() {
-        return getStringValueFromSettings("ACTIVE_SERVER");
+        return getStringValueFromSettings(ACTIVE_SERVER);
     }
 
     public static String getActiveServerKey() {
@@ -287,9 +311,27 @@ public class Utils {
     }
 
     private static HashMap<String, String> getMapWithServers() {
-        String serverList = getStringValueFromSettings("SERVER_LIST");
+        String serverList = getStringValueFromSettings(SERVER_LIST);
         Gson gson = new Gson();
         return gson.fromJson(serverList, HashMap.class) == null ? new HashMap<String, String>() : new HashMap<>(gson.fromJson(serverList, HashMap.class));
+    }
+
+    public static String getNotificationTypeForServer(String serverName) {
+        return stringIsEmptyOrNull(getNotificationTypes().get(serverName)) ? "" : getNotificationTypes().get(serverName);
+    }
+
+    private static HashMap<String, String> getNotificationTypes() {
+        String serverList = getStringValueFromSettings(NOTIFICATION_TYPES);
+        Gson gson = new Gson();
+        return gson.fromJson(NOTIFICATION_TYPES, HashMap.class) == null ? new HashMap<String, String>() : new HashMap<>(gson.fromJson(NOTIFICATION_TYPES, HashMap.class));
+    }
+
+    public static void saveNotificationTypeForServer(String serverName, String notificationType) {
+        Gson gson = new Gson();
+        HashMap<String, String> notificationTypes = gson.fromJson(getStringValueFromSettings(NOTIFICATION_TYPES), HashMap.class) == null ? new HashMap<String, String>() : gson.fromJson(getStringValueFromSettings(NOTIFICATION_TYPES), HashMap.class);
+        notificationTypes.put(serverName, notificationType);
+
+        saveStringValueToSettings(NOTIFICATION_TYPES, gson.toJson(notificationTypes));
     }
 
     public static String getCurrentFcmToken() {

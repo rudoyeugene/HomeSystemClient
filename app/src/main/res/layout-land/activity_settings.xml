@@ -4,102 +4,114 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:clipToPadding="false"
     tools:context=".activities.SettingsActivity">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:theme="@android:style/Theme.Material.Light">
 
         <TextView
-            android:id="@+id/selectCameraApp"
-            android:layout_width="wrap_content"
+            android:id="@+id/textViewForSpinnerAppsList"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:text="@string/text_settings_select_camera_app"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/text_textViewSelectCameraApp"
+            android:textAlignment="viewStart"
+            app:layout_constraintEnd_toStartOf="@+id/space3"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
-            android:id="@+id/appsList"
+            android:id="@+id/spinnerAppsList"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="45dp"
-            android:layout_marginStart="45dp"
-            android:layout_marginTop="24dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:hapticFeedbackEnabled="true"
+            android:maxWidth="150dp"
+            app:layout_constraintEnd_toStartOf="@+id/space3"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/selectCameraApp" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewForSpinnerAppsList" />
 
         <TextView
-            android:id="@+id/infoSoundText"
-            android:layout_width="wrap_content"
+            android:id="@+id/textViewForButtonInfoSound"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
             android:text="@string/text_info_sound"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appsList" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/space3"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/infoSound"
+            android:id="@+id/buttonInfoSound"
             style="@android:style/TextAppearance.Material.Widget.TextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:hapticFeedbackEnabled="true"
             android:text="@string/text_info_sound"
+            android:textAlignment="center"
             android:textAllCaps="false"
-            app:layout_constraintEnd_toStartOf="@+id/motionSound"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/infoSoundText" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/space3"
+            app:layout_constraintTop_toBottomOf="@+id/textViewForButtonInfoSound" />
 
         <TextView
-            android:id="@+id/motionSoundTesxt"
-            android:layout_width="wrap_content"
+            android:id="@+id/textViewForButtonMotionSound"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="20dp"
             android:text="@string/text_motion_sound"
-            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appsList" />
+            app:layout_constraintStart_toEndOf="@+id/space3"
+            app:layout_constraintTop_toBottomOf="@+id/buttonInfoSound" />
 
         <Button
-            android:id="@+id/motionSound"
+            android:id="@+id/buttonMotionSound"
             style="@android:style/TextAppearance.Material.Widget.TextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
+            android:hapticFeedbackEnabled="true"
             android:text="@string/text_motion_sound"
+            android:textAlignment="center"
             android:textAllCaps="false"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/infoSound"
-            app:layout_constraintTop_toBottomOf="@+id/motionSoundTesxt" />
+            app:layout_constraintStart_toEndOf="@+id/space3"
+            app:layout_constraintTop_toBottomOf="@+id/textViewForButtonMotionSound" />
 
         <Button
-            android:id="@+id/pairServer"
+            android:id="@+id/buttonPairServer"
             style="@android:style/TextAppearance.Material.Widget.TextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
+            android:hapticFeedbackEnabled="true"
             android:text="@string/button_pair_server_pair_server"
+            android:textAlignment="center"
             android:textAllCaps="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/unpairServer"
-            app:layout_constraintTop_toBottomOf="@+id/motionSound"
+            app:layout_constraintEnd_toStartOf="@+id/space3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinnerAppsList"
             tools:layout_constraintBottom_creator="1"
             tools:layout_constraintLeft_creator="1"
             tools:layout_constraintRight_creator="1"
@@ -107,20 +119,289 @@
             tools:text="@string/button_pair_server_pair_server" />
 
         <Button
-            android:id="@+id/unpairServer"
+            android:id="@+id/buttonUnpairServer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:fontFamily="sans-serif"
+            android:hapticFeedbackEnabled="true"
             android:text="@string/button_pair_server_unpair_server"
+            android:textAlignment="center"
             android:textAllCaps="false"
-            app:layout_constraintEnd_toStartOf="@+id/pairServer"
+            app:layout_constraintEnd_toEndOf="@+id/space3"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/infoSound"
+            app:layout_constraintTop_toBottomOf="@+id/buttonPairServer"
             tools:text="@string/button_pair_server_unpair_server" />
+
+        <Space
+            android:id="@+id/space3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/textViewForSwitchCollectStats"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.512" />
+
+        <TextView
+            android:id="@+id/textViewForSwitchCollectStats"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="@string/text_textViewForSwitchCollectStats"
+            android:textAlignment="viewStart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/switchCollectStatsEnabled"
+            app:layout_constraintTop_toTopOf="@+id/switchCollectStatsEnabled" />
+
+        <Switch
+            android:id="@+id/switchCollectStatsEnabled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
+            android:checked="false"
+            android:enabled="false"
+            android:hapticFeedbackEnabled="true"
+            android:textAllCaps="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonMotionSound" />
+
+        <TextView
+            android:id="@+id/textViewForSwitchMonitoringEnabled"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="@string/text_textViewForSwitchMonitoringEnabled"
+            android:textAlignment="viewStart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/switchMonitoringEnabled"
+            app:layout_constraintTop_toTopOf="@+id/switchMonitoringEnabled" />
+
+        <Switch
+            android:id="@+id/switchMonitoringEnabled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:checked="false"
+            android:enabled="false"
+            android:hapticFeedbackEnabled="true"
+            android:textAllCaps="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switchCollectStatsEnabled" />
+
+        <TextView
+            android:id="@+id/textViewForSwitchHourlyReportEnabled"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="@string/text_textViewForSwitchHourlyReportEnabled"
+            android:textAlignment="viewStart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/switchHourlyReportEnabled"
+            app:layout_constraintTop_toTopOf="@+id/switchHourlyReportEnabled" />
+
+        <Switch
+            android:id="@+id/switchHourlyReportEnabled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:checked="false"
+            android:enabled="false"
+            android:hapticFeedbackEnabled="true"
+            android:textAllCaps="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switchMonitoringEnabled" />
+
+        <TextView
+            android:id="@+id/textViewForSwitchHourlyReportForced"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="@string/text_textViewForSwitchHourlyReportForced"
+            android:textAlignment="viewStart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/switchHourlyReportForced"
+            app:layout_constraintTop_toTopOf="@+id/switchHourlyReportForced" />
+
+        <Switch
+            android:id="@+id/switchHourlyReportForced"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:checked="false"
+            android:enabled="false"
+            android:hapticFeedbackEnabled="true"
+            android:textAllCaps="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switchHourlyReportEnabled" />
+
+        <TextView
+            android:id="@+id/textViewForSwitchVerboseOutputEnabled"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="@string/text_textViewForSwitchVerboseOutputEnabled"
+            android:textAlignment="viewStart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/switchVerboseOutputEnabled"
+            app:layout_constraintTop_toTopOf="@+id/switchVerboseOutputEnabled" />
+
+        <Switch
+            android:id="@+id/switchVerboseOutputEnabled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:checked="false"
+            android:enabled="false"
+            android:hapticFeedbackEnabled="true"
+            android:textAllCaps="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switchHourlyReportForced" />
+
+        <TextView
+            android:id="@+id/textViewForSwitchShowMotionAreaEnabled"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="@string/text_textViewForSwitchShowMotionAreaEnabled"
+            android:textAlignment="viewStart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/switchShowMotionAreaEnabled"
+            app:layout_constraintTop_toTopOf="@+id/switchShowMotionAreaEnabled" />
+
+        <Switch
+            android:id="@+id/switchShowMotionAreaEnabled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:checked="false"
+            android:enabled="false"
+            android:hapticFeedbackEnabled="true"
+            android:textAllCaps="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switchVerboseOutputEnabled" />
+
+        <TextView
+            android:id="@+id/textViewForTextViewDelayedArmInterval"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/text_textViewForTextViewDelayedArmInterval"
+            android:textAlignment="viewStart"
+            app:layout_constraintEnd_toStartOf="@+id/editTextForDelayedArmInterval"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switchShowMotionAreaEnabled" />
+
+        <EditText
+            android:id="@+id/editTextForDelayedArmInterval"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:enabled="false"
+            android:inputType="number"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:text="60"
+            android:textAlignment="viewStart"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/editTextForTextViewKeepDays"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textViewForTextViewDelayedArmInterval"
+            app:layout_constraintTop_toBottomOf="@+id/switchShowMotionAreaEnabled" />
+
+        <TextView
+            android:id="@+id/textViewForTextViewKeepDays"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/text_textViewForTextViewKeepDays"
+            android:textAlignment="viewStart"
+            app:layout_constraintEnd_toStartOf="@+id/editTextForTextViewKeepDays"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewForTextViewDelayedArmInterval" />
+
+        <EditText
+            android:id="@+id/editTextForTextViewKeepDays"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:enabled="false"
+            android:inputType="number"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:text="30"
+            android:textAlignment="viewStart"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/editTextForTextViewRecordInterval"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textViewForTextViewKeepDays"
+            app:layout_constraintTop_toBottomOf="@+id/textViewForTextViewDelayedArmInterval" />
+
+        <TextView
+            android:id="@+id/textViewForTextViewRecordInterval"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/text_textViewForTextViewRecordInterval"
+            android:textAlignment="viewStart"
+            app:layout_constraintEnd_toStartOf="@+id/editTextForTextViewRecordInterval"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewForTextViewKeepDays" />
+
+        <EditText
+            android:id="@+id/editTextForTextViewRecordInterval"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:enabled="false"
+            android:inputType="number"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:text="10"
+            android:textAlignment="viewStart"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textViewForTextViewRecordInterval"
+            app:layout_constraintTop_toBottomOf="@+id/textViewForTextViewKeepDays" />
 
     </android.support.constraint.ConstraintLayout>
 

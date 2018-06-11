@@ -77,6 +77,9 @@
     <string name="text_textViewForTextViewKeepDays">Keep history for, days:</string>
     <string name="text_textViewForTextViewRecordInterval">Record video for, sec:</string>
     <string name="text_textViewSelectCameraApp">Camera app</string>
+    <string name="text_toast_notification_type_both">You\'ll be notofoed twice: as soon as new motion detected and right after video uploaded</string>
+    <string name="text_toast_notification_type_motion_detected">You\'ll be notified as soon as new motion detected</string>
+    <string name="text_toast_notification_type_video_recorded">You\'ll be notified as soon as video recoreded and uploaded</string>
 
     <string name="toast_choose_camera_app_error_text">Camera application unavailable. Select new Camera application</string>
     <string name="toast_choose_camera_app_text">Camera application is not selected. Select new Camera application</string>
@@ -96,7 +99,4 @@
     <string name="toggle_button_text_system_mode_state_automatic">Auto</string>
     <string name="toggle_button_text_system_state_armed">Armed</string>
     <string name="toggle_button_text_system_state_disarmed">Disarmed</string>
-    <string name="text_toast_notification_type_motion_detected">You\'ll be notified as soon as new motion detected</string>
-    <string name="text_toast_notification_type_video_recorded">You\'ll be notified as soon as video recoreded and uploaded</string>
-    <string name="text_toast_notification_type_both">You\'ll be notofoed twice: as soon as new motion detected and right after video uploaded</string>
 </resources>

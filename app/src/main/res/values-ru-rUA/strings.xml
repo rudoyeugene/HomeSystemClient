@@ -76,6 +76,9 @@
     <string name="text_textViewForTextViewKeepDays">Хранить историю, дней:</string>
     <string name="text_textViewForTextViewRecordInterval">Запись видео, сек:</string>
     <string name="text_textViewSelectCameraApp">Приложение для камер</string>
+    <string name="text_toast_notification_type_both">Вы будете уведомлены в момент дважды: в момент обнаружения движения и в момент загрузки видео</string>
+    <string name="text_toast_notification_type_motion_detected">Вы будете уведомлены в момент обнаружения движения</string>
+    <string name="text_toast_notification_type_video_recorded">Вы будете уведомлены в момент загрузки видео</string>
 
     <string name="toast_choose_camera_app_error_text">Приложение для камер не доступно, выберите желаемое</string>
     <string name="toast_choose_camera_app_text">Приложение для камер не выбрано, выберите желаемое</string>
@@ -95,7 +98,4 @@
     <string name="toggle_button_text_system_mode_state_automatic">Авто</string>
     <string name="toggle_button_text_system_state_armed">Включен</string>
     <string name="toggle_button_text_system_state_disarmed">Выключен</string>
-    <string name="text_toast_notification_type_motion_detected">Вы будете уведомлены в момент обнаружения движения</string>
-    <string name="text_toast_notification_type_video_recorded">Вы будете уведомлены в момент загрузки видео</string>
-    <string name="text_toast_notification_type_both">Вы будете уведомлены в момент дважды: в момент обнаружения движения и в момент загрузки видео</string>
 </resources>

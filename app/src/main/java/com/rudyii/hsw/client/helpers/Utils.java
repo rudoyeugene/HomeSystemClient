@@ -202,17 +202,21 @@ public class Utils {
         if (!getMapWithServers().isEmpty()) {
             for (Map.Entry<String, String> entry : getMapWithServers().entrySet()) {
                 String serverKey = entry.getValue();
-                registerUserDataOnServer(serverKey);
+                String serverName = entry.getValue();
+                registerUserDataOnServer(serverKey, serverName);
             }
         }
     }
 
-    public static void registerUserDataOnServer(String ref) {
+    public static void registerUserDataOnServer(String serverKey, String serverName) {
         String simplifiedPrimaryAccountName = getSimplifiedPrimaryAccountName();
         String deviceId = getDeviceId();
 
         HashMap<String, Object> clientData = new HashMap<>();
-        clientData.put("notificationType", getStringValueFromSettings("NOTIFICATION_TYPE")); //TODO implement this!
+
+        String notificationType = getNotificationTypeForServer(serverName);
+
+        clientData.put("notificationType", notificationType);
         clientData.put("lastUpdated", System.currentTimeMillis());
         clientData.put("token", getCurrentFcmToken());
         clientData.put("device", android.os.Build.MODEL);
@@ -229,14 +233,14 @@ public class Utils {
 
         if (stringIsNotEmptyOrNull(simplifiedPrimaryAccountName)) {
             if (stringIsNotEmptyOrNull(deviceId)) {
-                getCustomReference(ref).child("/connectedClients/" + deviceId).removeValue();
+                getCustomReference(serverKey).child("/connectedClients/" + deviceId).removeValue();
             }
-            getCustomReference(ref).child("/connectedClients/" + simplifiedPrimaryAccountName).setValue(clientData);
+            getCustomReference(serverKey).child("/connectedClients/" + simplifiedPrimaryAccountName).setValue(clientData);
         } else if (stringIsNotEmptyOrNull(deviceId)) {
             if (stringIsNotEmptyOrNull(simplifiedPrimaryAccountName)) {
-                getCustomReference(ref).child("/connectedClients/" + simplifiedPrimaryAccountName).removeValue();
+                getCustomReference(serverKey).child("/connectedClients/" + simplifiedPrimaryAccountName).removeValue();
             }
-            getCustomReference(ref).child("/connectedClients/" + deviceId).setValue(clientData);
+            getCustomReference(serverKey).child("/connectedClients/" + deviceId).setValue(clientData);
         } else {
             new ToastDrawer().showToast(getAppContext().getResources().getString(R.string.toast_failed_to_register_on_server));
         }
@@ -317,21 +321,21 @@ public class Utils {
     }
 
     public static String getNotificationTypeForServer(String serverName) {
-        return stringIsEmptyOrNull(getNotificationTypes().get(serverName)) ? "" : getNotificationTypes().get(serverName);
+        return stringIsEmptyOrNull(getNotificationTypes().get(serverName)) ? NOTIFICATION_TYPE_MOTION_DETECTED : getNotificationTypes().get(serverName);
     }
 
     private static HashMap<String, String> getNotificationTypes() {
-        String serverList = getStringValueFromSettings(NOTIFICATION_TYPES);
+        String serversNotificationTypes = getStringValueFromSettings(NOTIFICATION_TYPES);
         Gson gson = new Gson();
-        return gson.fromJson(NOTIFICATION_TYPES, HashMap.class) == null ? new HashMap<String, String>() : new HashMap<>(gson.fromJson(NOTIFICATION_TYPES, HashMap.class));
+        return gson.fromJson(serversNotificationTypes, HashMap.class) == null ? new HashMap<String, String>() : new HashMap<>(gson.fromJson(serversNotificationTypes, HashMap.class));
     }
 
     public static void saveNotificationTypeForServer(String serverName, String notificationType) {
         Gson gson = new Gson();
-        HashMap<String, String> notificationTypes = gson.fromJson(getStringValueFromSettings(NOTIFICATION_TYPES), HashMap.class) == null ? new HashMap<String, String>() : gson.fromJson(getStringValueFromSettings(NOTIFICATION_TYPES), HashMap.class);
-        notificationTypes.put(serverName, notificationType);
+        HashMap<String, String> serversNotificationTypes = gson.fromJson(getStringValueFromSettings(NOTIFICATION_TYPES), HashMap.class) == null ? new HashMap<String, String>() : gson.fromJson(getStringValueFromSettings(NOTIFICATION_TYPES), HashMap.class);
+        serversNotificationTypes.put(serverName, notificationType);
 
-        saveStringValueToSettings(NOTIFICATION_TYPES, gson.toJson(notificationTypes));
+        saveStringValueToSettings(NOTIFICATION_TYPES, gson.toJson(serversNotificationTypes));
     }
 
     public static String getCurrentFcmToken() {

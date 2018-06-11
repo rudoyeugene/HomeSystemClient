@@ -402,6 +402,8 @@ public class SettingsActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 options = (Map<String, Object>) dataSnapshot.getValue();
 
+                if (options == null) return;
+
                 buttonsChangedByUser = false;
 
                 switchCollectStatsEnabled.setChecked((boolean) options.get("collectStatistics"));
@@ -511,7 +513,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                 if (serverKeyIsValid(serverKey)) {
                     saveStringValueToSettings(Utils.ACTIVE_SERVER, serverAlias);
-                    registerUserDataOnServer(serverKey);
+                    registerUserDataOnServer(serverKey, serverAlias);
 
                     new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.toast_server_paired_success) : getResources().getString(R.string.toast_server_paired_failure));
                 } else {

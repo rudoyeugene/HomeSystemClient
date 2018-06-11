@@ -37,33 +37,39 @@
 
         <TextView
             android:id="@+id/textViewServerVersion"
-            android:layout_width="150dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:text="@string/text_server_version"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/textViewServerVersionValue"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewCurrentServer" />
+            app:layout_constraintTop_toBottomOf="@+id/spinnerServerList" />
 
         <TextView
             android:id="@+id/textViewServerVersionValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:text="@string/text_retrieving_data"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textViewServerVersion"
             app:layout_constraintTop_toBottomOf="@+id/spinnerServerList" />
 
         <TextView
             android:id="@+id/textViewServerLastPing"
-            android:layout_width="150dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:text="@string/text_server_ping"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/textViewServerLastPingValue"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewServerVersion" />
 
@@ -71,20 +77,24 @@
             android:id="@+id/textViewServerLastPingValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:text="@string/text_retrieving_data"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textViewServerLastPing"
             app:layout_constraintTop_toBottomOf="@+id/textViewServerVersionValue" />
 
         <TextView
             android:id="@+id/textViewServerUptime"
-            android:layout_width="150dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:text="@string/text_server_uptime"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/textViewServerUptimeValue"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewServerLastPing" />
 
@@ -92,9 +102,11 @@
             android:id="@+id/textViewServerUptimeValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:text="@string/text_retrieving_data"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textViewServerUptime"
             app:layout_constraintTop_toBottomOf="@+id/textViewServerLastPingValue" />
 
@@ -220,7 +232,7 @@
         <TextView
             android:id="@+id/textViewForSwitchSystemState"
             android:layout_width="wrap_content"
-            android:layout_height="14dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="@string/text_armed_state"

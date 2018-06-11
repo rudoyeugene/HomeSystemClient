@@ -19,4 +19,13 @@ public class ToastDrawer {
             }
         });
     }
+
+    public void showLongToast(final String message) {
+        Handler h = new Handler(Looper.getMainLooper());
+        h.post(new Runnable() {
+            public void run() {
+                Toast.makeText(getAppContext(), message, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 }

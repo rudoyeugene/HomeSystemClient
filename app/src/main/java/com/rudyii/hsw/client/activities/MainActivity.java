@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -42,13 +41,19 @@ import java.util.concurrent.TimeUnit;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.HSC_SERVER_CHANGED;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
+import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_BOTH;
+import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_MOTION_DETECTED;
+import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_VIDEO_RECORDED;
 import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
 import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
+import static com.rudyii.hsw.client.helpers.Utils.getActiveServerKey;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDotsDelimFrom;
+import static com.rudyii.hsw.client.helpers.Utils.getNotificationTypeForServer;
 import static com.rudyii.hsw.client.helpers.Utils.getServersList;
+import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServer;
 import static com.rudyii.hsw.client.helpers.Utils.retrievePermissions;
+import static com.rudyii.hsw.client.helpers.Utils.saveNotificationTypeForServer;
 import static com.rudyii.hsw.client.helpers.Utils.switchActiveServerTo;
-import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
 
 public class MainActivity extends AppCompatActivity {
@@ -156,13 +161,20 @@ public class MainActivity extends AppCompatActivity {
         });
 
         buttonNotificationType = (ImageButton) findViewById(R.id.buttonNotificationType);
+        resolveNotificationType();
         buttonNotificationType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switchNotificationType();
+                switchNotificationTypes();
             }
         });
-
+        buttonNotificationType.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                drawToastWithNotificationTypeInfo();
+                return true;
+            }
+        });
         switchPorts = (Switch) findViewById(R.id.switchPorts);
         switchPorts.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -266,17 +278,77 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void switchNotificationType() {
-        try {
-            Drawable icon = getPackageManager().getApplicationIcon(getStringValueFromSettings("CAMERA_APP"));
-            if (icon != null) {
-                buttonNotificationType.setImageDrawable(icon);
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+    private void switchNotificationTypes() {
+        String activeServer = getActiveServerAlias();
+        String notificationType = getNotificationTypeForServer(activeServer);
+        Drawable icon = null;
+
+        switch (notificationType) {
+            case NOTIFICATION_TYPE_MOTION_DETECTED:
+                icon = getDrawable(R.mipmap.button_on_video_recorded);
+                saveNotificationTypeForServer(activeServer, NOTIFICATION_TYPE_VIDEO_RECORDED);
+                break;
+
+            case NOTIFICATION_TYPE_VIDEO_RECORDED:
+                icon = getDrawable(R.mipmap.button_on_motion_and_video_recorded);
+                saveNotificationTypeForServer(activeServer, NOTIFICATION_TYPE_BOTH);
+                break;
+
+            case NOTIFICATION_TYPE_BOTH:
+                icon = getDrawable(R.mipmap.button_on_motion);
+                saveNotificationTypeForServer(activeServer, NOTIFICATION_TYPE_MOTION_DETECTED);
+                break;
+            default:
+                icon = getDrawable(R.mipmap.image_warning);
+                break;
         }
 
-        new ToastDrawer().showToast("Switching...");
+        buttonNotificationType.setImageDrawable(icon);
+        registerUserDataOnServer(getActiveServerKey(), activeServer);
+    }
+
+    private void resolveNotificationType() {
+        String activeServer = getActiveServerAlias();
+        String notificationType = getNotificationTypeForServer(activeServer);
+        Drawable icon = null;
+
+        switch (notificationType) {
+            case NOTIFICATION_TYPE_MOTION_DETECTED:
+                icon = getDrawable(R.mipmap.button_on_motion);
+                break;
+
+            case NOTIFICATION_TYPE_VIDEO_RECORDED:
+                icon = getDrawable(R.mipmap.button_on_video_recorded);
+                break;
+
+            case NOTIFICATION_TYPE_BOTH:
+                icon = getDrawable(R.mipmap.button_on_motion_and_video_recorded);
+                break;
+            default:
+                icon = getDrawable(R.mipmap.image_warning);
+                break;
+        }
+
+        buttonNotificationType.setImageDrawable(icon);
+    }
+
+    private void drawToastWithNotificationTypeInfo() {
+        String activeServer = getActiveServerAlias();
+        String notificationType = getNotificationTypeForServer(activeServer);
+
+        switch (notificationType) {
+            case NOTIFICATION_TYPE_MOTION_DETECTED:
+                new ToastDrawer().showLongToast(getResources().getString(R.string.text_toast_notification_type_motion_detected));
+                break;
+
+            case NOTIFICATION_TYPE_VIDEO_RECORDED:
+                new ToastDrawer().showLongToast(getResources().getString(R.string.text_toast_notification_type_video_recorded));
+                break;
+
+            case NOTIFICATION_TYPE_BOTH:
+                new ToastDrawer().showLongToast(getResources().getString(R.string.text_toast_notification_type_both));
+                break;
+        }
     }
 
     private void calculateSystemStateBasedOn(Switch systemMode, Switch systemState) {

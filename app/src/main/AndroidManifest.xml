@@ -83,6 +83,12 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".listeners.VideoUploadedListener">
+            <intent-filter>
+                <action android:name="com.rudyii.hsw.client.HSC_VIDEO_UPLOADED" />
+            </intent-filter>
+        </receiver>
+
         <receiver android:name=".listeners.StatusesListener">
             <intent-filter>
                 <action android:name="com.rudyii.hsw.client.HSC_STATUSES_UPDATED" />

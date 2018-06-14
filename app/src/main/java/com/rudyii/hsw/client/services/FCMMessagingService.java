@@ -14,6 +14,7 @@ import java.util.Map;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.helpers.FirebaseListenersFactory.buildMotionRefValueEventListener;
+import static com.rudyii.hsw.client.helpers.FirebaseListenersFactory.buildRecordRefValueEventListener;
 import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
 import static com.rudyii.hsw.client.helpers.Utils.getServerKeyFromAlias;
 import static com.rudyii.hsw.client.listeners.OfflineDeviceListener.HSC_DEVICE_REBOOT;
@@ -54,6 +55,12 @@ public class FCMMessagingService extends FirebaseMessagingService {
                 Long motionId = Long.valueOf(messageData.get("motionId"));
                 DatabaseReference motionsRef = firebaseDatabase.getReference(getServerKeyFromAlias(serverName) + "/log/" + motionId);
                 motionsRef.addListenerForSingleValueEvent(buildMotionRefValueEventListener(serverName));
+                break;
+
+            case "videoRecorded":
+                Long recordId = Long.valueOf(messageData.get("recordId"));
+                DatabaseReference recordsRef = firebaseDatabase.getReference(getServerKeyFromAlias(serverName) + "/log/" + recordId);
+                recordsRef.addListenerForSingleValueEvent(buildRecordRefValueEventListener(serverName));
                 break;
 
             case "ispChanged":

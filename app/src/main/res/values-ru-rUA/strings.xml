@@ -32,6 +32,7 @@
     <string name="notif_text_server_stopped">Сервер остановлен</string>
     <string name="notif_text_system_state_changed">Состояние системы изменилось</string>
     <string name="notif_text_system_state_is">Система в\u0020</string>
+    <string name="notif_text_video_uploaded">Загружено новое видео</string>
 
     <string name="shortcut_arm">Включить</string>
     <string name="shortcut_arm_activity_text">Запрошено переключение в РУЧНОЙ:ВКЛЮЧЕН режим, Вы будете уведомлены</string>

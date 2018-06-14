@@ -32,6 +32,7 @@
     <string name="notif_text_server_stopped">Server stopped</string>
     <string name="notif_text_system_state_changed">System state changed</string>
     <string name="notif_text_system_state_is">System state is\u0020</string>
+    <string name="notif_text_video_uploaded">New video uploaded</string>
 
     <string name="shortcut_arm">Arm</string>
     <string name="shortcut_arm_activity_text">Requested system switch to MANUAL:ARM, you\'ll be notified</string>

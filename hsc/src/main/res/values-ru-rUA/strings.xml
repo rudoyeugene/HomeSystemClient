@@ -5,7 +5,7 @@
 
     <string name="dialog_are_you_sure_cant_undo_alert_message">Вы уверены? Это действие нельзя отменить.</string>
     <string name="dialog_cleanup_log_title">Очистка системного журнала</string>
-    <string name="dialog_cleanup_usage_stats_title">Cleanup usage stats</string>
+    <string name="dialog_cleanup_usage_stats_title">Очистка статистики использования</string>
     <string name="dialog_download_qr_scanner_message">Загрузить Сканер QR Кодов с Play Store?</string>
     <string name="dialog_download_qr_scanner_title">Сканер QR Кодов не найден</string>
     <string name="dialog_no">Нет</string>

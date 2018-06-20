@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.HSC_SERVER_CHANGED;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
-import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_BOTH;
+import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_ALL;
 import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_MOTION_DETECTED;
 import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_VIDEO_RECORDED;
 import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
@@ -291,10 +291,10 @@ public class MainActivity extends AppCompatActivity {
 
             case NOTIFICATION_TYPE_VIDEO_RECORDED:
                 icon = getDrawable(R.mipmap.button_on_motion_and_video_recorded);
-                saveNotificationTypeForServer(activeServer, NOTIFICATION_TYPE_BOTH);
+                saveNotificationTypeForServer(activeServer, NOTIFICATION_TYPE_ALL);
                 break;
 
-            case NOTIFICATION_TYPE_BOTH:
+            case NOTIFICATION_TYPE_ALL:
                 icon = getDrawable(R.mipmap.button_on_motion);
                 saveNotificationTypeForServer(activeServer, NOTIFICATION_TYPE_MOTION_DETECTED);
                 break;
@@ -321,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
                 icon = getDrawable(R.mipmap.button_on_video_recorded);
                 break;
 
-            case NOTIFICATION_TYPE_BOTH:
+            case NOTIFICATION_TYPE_ALL:
                 icon = getDrawable(R.mipmap.button_on_motion_and_video_recorded);
                 break;
             default:
@@ -345,7 +345,7 @@ public class MainActivity extends AppCompatActivity {
                 new ToastDrawer().showLongToast(getResources().getString(R.string.text_toast_notification_type_video_recorded));
                 break;
 
-            case NOTIFICATION_TYPE_BOTH:
+            case NOTIFICATION_TYPE_ALL:
                 new ToastDrawer().showLongToast(getResources().getString(R.string.text_toast_notification_type_both));
                 break;
         }

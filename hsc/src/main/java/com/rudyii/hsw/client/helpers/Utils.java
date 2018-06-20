@@ -56,7 +56,7 @@ public class Utils {
     public static final String CAMERA_APP = "CAMERA_APP";
     public static final String NOTIFICATION_TYPE_MOTION_DETECTED = "motionDetected";
     public static final String NOTIFICATION_TYPE_VIDEO_RECORDED = "videoRecorded";
-    public static final String NOTIFICATION_TYPE_BOTH = "both";
+    public static final String NOTIFICATION_TYPE_ALL = "all";
     public static Locale currentLocale = getAppContext().getResources().getConfiguration().locale;
 
     public static String getCurrentTimeAndDateDoubleDotsDelimFrom(Long timeStamp) {

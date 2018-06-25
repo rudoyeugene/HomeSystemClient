@@ -93,7 +93,7 @@
     <string name="toast_server_paired_success">Соединение удалось</string>
     <string name="toast_server_unpair_failure">Отсоединение не удалось</string>
     <string name="toast_server_unpair_success">Отсоединение удалось</string>
-    <string name="toast_usage_stats_empty">Статистика недоступна</string>
+    <string name="toast_text_data_unavailable">Данные недоступны</string>
 
     <string name="toggle_button_text_system_mode_manual">Ручной</string>
     <string name="toggle_button_text_system_mode_state_automatic">Авто</string>

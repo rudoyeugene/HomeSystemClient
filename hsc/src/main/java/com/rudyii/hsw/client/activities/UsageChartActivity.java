@@ -106,7 +106,7 @@ public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnS
                 HashMap<String, Object> tempData = (HashMap<String, Object>) dataSnapshot.getValue();
 
                 if (tempData == null) {
-                    new ToastDrawer().showToast(getResources().getString(R.string.toast_usage_stats_empty));
+                    new ToastDrawer().showToast(getResources().getString(R.string.toast_text_data_unavailable));
                 } else {
                     usageStats = new TreeMap<>(tempData);
                     List<BarEntry> values = new ArrayList<>();

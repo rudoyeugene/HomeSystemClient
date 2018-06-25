@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
@@ -56,6 +58,7 @@ public class SystemLogActivity extends AppCompatActivity {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ArrayList<LogItem> systemLog = new ArrayList<>();
     private DatabaseReference logRef;
+    private ValueEventListener logValueEventListener;
     private SystemLogBroadcastReceiver systemLogBroadcastReceiver = new SystemLogBroadcastReceiver();
 
     @Override
@@ -68,15 +71,13 @@ public class SystemLogActivity extends AppCompatActivity {
         setTitle(getResources().getString(R.string.label_system_log));
 
         logRef = getRootReference().child("/log");
+        logValueEventListener = getValueEventListener();
+
+        logRef.addValueEventListener(logValueEventListener);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mSwipeRefreshLayout.setRefreshing(true);
-                fillLog();
-            }
-        });
+        mSwipeRefreshLayout.setEnabled(false);
+        mSwipeRefreshLayout.setRefreshing(false);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.logRecyclerView);
         mRecyclerView.setHasFixedSize(false);
@@ -90,8 +91,6 @@ public class SystemLogActivity extends AppCompatActivity {
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
-
-        fillLog();
 
         mAdapter = new LogListAdapter(getApplicationContext(), systemLog);
         mAdapter.setHasStableIds(true);
@@ -135,6 +134,8 @@ public class SystemLogActivity extends AppCompatActivity {
         Log.i(TAG, "System Log Activity paused");
 
         unregisterReceiver(systemLogBroadcastReceiver);
+
+        logRef.removeEventListener(logValueEventListener);
     }
 
     @Override
@@ -159,8 +160,9 @@ public class SystemLogActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void fillLog() {
-        logRef.addListenerForSingleValueEvent(new ValueEventListener() {
+    @NonNull
+    private ValueEventListener getValueEventListener() {
+        return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final HashMap<String, Map<String, Object>> logMap = (HashMap<String, Map<String, Object>>) dataSnapshot.getValue();
@@ -174,10 +176,13 @@ public class SystemLogActivity extends AppCompatActivity {
 
                 mSwipeRefreshLayout.setRefreshing(true);
                 systemLog.clear();
+
+                TreeSet<LogItem> sortedLogItems = new TreeSet<>();
                 for (Map.Entry<String, Map<String, Object>> entry : treeMap.entrySet()) {
-                    systemLog.add(buildAndFillLogItem(Long.valueOf(entry.getKey()), entry.getValue()));
+                    sortedLogItems.add(buildAndFillLogItem(Long.valueOf(entry.getKey()), entry.getValue()));
                 }
 
+                systemLog.addAll(sortedLogItems);
                 mSwipeRefreshLayout.setRefreshing(false);
                 mAdapter.notifyDataSetChanged();
             }
@@ -186,7 +191,7 @@ public class SystemLogActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
     }
 
     private LogItem buildAndFillLogItem(Long logRecordId, Map<String, Object> logRecordData) {

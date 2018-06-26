@@ -441,6 +441,7 @@ public class MainActivity extends AppCompatActivity {
 
                 buttonsChangedInternally = true;
                 updateModeStateButtons(buttonsState);
+                switchPorts.setEnabled(true);
                 switchPorts.setChecked(portsOpen);
                 buttonsChangedInternally = false;
 
@@ -499,6 +500,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateModeStateButtons(HashMap<String, Object> statusesData) {
         systemMode.setChecked((boolean) statusesData.get("systemModeChecked"));
+        systemMode.setEnabled(true);
+
         systemState.setChecked((boolean) statusesData.get("systemStateChecked"));
         systemState.setEnabled((boolean) statusesData.get("systemStateEnabled"));
     }

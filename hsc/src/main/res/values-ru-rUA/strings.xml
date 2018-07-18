@@ -15,6 +15,7 @@
 
     <string name="label_about">О приложении</string>
     <string name="label_app_name">Home System Client</string>
+    <string name="label_download_server">Скачать Сервер</string>
     <string name="label_settings">Настройки</string>
     <string name="label_system_log">Журнал событий</string>
     <string name="label_usage_chart">График использования</string>
@@ -53,11 +54,15 @@
     <string name="text_current_server">Текущий сервер:</string>
     <string name="text_day">\u0020день\u0020</string>
     <string name="text_days">\u0020дней\u0020</string>
+    <string name="text_horly_report_button">Ежечасный\nотчет</string>
     <string name="text_info_sound">Звук уведомления</string>
+    <string name="text_log_button">Журнал</string>
     <string name="text_menu_system_log_clear_log">Очистить журнал</string>
     <string name="text_motion_sound">Звук движения</string>
     <string name="text_no_server">НЕТ СЕРВЕРА</string>
     <string name="text_no_sound">Без звука</string>
+    <string name="text_notification_type_button">Тип\\nуведомлений</string>
+    <string name="text_resend_hourly_request_muted">Ежечасный отчет отключен, включите чтобы изменить</string>
     <string name="text_resend_hourly_request_text">Запрос на ежечасный отчет отправлен</string>
     <string name="text_resend_hourly_text">Получить ежечасный отчет</string>
     <string name="text_resend_weekly_text">Открыть график использования</string>
@@ -66,6 +71,7 @@
     <string name="text_server_uptime">Время в работе:</string>
     <string name="text_server_version">Версия сервера:</string>
     <string name="text_settings">Настройки</string>
+    <string name="text_stats_button">Статистика</string>
     <string name="text_system_log_text">Открыть системный журнал</string>
     <string name="text_textViewForSwitchCollectStats">Собирать статистику если ВКЛЮЧЕН</string>
     <string name="text_textViewForSwitchHourlyReportEnabled">Отправлять ежечасный отчет если ВКЛЮЧЕН</string>
@@ -77,6 +83,7 @@
     <string name="text_textViewForTextViewKeepDays">Хранить историю, дней:</string>
     <string name="text_textViewForTextViewRecordInterval">Запись видео, сек:</string>
     <string name="text_textViewSelectCameraApp">Приложение для камер</string>
+    <string name="text_toast_notification_muted">Уведомления отключены, включите чтобы изменить</string>
     <string name="text_toast_notification_type_both">Вы будете уведомлены в момент дважды: в момент обнаружения движения и в момент загрузки видео</string>
     <string name="text_toast_notification_type_motion_detected">Вы будете уведомлены в момент обнаружения движения</string>
     <string name="text_toast_notification_type_video_recorded">Вы будете уведомлены в момент загрузки видео</string>

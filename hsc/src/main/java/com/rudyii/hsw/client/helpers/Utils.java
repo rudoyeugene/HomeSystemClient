@@ -50,6 +50,7 @@ import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getCustom
 public class Utils {
     public static final String SERVER_LIST = "SERVER_LIST";
     public static final String NOTIFICATION_TYPES = "NOTIFICATION_TYPES";
+    public static final String NOTIFICATIONS_MUTED = "NOTIFICATIONS_MUTED";
     public static final String ACTIVE_SERVER = "ACTIVE_SERVER";
     public static final String INFO_SOUND = "INFO_SOUND";
     public static final String MOTION_SOUND = "MOTION_SOUND";
@@ -57,6 +58,9 @@ public class Utils {
     public static final String NOTIFICATION_TYPE_MOTION_DETECTED = "motionDetected";
     public static final String NOTIFICATION_TYPE_VIDEO_RECORDED = "videoRecorded";
     public static final String NOTIFICATION_TYPE_ALL = "all";
+    public static final String NOTIFICATION_TYPE_MUTE = "mute";
+    public static final String HOURLY_REPORT_MUTE = "mute";
+    private static final String HOURLY_REPORT_STATE = "HOURLY_REPORT_STATE";
     public static Locale currentLocale = getAppContext().getResources().getConfiguration().locale;
 
     public static String getCurrentTimeAndDateDoubleDotsDelimFrom(Long timeStamp) {
@@ -215,11 +219,16 @@ public class Utils {
         HashMap<String, Object> clientData = new HashMap<>();
 
         String notificationType = getNotificationTypeForServer(serverName);
+        String hourlyReportMuted = getHourlyReportMutedStateForServer(serverName);
+        String notificationsMuted = getNotificationMutedForServer(serverName);
 
         clientData.put("notificationType", notificationType);
+        clientData.put("notificationsMuted", Boolean.parseBoolean(notificationsMuted));
+        clientData.put("hourlyReportMuted", Boolean.parseBoolean(hourlyReportMuted));
         clientData.put("lastUpdated", System.currentTimeMillis());
         clientData.put("token", getCurrentFcmToken());
         clientData.put("device", android.os.Build.MODEL);
+        clientData.put("email", getPrimaryAccountEmail());
 
         PackageInfo pInfo;
         String version = "0.0.0";
@@ -246,6 +255,16 @@ public class Utils {
         }
     }
 
+    public static String getHourlyReportMutedStateForServer(String serverName) {
+        return stringIsEmptyOrNull(getHourlyReportMutedStates().get(serverName)) ? "false" : getHourlyReportMutedStates().get(serverName);
+    }
+
+    public static void saveHourlyReportMutedStateForServer(String serverName, String state){
+        HashMap<String, String> states = getHourlyReportMutedStates();
+        states.put(serverName, state);
+        saveMapToSettings(states, HOURLY_REPORT_STATE);
+    }
+
     private static String getSimplifiedPrimaryAccountName() {
         AccountManager accountManager = AccountManager.get(getAppContext());
         Account[] accounts = accountManager.getAccountsByType("com.google");
@@ -255,6 +274,18 @@ public class Utils {
             Account mainAccount = accounts[0];
             simplifiedAccountName = mainAccount.name.split("@")[0].replace(".", "");
 
+        }
+
+        return simplifiedAccountName;
+    }
+
+    private static String getPrimaryAccountEmail() {
+        AccountManager accountManager = AccountManager.get(getAppContext());
+        Account[] accounts = accountManager.getAccountsByType("com.google");
+        String simplifiedAccountName = "";
+
+        if (accounts.length > 0) {
+            simplifiedAccountName = accounts[0].name;
         }
 
         return simplifiedAccountName;
@@ -284,9 +315,7 @@ public class Utils {
 
         if (serverListMap.containsKey(serverAlias)) {
             serverListMap.remove(serverAlias);
-
-            Gson gson = new Gson();
-            saveStringValueToSettings(SERVER_LIST, gson.toJson(serverListMap));
+            saveMapToSettings(serverListMap, SERVER_LIST);
             return true;
         } else {
             return false;
@@ -306,18 +335,14 @@ public class Utils {
     public static ArrayList<String> getServersList() {
         ArrayList<String> serversList = new ArrayList<>();
 
-        if (getMapWithServers() != null) {
-            for (Map.Entry<String, String> entry : getMapWithServers().entrySet()) {
-                serversList.add(entry.getKey());
-            }
+        for (Map.Entry<String, String> entry : getMapWithServers().entrySet()) {
+            serversList.add(entry.getKey());
         }
         return serversList;
     }
 
     private static HashMap<String, String> getMapWithServers() {
-        String serverList = getStringValueFromSettings(SERVER_LIST);
-        Gson gson = new Gson();
-        return gson.fromJson(serverList, HashMap.class) == null ? new HashMap<String, String>() : new HashMap<>(gson.fromJson(serverList, HashMap.class));
+        return (HashMap<String, String>) getMapFromSettings(SERVER_LIST);
     }
 
     public static String getNotificationTypeForServer(String serverName) {
@@ -325,17 +350,42 @@ public class Utils {
     }
 
     private static HashMap<String, String> getNotificationTypes() {
-        String serversNotificationTypes = getStringValueFromSettings(NOTIFICATION_TYPES);
-        Gson gson = new Gson();
-        return gson.fromJson(serversNotificationTypes, HashMap.class) == null ? new HashMap<String, String>() : new HashMap<>(gson.fromJson(serversNotificationTypes, HashMap.class));
+        return (HashMap<String, String>) getMapFromSettings(NOTIFICATION_TYPES);
+    }
+
+    private static HashMap<String, String> getHourlyReportMutedStates() {
+        return (HashMap<String, String>) getMapFromSettings(HOURLY_REPORT_STATE);
+    }
+
+    private static HashMap<String, String> getNotificationMuted() {
+        return (HashMap<String, String>) getMapFromSettings(NOTIFICATIONS_MUTED);
+    }
+
+    public static String getNotificationMutedForServer(String serverName) {
+        return stringIsEmptyOrNull(getNotificationMuted().get(serverName)) ? "false" : getNotificationMuted().get(serverName);
+    }
+
+    public static void saveNotificationMutedForServer(String serverName, String muted) {
+        HashMap<String, String> serversNotificationTypes = (HashMap<String, String>) getMapFromSettings(NOTIFICATIONS_MUTED);
+        serversNotificationTypes.put(serverName, muted);
+        saveMapToSettings(serversNotificationTypes, NOTIFICATIONS_MUTED);
     }
 
     public static void saveNotificationTypeForServer(String serverName, String notificationType) {
-        Gson gson = new Gson();
-        HashMap<String, String> serversNotificationTypes = gson.fromJson(getStringValueFromSettings(NOTIFICATION_TYPES), HashMap.class) == null ? new HashMap<String, String>() : gson.fromJson(getStringValueFromSettings(NOTIFICATION_TYPES), HashMap.class);
+        HashMap<String, String> serversNotificationTypes = (HashMap<String, String>) getMapFromSettings(NOTIFICATION_TYPES);
         serversNotificationTypes.put(serverName, notificationType);
+        saveMapToSettings(serversNotificationTypes, NOTIFICATION_TYPES);
+    }
 
-        saveStringValueToSettings(NOTIFICATION_TYPES, gson.toJson(serversNotificationTypes));
+    private static Map<String, String> getMapFromSettings(String id) {
+        String mapJson = getStringValueFromSettings(id);
+        Gson gson = new Gson();
+        return gson.fromJson(mapJson, HashMap.class) == null ? new HashMap<String, String>() : new HashMap<>(gson.fromJson(mapJson, HashMap.class));
+    }
+
+    public static void saveMapToSettings(Map<String, String> map, String id) {
+        Gson gson = new Gson();
+        saveStringValueToSettings(id, gson.toJson(map));
     }
 
     public static String getCurrentFcmToken() {
@@ -355,7 +405,7 @@ public class Utils {
     }
 
     public static void saveImageFromCamera(Bitmap bitmap, String serverName, String cameraName, String imageName) {
-        imageName = imageName + ".png";
+        imageName = imageName + ".jpg";
 
         FileOutputStream fos = null;
 
@@ -375,7 +425,7 @@ public class Utils {
             }
 
             fos = new FileOutputStream(motionImage);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.close();
 
             Uri uri = Uri.fromFile(motionImage);

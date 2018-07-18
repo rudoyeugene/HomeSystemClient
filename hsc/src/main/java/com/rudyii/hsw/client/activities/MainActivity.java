@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
@@ -43,15 +44,20 @@ import static com.rudyii.hsw.client.HomeSystemClientApplication.HSC_SERVER_CHANG
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_ALL;
 import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_MOTION_DETECTED;
+import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_MUTE;
 import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_VIDEO_RECORDED;
 import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
 import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
 import static com.rudyii.hsw.client.helpers.Utils.getActiveServerKey;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDotsDelimFrom;
+import static com.rudyii.hsw.client.helpers.Utils.getHourlyReportMutedStateForServer;
+import static com.rudyii.hsw.client.helpers.Utils.getNotificationMutedForServer;
 import static com.rudyii.hsw.client.helpers.Utils.getNotificationTypeForServer;
 import static com.rudyii.hsw.client.helpers.Utils.getServersList;
 import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServer;
 import static com.rudyii.hsw.client.helpers.Utils.retrievePermissions;
+import static com.rudyii.hsw.client.helpers.Utils.saveHourlyReportMutedStateForServer;
+import static com.rudyii.hsw.client.helpers.Utils.saveNotificationMutedForServer;
 import static com.rudyii.hsw.client.helpers.Utils.saveNotificationTypeForServer;
 import static com.rudyii.hsw.client.helpers.Utils.switchActiveServerTo;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
@@ -61,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private Switch systemMode, systemState, switchPorts;
     private ImageButton buttonResendHourlyReport, buttonUsageStats, buttonSystemLog, buttonNotificationType;
     private TextView armedModeText, armedStateText;
-    private boolean buttonsChangedInternally;
+    private boolean buttonsChangedInternally, buttonNotificationTypeMuted, buttonResendHourlyReportMuted;
     private MainActivityBroadcastReceiver mainActivityBroadcastReceiver = new MainActivityBroadcastReceiver();
     private Handler serverLastPingHandler;
     private Runnable serverLastPingRunnable;
@@ -80,17 +86,22 @@ public class MainActivity extends AppCompatActivity {
         defaultTextColor = serverLastPingTextValue.getTextColors();
 
         buttonResendHourlyReport = (ImageButton) findViewById(R.id.buttonResendHourly);
+        resolveHourlyReportIcon();
         buttonResendHourlyReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getRootReference().child("requests/resendHourly").setValue(random.nextInt(999));
-                new ToastDrawer().showToast(getResources().getString(R.string.text_resend_hourly_request_text));
+                if (buttonResendHourlyReportMuted) {
+                    new ToastDrawer().showToast(getResources().getString(R.string.text_resend_hourly_request_muted));
+                } else {
+                    getRootReference().child("requests/resendHourly").setValue(random.nextInt(999));
+                    new ToastDrawer().showToast(getResources().getString(R.string.text_resend_hourly_request_text));
+                }
             }
         });
         buttonResendHourlyReport.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                new ToastDrawer().showToast(getResources().getString(R.string.text_resend_hourly_text));
+                muteUnmuteHourlyReporting();
                 return true;
             }
         });
@@ -165,13 +176,18 @@ public class MainActivity extends AppCompatActivity {
         buttonNotificationType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switchNotificationTypes();
+                if (buttonNotificationTypeMuted) {
+                    new ToastDrawer().showToast(getResources().getString(R.string.text_toast_notification_muted));
+                } else {
+                    switchNotificationTypes();
+                    drawToastWithNotificationTypeInfo();
+                }
             }
         });
         buttonNotificationType.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                drawToastWithNotificationTypeInfo();
+                muteUnmuteButtonNotificationType();
                 return true;
             }
         });
@@ -212,6 +228,40 @@ public class MainActivity extends AppCompatActivity {
         });
 
         requestPermissions();
+    }
+
+    private void muteUnmuteButtonNotificationType() {
+        String activeServer = getActiveServerAlias();
+        buttonNotificationTypeMuted = Boolean.parseBoolean(getNotificationMutedForServer(activeServer));
+
+        if (buttonNotificationTypeMuted) {
+            buttonNotificationTypeMuted = false;
+        } else {
+            buttonNotificationTypeMuted = true;
+        }
+
+        saveNotificationMutedForServer(activeServer, "" + buttonNotificationTypeMuted);
+        resolveNotificationType();
+
+        registerUserDataOnServer(getActiveServerKey(), activeServer);
+    }
+
+    private void muteUnmuteHourlyReporting() {
+        String activeServer = getActiveServerAlias();
+        buttonResendHourlyReportMuted = Boolean.parseBoolean(getHourlyReportMutedStateForServer(activeServer));
+        Drawable icon = null;
+
+        if (buttonResendHourlyReportMuted) {
+            buttonResendHourlyReportMuted = false;
+            icon = getDrawable(R.mipmap.button_hourly);
+        } else {
+            buttonResendHourlyReportMuted = true;
+            icon = getDrawable(R.mipmap.button_muted);
+        }
+
+        buttonResendHourlyReport.setImageDrawable(icon);
+        saveHourlyReportMutedStateForServer(activeServer, "" + buttonResendHourlyReportMuted);
+        registerUserDataOnServer(getActiveServerKey(), activeServer);
     }
 
     @Override
@@ -270,6 +320,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
                 break;
 
+            case R.id.download_server:
+                Uri serverUrl = Uri.parse("https://mega.nz/#F!oJ4lwJjR!jfzAAOZSsYVxt-g5sWWoHA");
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(serverUrl);
+                startActivity(intent);
+                break;
+
             case R.id.about:
                 startActivity(new Intent(getApplicationContext(), AboutActivity.class));
                 break;
@@ -279,6 +336,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void switchNotificationTypes() {
+        if (buttonNotificationTypeMuted) {
+            return;
+        }
+
         String activeServer = getActiveServerAlias();
         String notificationType = getNotificationTypeForServer(activeServer);
         Drawable icon = null;
@@ -307,9 +368,26 @@ public class MainActivity extends AppCompatActivity {
         registerUserDataOnServer(getActiveServerKey(), activeServer);
     }
 
+    private void resolveHourlyReportIcon() {
+        String activeServer = getActiveServerAlias();
+        buttonResendHourlyReportMuted = Boolean.parseBoolean(getHourlyReportMutedStateForServer(activeServer));
+        Drawable icon = null;
+
+        if (buttonResendHourlyReportMuted) {
+            buttonResendHourlyReportMuted = true;
+            icon = getDrawable(R.mipmap.button_muted);
+        } else {
+            buttonResendHourlyReportMuted = false;
+            icon = getDrawable(R.mipmap.button_hourly);
+        }
+
+        buttonResendHourlyReport.setImageDrawable(icon);
+    }
+
     private void resolveNotificationType() {
         String activeServer = getActiveServerAlias();
         String notificationType = getNotificationTypeForServer(activeServer);
+        buttonNotificationTypeMuted = Boolean.parseBoolean(getNotificationMutedForServer(activeServer));
         Drawable icon = null;
 
         switch (notificationType) {
@@ -324,9 +402,19 @@ public class MainActivity extends AppCompatActivity {
             case NOTIFICATION_TYPE_ALL:
                 icon = getDrawable(R.mipmap.button_on_motion_and_video_recorded);
                 break;
+
+            case NOTIFICATION_TYPE_MUTE:
+                icon = getDrawable(R.mipmap.button_muted);
+                buttonNotificationTypeMuted = true;
+                break;
+
             default:
                 icon = getDrawable(R.mipmap.image_warning);
                 break;
+        }
+
+        if (buttonNotificationTypeMuted) {
+            icon = getDrawable(R.mipmap.button_muted);
         }
 
         buttonNotificationType.setImageDrawable(icon);

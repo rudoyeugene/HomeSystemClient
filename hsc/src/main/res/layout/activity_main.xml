@@ -140,6 +140,20 @@
             app:layout_constraintTop_toBottomOf="@+id/space1"
             app:srcCompat="@mipmap/button_hourly" />
 
+        <TextView
+            android:id="@+id/textViewForButtonResendHourly"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:lines="2"
+            android:text="@string/text_horly_report_button"
+            app:layout_constraintEnd_toStartOf="@+id/textViewForButtonStatistics"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonResendHourly" />
+
         <ImageButton
             android:id="@+id/buttonUsageChart"
             android:layout_width="wrap_content"
@@ -158,6 +172,19 @@
             app:layout_constraintTop_toBottomOf="@+id/space1"
             app:srcCompat="@mipmap/button_chart" />
 
+        <TextView
+            android:id="@+id/textViewForButtonStatistics"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:text="@string/text_stats_button"
+            app:layout_constraintEnd_toStartOf="@+id/textViewForButtonLog"
+            app:layout_constraintStart_toEndOf="@+id/textViewForButtonResendHourly"
+            app:layout_constraintTop_toBottomOf="@+id/buttonUsageChart" />
+
         <ImageButton
             android:id="@+id/buttonSystemLog"
             android:layout_width="wrap_content"
@@ -172,6 +199,19 @@
             app:layout_constraintStart_toEndOf="@+id/buttonUsageChart"
             app:layout_constraintTop_toTopOf="@+id/space1"
             app:srcCompat="@mipmap/button_log" />
+
+        <TextView
+            android:id="@+id/textViewForButtonLog"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:text="@string/text_log_button"
+            app:layout_constraintEnd_toStartOf="@+id/textViewForNotificationTypeButton"
+            app:layout_constraintStart_toEndOf="@+id/textViewForButtonStatistics"
+            app:layout_constraintTop_toBottomOf="@+id/buttonSystemLog" />
 
         <ImageButton
             android:id="@+id/buttonNotificationType"
@@ -192,17 +232,30 @@
             app:layout_constraintTop_toBottomOf="@+id/space1"
             app:srcCompat="@mipmap/image_warning" />
 
+        <TextView
+            android:id="@+id/textViewForNotificationTypeButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/text_notification_type_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textViewForButtonLog"
+            app:layout_constraintTop_toBottomOf="@+id/buttonNotificationType" />
+
         <Space
             android:id="@+id/space2"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonUsageChart" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewForButtonLog" />
 
         <TextView
             android:id="@+id/textViewForSwitchSystemMode"

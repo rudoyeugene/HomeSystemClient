@@ -54,14 +54,13 @@
     <string name="text_current_server">Текущий сервер:</string>
     <string name="text_day">\u0020день\u0020</string>
     <string name="text_days">\u0020дней\u0020</string>
-    <string name="text_horly_report_button">Ежечасный\nотчет</string>
+    <string name="text_horly_report_button">Отчеты</string>
     <string name="text_info_sound">Звук уведомления</string>
     <string name="text_log_button">Журнал</string>
     <string name="text_menu_system_log_clear_log">Очистить журнал</string>
     <string name="text_motion_sound">Звук движения</string>
     <string name="text_no_server">НЕТ СЕРВЕРА</string>
-    <string name="text_no_sound">Без звука</string>
-    <string name="text_notification_type_button">Тип\\nуведомлений</string>
+    <string name="text_notification_type_button">Уведомления</string>
     <string name="text_resend_hourly_request_muted">Ежечасный отчет отключен, включите чтобы изменить</string>
     <string name="text_resend_hourly_request_text">Запрос на ежечасный отчет отправлен</string>
     <string name="text_resend_hourly_text">Получить ежечасный отчет</string>
@@ -71,8 +70,8 @@
     <string name="text_server_uptime">Время в работе:</string>
     <string name="text_server_version">Версия сервера:</string>
     <string name="text_settings">Настройки</string>
-    <string name="text_stats_button">Статистика</string>
-    <string name="text_system_log_text">Открыть системный журнал</string>
+    <string name="text_stats_button">График</string>
+    <string name="text_system_log_is_empty">Системный журнал пуст</string>
     <string name="text_textViewForSwitchCollectStats">Собирать статистику если ВКЛЮЧЕН</string>
     <string name="text_textViewForSwitchHourlyReportEnabled">Отправлять ежечасный отчет если ВКЛЮЧЕН</string>
     <string name="text_textViewForSwitchHourlyReportForced">Всегда отправлять ежечасный отчет</string>
@@ -88,8 +87,6 @@
     <string name="text_toast_notification_type_motion_detected">Вы будете уведомлены в момент обнаружения движения</string>
     <string name="text_toast_notification_type_video_recorded">Вы будете уведомлены в момент загрузки видео</string>
 
-    <string name="toast_choose_camera_app_error_text">Приложение для камер не доступно, выберите желаемое</string>
-    <string name="toast_choose_camera_app_text">Приложение для камер не выбрано, выберите желаемое</string>
     <string name="toast_failed_to_register_on_server">Не удалось зарегестрироваться на сервере, попробуйте позже</string>
     <string name="toast_info_sound_changed_to">Звук уведомлений изменен на:\u0020</string>
     <string name="toast_info_sound_removed">Звук уведомлений удален</string>

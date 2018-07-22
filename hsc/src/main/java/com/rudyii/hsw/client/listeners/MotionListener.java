@@ -19,15 +19,15 @@ import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDot
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 
 /**
- * Created by j-a-c on 16.12.2017.
+ * Created by Jack on 16.12.2017.
  */
 
 public class MotionListener extends BroadcastReceiver {
-    public static String HSC_MOTION_DETECTED = "com.rudyii.hsw.client.HSC_MOTION_DETECTED";
+    public static final String HSC_MOTION_DETECTED = "com.rudyii.hsw.client.HSC_MOTION_DETECTED";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        HashMap<String, Object> motionData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_MOTION_DETECTED");
+        @SuppressWarnings("unchecked") HashMap<String, Object> motionData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_MOTION_DETECTED");
         String serverName = (String) motionData.get("serverName");
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
@@ -46,6 +46,6 @@ public class MotionListener extends BroadcastReceiver {
         }
 
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify((int) System.currentTimeMillis(), mBuilder.build());
+        Objects.requireNonNull(mNotificationManager).notify((int) System.currentTimeMillis(), mBuilder.build());
     }
 }

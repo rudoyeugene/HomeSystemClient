@@ -13,19 +13,18 @@ import android.widget.TextView;
 import com.rudyii.hsw.client.R;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.activities.SystemLogActivity.HSC_SYSTEM_LOG_ITEM_CLICKED;
 
 /**
- * Created by j-a-c on 14.01.2018.
+ * Created by Jack on 14.01.2018.
  */
 
 public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHolder> {
-    private List<LogItem> mData = Collections.emptyList();
-    private LayoutInflater mInflater;
+    private final List<LogItem> mData;
+    private final LayoutInflater mInflater;
 
     // data is passed into the constructor
     public LogListAdapter(Context context, ArrayList<LogItem> mData) {
@@ -45,7 +44,7 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, int position) {
         LogItem logItem = mData.get(position);
         holder.imageView.setImageDrawable(new BitmapDrawable(logItem.getImage()));
-        holder.logDescriptionHeader.setText(logItem.getHeader());
+        holder.logDescriptionHeader.setText(logItem.getTitle());
         holder.logDescriptionDetails.setText(logItem.getDescription());
     }
 
@@ -55,36 +54,28 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
         return mData.size();
     }
 
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-    }
-
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView logDescriptionHeader, logDescriptionDetails;
-        private ImageView imageView;
-        private Intent intent;
+        private final TextView logDescriptionHeader;
+        private final TextView logDescriptionDetails;
+        private final ImageView imageView;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             logDescriptionHeader = (TextView) itemView.findViewById(R.id.logDescriptionHeader);
             logDescriptionDetails = (TextView) itemView.findViewById(R.id.logDescriptionDetails);
             imageView = (ImageView) itemView.findViewById(R.id.logImage);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    System.out.println(getLayoutPosition());
-                    System.out.println("clicked");
-                    System.out.println("firing intent");
+            itemView.setOnClickListener(v -> {
+                System.out.println(getLayoutPosition());
+                System.out.println("clicked");
+                System.out.println("firing intent");
 
-                    Intent intent = new Intent();
-                    intent.setAction(HSC_SYSTEM_LOG_ITEM_CLICKED);
-                    intent.putExtra("itemId", getLayoutPosition());
+                Intent intent = new Intent();
+                intent.setAction(HSC_SYSTEM_LOG_ITEM_CLICKED);
+                intent.putExtra("itemId", getLayoutPosition());
 
-                    getAppContext().sendBroadcast(intent);
-                }
+                getAppContext().sendBroadcast(intent);
             });
         }
     }

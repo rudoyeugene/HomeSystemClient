@@ -17,6 +17,7 @@ import com.google.firebase.FirebaseApp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -25,12 +26,12 @@ import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServers;
 import static com.rudyii.hsw.client.helpers.Utils.stringIsEmptyOrNull;
 
 /**
- * Created by j-a-c on 16.12.2017.
+ * Created by Jack on 16.12.2017.
  */
 
 public class HomeSystemClientApplication extends Application {
-    public static String HSC_SERVER_CHANGED = "com.rudyii.hsw.client.HSC_SERVER_CHANGED";
-    public static String TAG = "HSClient";
+    public static final String HSC_SERVER_CHANGED = "com.rudyii.hsw.client.HSC_SERVER_CHANGED";
+    public static final String TAG = "HSClient";
     private static Context appContext;
 
     public static Context getAppContext() {
@@ -58,7 +59,7 @@ public class HomeSystemClientApplication extends Application {
     private void buildDynamicShortcuts() {
         if (Build.VERSION.SDK_INT >= 25) {
             ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
-            shortcutManager.removeAllDynamicShortcuts();
+            Objects.requireNonNull(shortcutManager).removeAllDynamicShortcuts();
             List<ShortcutInfo> scInfoFromXml = shortcutManager.getDynamicShortcuts();
 
             ShortcutInfo serverName = new ShortcutInfo.Builder(this, "serverName")

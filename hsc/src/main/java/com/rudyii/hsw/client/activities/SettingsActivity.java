@@ -1,9 +1,9 @@
 package com.rudyii.hsw.client.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -22,7 +22,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -43,6 +42,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static android.media.RingtoneManager.ACTION_RINGTONE_PICKER;
 import static android.media.RingtoneManager.EXTRA_RINGTONE_EXISTING_URI;
@@ -65,10 +65,12 @@ import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueTo
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
 
 public class SettingsActivity extends AppCompatActivity {
-    static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
+    private static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
     private final int QR_SCAN_CODE = 111;
     private final int INFORMATION_NOTIFICATION_SOUND_CODE = 222;
     private final int MOTION_NOTIFICATION_SOUND_CODE = 333;
+
+    @SuppressWarnings("FieldCanBeLocal")
     private Button addServerButton, removeServerButton, infoSoundButton, motionSoundButton;
     private Switch switchCollectStatsEnabled, switchMonitoringEnabled, switchHourlyReportEnabled, switchHourlyReportForced, switchVerboseOutputEnabled, switchShowMotionAreaEnabled;
     private EditText editTextForDelayedArmInterval, editTextForTextViewKeepDays, editTextForTextViewRecordInterval;
@@ -89,10 +91,10 @@ public class SettingsActivity extends AppCompatActivity {
         final ArrayList<ResolveInfoWrapper> infoWrappers = new ArrayList<>();
 
         Spinner appsList = (Spinner) findViewById(R.id.spinnerAppsList);
-        final ActivityAdapter arrayAdapter = new ActivityAdapter(getApplicationContext(), android.R.layout.simple_spinner_item, infoWrappers) {
+        final ActivityAdapter arrayAdapter = new ActivityAdapter(getApplicationContext(), infoWrappers) {
             @NonNull
             @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 if (convertView == null)
                     convertView = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_spinner_item, parent, false);
 
@@ -105,21 +107,18 @@ public class SettingsActivity extends AppCompatActivity {
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         Handler handler = new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
-                mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-                List<ResolveInfo> pkgAppsList = getPackageManager().queryIntentActivities(mainIntent, 0);
+        handler.post(() -> {
+            Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+            mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            List<ResolveInfo> pkgAppsList = getPackageManager().queryIntentActivities(mainIntent, 0);
 
-                Collections.sort(pkgAppsList, new ResolveInfo.DisplayNameComparator(getPackageManager()));
+            Collections.sort(pkgAppsList, new ResolveInfo.DisplayNameComparator(getPackageManager()));
 
-                for (ResolveInfo resolveInfo : pkgAppsList) {
-                    infoWrappers.add(new ResolveInfoWrapper(resolveInfo));
-                }
-
-                arrayAdapter.notifyDataSetChanged();
+            for (ResolveInfo resolveInfo : pkgAppsList) {
+                infoWrappers.add(new ResolveInfoWrapper(resolveInfo));
             }
+
+            arrayAdapter.notifyDataSetChanged();
         });
 
         appsList.setAdapter(arrayAdapter);
@@ -150,80 +149,64 @@ public class SettingsActivity extends AppCompatActivity {
         infoSoundButton = (Button) findViewById(R.id.buttonInfoSound);
         infoSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND)));
 
-        infoSoundButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent infoSoundIntent = new Intent(ACTION_RINGTONE_PICKER);
-                infoSoundIntent.putExtra(EXTRA_RINGTONE_TYPE, TYPE_NOTIFICATION);
-                infoSoundIntent.putExtra(EXTRA_RINGTONE_PICKED_URI, (Uri) null);
-                infoSoundIntent.putExtra(EXTRA_RINGTONE_TITLE, "Select Tone");
-                infoSoundIntent.putExtra(EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
-                startActivityForResult(infoSoundIntent, INFORMATION_NOTIFICATION_SOUND_CODE);
-            }
+        infoSoundButton.setOnClickListener(v -> {
+            Intent infoSoundIntent = new Intent(ACTION_RINGTONE_PICKER);
+            infoSoundIntent.putExtra(EXTRA_RINGTONE_TYPE, TYPE_NOTIFICATION);
+            infoSoundIntent.putExtra(EXTRA_RINGTONE_PICKED_URI, (Uri) null);
+            infoSoundIntent.putExtra(EXTRA_RINGTONE_TITLE, "Select Tone");
+            infoSoundIntent.putExtra(EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
+            startActivityForResult(infoSoundIntent, INFORMATION_NOTIFICATION_SOUND_CODE);
         });
 
         motionSoundButton = (Button) findViewById(R.id.buttonMotionSound);
         motionSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND)));
 
-        motionSoundButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent infoSoundIntent = new Intent(ACTION_RINGTONE_PICKER);
-                infoSoundIntent.putExtra(EXTRA_RINGTONE_TYPE, TYPE_NOTIFICATION);
-                infoSoundIntent.putExtra(EXTRA_RINGTONE_PICKED_URI, (Uri) null);
-                infoSoundIntent.putExtra(EXTRA_RINGTONE_TITLE, "Select Tone");
-                infoSoundIntent.putExtra(EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
-                startActivityForResult(infoSoundIntent, MOTION_NOTIFICATION_SOUND_CODE);
-            }
+        motionSoundButton.setOnClickListener(v -> {
+            Intent infoSoundIntent = new Intent(ACTION_RINGTONE_PICKER);
+            infoSoundIntent.putExtra(EXTRA_RINGTONE_TYPE, TYPE_NOTIFICATION);
+            infoSoundIntent.putExtra(EXTRA_RINGTONE_PICKED_URI, (Uri) null);
+            infoSoundIntent.putExtra(EXTRA_RINGTONE_TITLE, "Select Tone");
+            infoSoundIntent.putExtra(EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
+            startActivityForResult(infoSoundIntent, MOTION_NOTIFICATION_SOUND_CODE);
         });
 
         addServerButton = (Button) findViewById(R.id.buttonPairServer);
         addServerButton.setText(getResources().getString(R.string.button_pair_server_pair_server));
-        addServerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    Intent intent = new Intent(ACTION_SCAN);
-                    intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-                    startActivityForResult(intent, QR_SCAN_CODE);
-                } catch (ActivityNotFoundException anfe) {
-                    showDialogToDownloadQrCodeScanner(SettingsActivity.this);
-                }
+        addServerButton.setOnClickListener(v -> {
+            try {
+                Intent intent = new Intent(ACTION_SCAN);
+                intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+                startActivityForResult(intent, QR_SCAN_CODE);
+            } catch (ActivityNotFoundException anfe) {
+                showDialogToDownloadQrCodeScanner(SettingsActivity.this);
             }
         });
 
         removeServerButton = (Button) findViewById(R.id.buttonUnpairServer);
         removeServerButton.setText(getResources().getString(R.string.button_pair_server_unpair_server));
-        removeServerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder unpairServerAlert = new AlertDialog.Builder(SettingsActivity.this);
-                unpairServerAlert.setTitle(getResources().getString(R.string.dialog_server_unpair_alert_title));
-                unpairServerAlert.setMessage(getResources().getString(R.string.dialog_server_unpair_alert_message));
+        removeServerButton.setOnClickListener(v -> {
+            AlertDialog.Builder unpairServerAlert = new AlertDialog.Builder(SettingsActivity.this);
+            unpairServerAlert.setTitle(getResources().getString(R.string.dialog_server_unpair_alert_title));
+            unpairServerAlert.setMessage(getResources().getString(R.string.dialog_server_unpair_alert_message));
 
-                unpairServerAlert.setPositiveButton(getResources().getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String accountName = getDeviceId();
-                        if (!stringIsEmptyOrNull(accountName)) {
-                            getRootReference().child("/connectedClients/" + accountName).removeValue();
-                        }
+            unpairServerAlert.setPositiveButton(getResources().getString(R.string.dialog_yes), (dialogInterface, i) -> {
+                String accountName = getDeviceId();
+                if (!stringIsEmptyOrNull(accountName)) {
+                    getRootReference().child("/connectedClients/" + accountName).removeValue();
+                }
 
-                        removeServerFromServersList(getActiveServerAlias());
-                        deleteIdFromSettings(Utils.ACTIVE_SERVER);
+                removeServerFromServersList(getActiveServerAlias());
+                deleteIdFromSettings(Utils.ACTIVE_SERVER);
 
-                        new ToastDrawer().showToast(isPaired() ? getActiveServerAlias() + ": " + getResources().getString(R.string.toast_server_unpair_failure) : getResources().getString(R.string.toast_server_unpair_success));
-                        addServerButton.setText(R.string.button_pair_server_pair_server);
-                    }
-                });
+                new ToastDrawer().showToast(isPaired() ? getActiveServerAlias() + ": " + getResources().getString(R.string.toast_server_unpair_failure) : getResources().getString(R.string.toast_server_unpair_success));
+                addServerButton.setText(R.string.button_pair_server_pair_server);
+            });
 
-                unpairServerAlert.setNegativeButton(getResources().getString(R.string.dialog_no), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogInterface, int i) {
+            unpairServerAlert.setNegativeButton(getResources().getString(R.string.dialog_no), (dialogInterface, i) -> {
 
-                    }
-                });
+            });
 
-                unpairServerAlert.show();
-            }
+            unpairServerAlert.show();
         });
 
         resolveOptionsControls();
@@ -234,68 +217,50 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void resolveOptionsControls() {
         switchCollectStatsEnabled = (Switch) findViewById(R.id.switchCollectStatsEnabled);
-        switchCollectStatsEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (buttonsChangedByUser) {
-                    optionsChanged = true;
-                    options.put("collectStatistics", isChecked);
-                }
+        switchCollectStatsEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (buttonsChangedByUser) {
+                optionsChanged = true;
+                options.put("collectStatistics", isChecked);
             }
         });
 
         switchMonitoringEnabled = (Switch) findViewById(R.id.switchMonitoringEnabled);
-        switchMonitoringEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (buttonsChangedByUser) {
-                    optionsChanged = true;
-                    options.put("monitoringEnabled", isChecked);
-                }
+        switchMonitoringEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (buttonsChangedByUser) {
+                optionsChanged = true;
+                options.put("monitoringEnabled", isChecked);
             }
         });
 
         switchHourlyReportEnabled = (Switch) findViewById(R.id.switchHourlyReportEnabled);
-        switchHourlyReportEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (buttonsChangedByUser) {
-                    optionsChanged = true;
-                    options.put("hourlyReportEnabled", isChecked);
-                }
+        switchHourlyReportEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (buttonsChangedByUser) {
+                optionsChanged = true;
+                options.put("hourlyReportEnabled", isChecked);
             }
         });
 
         switchHourlyReportForced = (Switch) findViewById(R.id.switchHourlyReportForced);
-        switchHourlyReportForced.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (buttonsChangedByUser) {
-                    optionsChanged = true;
-                    options.put("hourlyReportForced", isChecked);
-                }
+        switchHourlyReportForced.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (buttonsChangedByUser) {
+                optionsChanged = true;
+                options.put("hourlyReportForced", isChecked);
             }
         });
 
         switchVerboseOutputEnabled = (Switch) findViewById(R.id.switchVerboseOutputEnabled);
-        switchVerboseOutputEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (buttonsChangedByUser) {
-                    optionsChanged = true;
-                    options.put("verboseOutputEnabled", isChecked);
-                }
+        switchVerboseOutputEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (buttonsChangedByUser) {
+                optionsChanged = true;
+                options.put("verboseOutputEnabled", isChecked);
             }
         });
 
         switchShowMotionAreaEnabled = (Switch) findViewById(R.id.switchShowMotionAreaEnabled);
-        switchShowMotionAreaEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (buttonsChangedByUser) {
-                    optionsChanged = true;
-                    options.put("showMotionArea", isChecked);
-                }
+        switchShowMotionAreaEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (buttonsChangedByUser) {
+                optionsChanged = true;
+                options.put("showMotionArea", isChecked);
             }
         });
 
@@ -398,6 +363,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     private ValueEventListener buildOptionsValueEventListener() {
         return new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
+            @SuppressWarnings("unchecked")
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 options = (Map<String, Object>) dataSnapshot.getValue();
@@ -448,21 +415,17 @@ public class SettingsActivity extends AppCompatActivity {
         AlertDialog.Builder downloadDialog = new AlertDialog.Builder(act);
         downloadDialog.setTitle(getResources().getString(R.string.dialog_download_qr_scanner_title));
         downloadDialog.setMessage(getResources().getString(R.string.dialog_download_qr_scanner_message));
-        downloadDialog.setPositiveButton(getResources().getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Uri uri = Uri.parse("market://search?q=pname:" + "com.google.zxing.client.android");
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                try {
-                    act.startActivity(intent);
-                } catch (ActivityNotFoundException anfe) {
-                    Log.e(TAG, "Failed to open Play Store.");
-                }
+        downloadDialog.setPositiveButton(getResources().getString(R.string.dialog_yes), (dialogInterface, i) -> {
+            Uri uri = Uri.parse("market://search?q=pname:" + "com.google.zxing.client.android");
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            try {
+                act.startActivity(intent);
+            } catch (ActivityNotFoundException anfe) {
+                Log.e(TAG, "Failed to open Play Store.");
             }
         });
-        downloadDialog.setNegativeButton(getResources().getString(R.string.dialog_no), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialogInterface, int i) {
+        downloadDialog.setNegativeButton(getResources().getString(R.string.dialog_no), (dialogInterface, i) -> {
 
-            }
         });
         downloadDialog.show();
     }
@@ -482,12 +445,13 @@ public class SettingsActivity extends AppCompatActivity {
         return appName;
     }
 
+    @SuppressWarnings("unchecked")
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (intent == null) {
             return;
         }
 
-        String contents, soundName = null;
+        String contents, soundName;
         Uri soundUri;
         switch (requestCode) {
             case QR_SCAN_CODE:
@@ -523,7 +487,7 @@ public class SettingsActivity extends AppCompatActivity {
                 break;
 
             case INFORMATION_NOTIFICATION_SOUND_CODE:
-                soundUri = (Uri) intent.getExtras().get("android.intent.extra.ringtone.PICKED_URI");
+                soundUri = (Uri) Objects.requireNonNull(intent.getExtras()).get("android.intent.extra.ringtone.PICKED_URI");
 
                 if (soundUri == null) {
                     deleteIdFromSettings(Utils.INFO_SOUND);
@@ -538,7 +502,7 @@ public class SettingsActivity extends AppCompatActivity {
                 break;
 
             case MOTION_NOTIFICATION_SOUND_CODE:
-                soundUri = (Uri) intent.getExtras().get("android.intent.extra.ringtone.PICKED_URI");
+                soundUri = (Uri) Objects.requireNonNull(intent.getExtras()).get("android.intent.extra.ringtone.PICKED_URI");
 
                 if (soundUri == null) {
                     deleteIdFromSettings(Utils.MOTION_SOUND);
@@ -555,9 +519,9 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private final class ResolveInfoWrapper {
-        private ResolveInfo mInfo;
+        private final ResolveInfo mInfo;
 
-        public ResolveInfoWrapper(ResolveInfo info) {
+        ResolveInfoWrapper(ResolveInfo info) {
             mInfo = info;
         }
 
@@ -566,22 +530,22 @@ public class SettingsActivity extends AppCompatActivity {
             return mInfo.loadLabel(getPackageManager()).toString();
         }
 
-        public ResolveInfo getInfo() {
+        ResolveInfo getInfo() {
             return mInfo;
         }
     }
 
     private class ActivityAdapter extends ArrayAdapter<ResolveInfoWrapper> {
-        private LayoutInflater mInflater;
+        private final LayoutInflater mInflater;
 
-        public ActivityAdapter(Context context, int resourceId, ArrayList<ResolveInfoWrapper> list) {
-            super(context, resourceId, list);
+        ActivityAdapter(Context context, ArrayList<ResolveInfoWrapper> list) {
+            super(context, android.R.layout.simple_spinner_item, list);
             mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         @NonNull
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
             final ResolveInfoWrapper info = getItem(position);
 
             View view = convertView;
@@ -591,7 +555,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
 
             final TextView textView = (TextView) view.getTag();
-            textView.setText(info.getInfo().loadLabel(getPackageManager()));
+            textView.setText(Objects.requireNonNull(info).getInfo().loadLabel(getPackageManager()));
 
             return view;
         }

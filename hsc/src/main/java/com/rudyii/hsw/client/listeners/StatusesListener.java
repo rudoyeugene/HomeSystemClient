@@ -13,19 +13,20 @@ import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.activities.MainActivity;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 
 /**
- * Created by j-a-c on 17.12.2017.
+ * Created by Jack on 17.12.2017.
  */
 
 public class StatusesListener extends BroadcastReceiver {
-    public static String HSC_STATUSES_UPDATED = "com.rudyii.hsw.client.HSC_STATUSES_UPDATED";
+    public static final String HSC_STATUSES_UPDATED = "com.rudyii.hsw.client.HSC_STATUSES_UPDATED";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        HashMap<String, Object> statusesData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_STATUSES_UPDATED");
+        @SuppressWarnings("unchecked") HashMap<String, Object> statusesData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_STATUSES_UPDATED");
         String serverName = (String) statusesData.get("serverName");
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
@@ -45,6 +46,6 @@ public class StatusesListener extends BroadcastReceiver {
                 .setSound(Uri.parse(getStringValueFromSettings("INFO_SOUND")), AudioManager.STREAM_NOTIFICATION);
 
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify((int) System.currentTimeMillis(), mBuilder.build());
+        Objects.requireNonNull(mNotificationManager).notify((int) System.currentTimeMillis(), mBuilder.build());
     }
 }

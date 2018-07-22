@@ -13,13 +13,13 @@ import java.util.Objects;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 
 /**
- * Created by j-a-c on 14.01.2018.
+ * Created by Jack on 14.01.2018.
  */
 
 public class LogItem extends View implements Comparable<LogItem> {
     private Long timestamp;
     private Bitmap image;
-    private String header, description;
+    private String title, description;
 
     public LogItem(Context context) {
         super(context);
@@ -33,7 +33,7 @@ public class LogItem extends View implements Comparable<LogItem> {
         }
 
         this.timestamp = timestamp;
-        this.header = title;
+        this.title = title;
         this.description = description;
         return this;
     }
@@ -42,8 +42,8 @@ public class LogItem extends View implements Comparable<LogItem> {
         return image;
     }
 
-    public String getHeader() {
-        return header;
+    public String getTitle() {
+        return title;
     }
 
     public String getDescription() {

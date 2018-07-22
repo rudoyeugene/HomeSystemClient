@@ -2,7 +2,6 @@ package com.rudyii.hsw.client.activities;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.ColorStateList;
@@ -19,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -36,10 +34,12 @@ import com.rudyii.hsw.client.listeners.StatusesListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import static com.rudyii.hsw.client.BuildConfig.COMPATIBLE_SERVER_VERSION;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.HSC_SERVER_CHANGED;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_ALL;
@@ -63,12 +63,14 @@ import static com.rudyii.hsw.client.helpers.Utils.switchActiveServerTo;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
 
 public class MainActivity extends AppCompatActivity {
-    private Random random = new Random();
+    private final Random random = new Random();
     private Switch systemMode, systemState, switchPorts;
+
+    @SuppressWarnings("FieldCanBeLocal")
     private ImageButton buttonResendHourlyReport, buttonUsageStats, buttonSystemLog, buttonNotificationType;
     private TextView armedModeText, armedStateText;
     private boolean buttonsChangedInternally, buttonNotificationTypeMuted, buttonResendHourlyReportMuted;
-    private MainActivityBroadcastReceiver mainActivityBroadcastReceiver = new MainActivityBroadcastReceiver();
+    private final MainActivityBroadcastReceiver mainActivityBroadcastReceiver = new MainActivityBroadcastReceiver();
     private Handler serverLastPingHandler;
     private Runnable serverLastPingRunnable;
     private ColorStateList defaultTextColor;
@@ -87,145 +89,91 @@ public class MainActivity extends AppCompatActivity {
 
         buttonResendHourlyReport = (ImageButton) findViewById(R.id.buttonResendHourly);
         resolveHourlyReportIcon();
-        buttonResendHourlyReport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (buttonResendHourlyReportMuted) {
-                    new ToastDrawer().showToast(getResources().getString(R.string.text_resend_hourly_request_muted));
-                } else {
-                    getRootReference().child("requests/resendHourly").setValue(random.nextInt(999));
-                    new ToastDrawer().showToast(getResources().getString(R.string.text_resend_hourly_request_text));
-                }
+        buttonResendHourlyReport.setOnClickListener(v -> {
+            if (buttonResendHourlyReportMuted) {
+                new ToastDrawer().showToast(getResources().getString(R.string.text_resend_hourly_request_muted));
+            } else {
+                getRootReference().child("requests/resendHourly").setValue(random.nextInt(999));
+                new ToastDrawer().showToast(getResources().getString(R.string.text_resend_hourly_request_text));
             }
         });
-        buttonResendHourlyReport.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                muteUnmuteHourlyReporting();
-                return true;
-            }
+        buttonResendHourlyReport.setOnLongClickListener(v -> {
+            muteUnmuteHourlyReporting();
+            return true;
         });
 
         buttonUsageStats = (ImageButton) findViewById(R.id.buttonUsageChart);
-        buttonUsageStats.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), UsageChartActivity.class));
-            }
-        });
-        buttonUsageStats.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                AlertDialog.Builder cleanupLog = new AlertDialog.Builder(MainActivity.this);
-                cleanupLog.setTitle(getResources().getString(R.string.dialog_cleanup_usage_stats_title));
-                cleanupLog.setMessage(getResources().getString(R.string.dialog_are_you_sure_cant_undo_alert_message));
+        buttonUsageStats.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), UsageChartActivity.class)));
+        buttonUsageStats.setOnLongClickListener(v -> {
+            AlertDialog.Builder cleanupLog = new AlertDialog.Builder(MainActivity.this);
+            cleanupLog.setTitle(getResources().getString(R.string.dialog_cleanup_usage_stats_title));
+            cleanupLog.setMessage(getResources().getString(R.string.dialog_are_you_sure_cant_undo_alert_message));
 
-                cleanupLog.setPositiveButton(getResources().getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        getRootReference().child("/usageStats").removeValue();
-                    }
-                });
+            cleanupLog.setPositiveButton(getResources().getString(R.string.dialog_yes), (dialogInterface, i) -> getRootReference().child("/usageStats").removeValue());
 
-                cleanupLog.setNegativeButton(getResources().getString(R.string.dialog_no), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogInterface, int i) {
+            cleanupLog.setNegativeButton(getResources().getString(R.string.dialog_no), (dialogInterface, i) -> {
 
-                    }
-                });
+            });
 
-                cleanupLog.show();
+            cleanupLog.show();
 
-                return true;
-            }
+            return true;
         });
 
         buttonSystemLog = (ImageButton) findViewById(R.id.buttonSystemLog);
-        buttonSystemLog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), SystemLogActivity.class));
-            }
-        });
-        buttonSystemLog.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                AlertDialog.Builder cleanupLog = new AlertDialog.Builder(MainActivity.this);
-                cleanupLog.setTitle(getResources().getString(R.string.dialog_cleanup_log_title));
-                cleanupLog.setMessage(getResources().getString(R.string.dialog_are_you_sure_cant_undo_alert_message));
+        buttonSystemLog.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), SystemLogActivity.class)));
+        buttonSystemLog.setOnLongClickListener(v -> {
+            AlertDialog.Builder cleanupLog = new AlertDialog.Builder(MainActivity.this);
+            cleanupLog.setTitle(getResources().getString(R.string.dialog_cleanup_log_title));
+            cleanupLog.setMessage(getResources().getString(R.string.dialog_are_you_sure_cant_undo_alert_message));
 
-                cleanupLog.setPositiveButton(getResources().getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        getRootReference().child("/log").removeValue();
-                    }
-                });
+            cleanupLog.setPositiveButton(getResources().getString(R.string.dialog_yes), (dialogInterface, i) -> getRootReference().child("/log").removeValue());
 
-                cleanupLog.setNegativeButton(getResources().getString(R.string.dialog_no), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialogInterface, int i) {
+            cleanupLog.setNegativeButton(getResources().getString(R.string.dialog_no), (dialogInterface, i) -> {
 
-                    }
-                });
+            });
 
-                cleanupLog.show();
+            cleanupLog.show();
 
-                return true;
-            }
-
+            return true;
         });
 
         buttonNotificationType = (ImageButton) findViewById(R.id.buttonNotificationType);
         resolveNotificationType();
-        buttonNotificationType.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (buttonNotificationTypeMuted) {
-                    new ToastDrawer().showToast(getResources().getString(R.string.text_toast_notification_muted));
-                } else {
-                    switchNotificationTypes();
-                    drawToastWithNotificationTypeInfo();
-                }
+        buttonNotificationType.setOnClickListener(v -> {
+            if (buttonNotificationTypeMuted) {
+                new ToastDrawer().showToast(getResources().getString(R.string.text_toast_notification_muted));
+            } else {
+                switchNotificationTypes();
+                drawToastWithNotificationTypeInfo();
             }
         });
-        buttonNotificationType.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                muteUnmuteButtonNotificationType();
-                return true;
-            }
+        buttonNotificationType.setOnLongClickListener(v -> {
+            muteUnmuteButtonNotificationType();
+            return true;
         });
         switchPorts = (Switch) findViewById(R.id.switchPorts);
-        switchPorts.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (buttonsChangedInternally) {
-                    return;
-                }
+        switchPorts.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (buttonsChangedInternally) {
+                return;
+            }
 
-                if (isChecked) {
-                    getRootReference().child("requests/portsOpen").setValue(true);
-                } else {
-                    getRootReference().child("requests/portsOpen").setValue(false);
-                }
+            if (isChecked) {
+                getRootReference().child("requests/portsOpen").setValue(true);
+            } else {
+                getRootReference().child("requests/portsOpen").setValue(false);
             }
         });
 
         systemMode = (Switch) findViewById(R.id.switchSystemMode);
         systemMode.setTextOn(getString(R.string.toggle_button_text_system_mode_state_automatic));
         systemMode.setTextOff(getString(R.string.toggle_button_text_system_mode_manual));
-        systemMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                calculateSystemStateBasedOn(systemMode, systemState);
-            }
-        });
+        systemMode.setOnCheckedChangeListener((buttonView, isChecked) -> calculateSystemStateBasedOn(systemMode, systemState));
 
         systemState = (Switch) findViewById(R.id.switchSystemState);
         systemState.setTextOn(getString(R.string.toggle_button_text_system_state_armed));
         systemState.setTextOff(getString(R.string.toggle_button_text_system_state_disarmed));
-        systemState.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                calculateSystemStateBasedOn(systemMode, systemState);
-            }
-        });
+        systemState.setOnCheckedChangeListener((buttonView, isChecked) -> calculateSystemStateBasedOn(systemMode, systemState));
 
         requestPermissions();
     }
@@ -234,11 +182,7 @@ public class MainActivity extends AppCompatActivity {
         String activeServer = getActiveServerAlias();
         buttonNotificationTypeMuted = Boolean.parseBoolean(getNotificationMutedForServer(activeServer));
 
-        if (buttonNotificationTypeMuted) {
-            buttonNotificationTypeMuted = false;
-        } else {
-            buttonNotificationTypeMuted = true;
-        }
+        buttonNotificationTypeMuted = !buttonNotificationTypeMuted;
 
         saveNotificationMutedForServer(activeServer, "" + buttonNotificationTypeMuted);
         resolveNotificationType();
@@ -249,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
     private void muteUnmuteHourlyReporting() {
         String activeServer = getActiveServerAlias();
         buttonResendHourlyReportMuted = Boolean.parseBoolean(getHourlyReportMutedStateForServer(activeServer));
-        Drawable icon = null;
+        Drawable icon;
 
         if (buttonResendHourlyReportMuted) {
             buttonResendHourlyReportMuted = false;
@@ -342,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
 
         String activeServer = getActiveServerAlias();
         String notificationType = getNotificationTypeForServer(activeServer);
-        Drawable icon = null;
+        Drawable icon;
 
         switch (notificationType) {
             case NOTIFICATION_TYPE_MOTION_DETECTED:
@@ -371,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
     private void resolveHourlyReportIcon() {
         String activeServer = getActiveServerAlias();
         buttonResendHourlyReportMuted = Boolean.parseBoolean(getHourlyReportMutedStateForServer(activeServer));
-        Drawable icon = null;
+        Drawable icon;
 
         if (buttonResendHourlyReportMuted) {
             buttonResendHourlyReportMuted = true;
@@ -388,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
         String activeServer = getActiveServerAlias();
         String notificationType = getNotificationTypeForServer(activeServer);
         buttonNotificationTypeMuted = Boolean.parseBoolean(getNotificationMutedForServer(activeServer));
-        Drawable icon = null;
+        Drawable icon;
 
         switch (notificationType) {
             case NOTIFICATION_TYPE_MOTION_DETECTED:
@@ -475,7 +419,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void refreshFirebaseListeners() {
+    private void refreshFirebaseListeners() {
         unsubscribeFirebaseListeners();
         subscribeFirebaseListeners();
     }
@@ -484,7 +428,7 @@ public class MainActivity extends AppCompatActivity {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final Map<String, Object> info = (Map<String, Object>) dataSnapshot.getValue();
+                @SuppressWarnings("unchecked") final Map<String, Object> info = (Map<String, Object>) dataSnapshot.getValue();
 
                 if (info == null) {
                     return;
@@ -495,6 +439,11 @@ public class MainActivity extends AppCompatActivity {
                 Long serverUptime = (long) info.get("uptime");
 
                 TextView serverVersionTextValue = (TextView) findViewById(R.id.textViewServerVersionValue);
+                if (COMPATIBLE_SERVER_VERSION.hashCode() > serverVersion.hashCode()){
+                    serverVersionTextValue.setTextColor(getApplicationContext().getColor(R.color.red));
+                } else {
+                    serverVersionTextValue.setTextColor(defaultTextColor);
+                }
                 serverVersionTextValue.setText(serverVersion);
 
                 TextView serverLastPingTextValue = (TextView) findViewById(R.id.textViewServerLastPingValue);
@@ -516,7 +465,7 @@ public class MainActivity extends AppCompatActivity {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final Map<String, Object> state = (Map<String, Object>) dataSnapshot.getValue();
+                @SuppressWarnings("unchecked") final Map<String, Object> state = (Map<String, Object>) dataSnapshot.getValue();
 
                 if (state == null) {
                     return;
@@ -579,9 +528,9 @@ public class MainActivity extends AppCompatActivity {
             builder.append(getResources().getString(R.string.text_days));
         }
 
-        builder.append(String.format("%01d:", hours))
-                .append(String.format("%02d:", minutes))
-                .append(String.format("%02d", seconds));
+        builder.append(String.format(Locale.getDefault(), "%01d:", hours))
+                .append(String.format(Locale.getDefault(), "%02d:", minutes))
+                .append(String.format(Locale.getDefault(), "%02d", seconds));
 
         return builder.toString();
     }
@@ -620,7 +569,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void buildServersList() {
         Spinner serversList = (Spinner) findViewById(R.id.spinnerServerList);
-        ArrayAdapter<String> serversArray = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, getServersList());
+        ArrayAdapter<String> serversArray = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, getServersList());
         serversArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         serversList.setAdapter(serversArray);
@@ -658,9 +607,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestPermissions() {
-        ArrayList<String> permissionsToBeRequested = new ArrayList<>();
 
-        permissionsToBeRequested.addAll(Arrays.asList(retrievePermissions()));
+        ArrayList<String> permissionsToBeRequested = new ArrayList<>(Arrays.asList(retrievePermissions()));
 
         if (permissionsToBeRequested.size() > 0) {
             String[] permissionsArray = new String[permissionsToBeRequested.size()];
@@ -674,7 +622,7 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             buttonsChangedInternally = true;
 
-            HashMap<String, Object> statusesData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_STATUSES_UPDATED");
+            @SuppressWarnings("unchecked") HashMap<String, Object> statusesData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_STATUSES_UPDATED");
 
             if (statusesData == null) {
                 return;

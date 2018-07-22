@@ -13,19 +13,20 @@ import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.activities.MainActivity;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 
 /**
- * Created by j-a-c on 18.12.2017.
+ * Created by Jack on 18.12.2017.
  */
 
 public class OfflineDeviceListener extends BroadcastReceiver {
-    public static String HSC_DEVICE_REBOOT = "com.rudyii.hsw.client.HSC_DEVICE_REBOOT";
+    public static final String HSC_DEVICE_REBOOT = "com.rudyii.hsw.client.HSC_DEVICE_REBOOT";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        HashMap<String, Object> offlineDeviceData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_DEVICE_REBOOT");
+        @SuppressWarnings("unchecked") HashMap<String, Object> offlineDeviceData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_DEVICE_REBOOT");
         String offlineDevice = (String) offlineDeviceData.get("cameraName");
         String serverName = (String) offlineDeviceData.get("serverName");
 
@@ -41,6 +42,6 @@ public class OfflineDeviceListener extends BroadcastReceiver {
                 .setSound(Uri.parse(getStringValueFromSettings("INFO_SOUND")), AudioManager.STREAM_NOTIFICATION);
 
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify((int) System.currentTimeMillis(), mBuilder.build());
+        Objects.requireNonNull(mNotificationManager).notify((int) System.currentTimeMillis(), mBuilder.build());
     }
 }

@@ -39,7 +39,7 @@ public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnS
         OnChartGestureListener, OnChartValueSelectedListener {
     private BarChart barChart;
     private TreeMap<String, Object> usageStats;
-    private DatabaseReference usageRef = getRootReference().child("/usageStats");
+    private final DatabaseReference usageRef = getRootReference().child("/usageStats");
     private Handler usageHandler;
     private Runnable usageRunnable;
 
@@ -103,7 +103,7 @@ public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnS
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String, Object> tempData = (HashMap<String, Object>) dataSnapshot.getValue();
+                @SuppressWarnings("unchecked") HashMap<String, Object> tempData = (HashMap<String, Object>) dataSnapshot.getValue();
 
                 if (tempData == null) {
                     new ToastDrawer().showToast(getResources().getString(R.string.toast_text_data_unavailable));

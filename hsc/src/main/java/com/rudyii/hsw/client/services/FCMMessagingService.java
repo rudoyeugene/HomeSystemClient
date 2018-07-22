@@ -24,11 +24,11 @@ import static com.rudyii.hsw.client.listeners.StatusesListener.HSC_STATUSES_UPDA
 import static com.rudyii.hsw.client.listeners.WanInfoListener.HSC_WAN_IP_CHANGED;
 
 /**
- * Created by j-a-c on 26.12.2017.
+ * Created by Jack on 26.12.2017.
  */
 
 public class FCMMessagingService extends FirebaseMessagingService {
-    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
     @Override
     public void onMessageReceived(RemoteMessage message) {

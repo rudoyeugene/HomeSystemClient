@@ -13,9 +13,10 @@
     <application
         android:name=".HomeSystemClientApplication"
         android:allowBackup="true"
-        android:resizeableActivity="true"
+        android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/label_app_name"
+        android:resizeableActivity="true"
         android:theme="@style/AppTheme">
 
         <meta-data
@@ -34,42 +35,56 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <meta-data android:name="android.app.shortcuts"
+            <intent-filter android:label="INDEX">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
+                <data
+                    android:host="www.example.com"
+                    android:pathPrefix="/hsc"
+                    android:scheme="http" />
+                <!-- note that the leading "/" is required for pathPrefix-->
+                <!-- Accepts URIs that begin with "example://gizmos” -->
+                <data
+                    android:host="hsc"
+                    android:scheme="example" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
 
         <activity
             android:name=".activities.SettingsActivity"
-            android:windowSoftInputMode="stateHidden"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/label_settings"
-            android:parentActivityName=".activities.MainActivity">
-        </activity>
+            android:parentActivityName=".activities.MainActivity"
+            android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".activities.AboutActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/label_about"
-            android:parentActivityName=".activities.MainActivity">
-        </activity>
+            android:parentActivityName=".activities.MainActivity" />
 
         <activity
             android:name=".activities.SystemLogActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/label_system_log"
-            android:parentActivityName=".activities.MainActivity">
-        </activity>
+            android:parentActivityName=".activities.MainActivity" />
 
         <activity
             android:name=".activities.UsageChartActivity"
             android:label="@string/label_usage_chart"
-            android:parentActivityName=".activities.MainActivity">
-        </activity>
+            android:parentActivityName=".activities.MainActivity" />
 
-        <activity android:name=".activities.ShortcutsActionProcessor"
+        <activity
+            android:name=".activities.ShortcutsActionProcessor"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.Material.Light.Dialog.Alert">
-        </activity>
+            android:theme="@android:style/Theme.Material.Light.Dialog.Alert" />
 
         <receiver android:name=".Autorun">
             <intent-filter>
@@ -113,7 +128,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".listeners.ServerShutdownListener" >
+        <receiver android:name=".listeners.ServerShutdownListener">
             <intent-filter>
                 <action android:name="com.rudyii.hsw.client.HSC_SERVER_STOPPED" />
             </intent-filter>
@@ -134,7 +149,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
         <meta-data
             android:name="io.fabric.ApiKey"

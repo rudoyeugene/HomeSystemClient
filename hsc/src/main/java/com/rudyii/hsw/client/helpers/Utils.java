@@ -3,7 +3,7 @@ package com.rudyii.hsw.client.helpers;
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.ActivityManager;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -44,9 +45,10 @@ import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueTo
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getCustomReference;
 
 /**
- * Created by j-a-c on 18.12.2017.
+ * Created by Jack on 18.12.2017.
  */
 
+@SuppressWarnings("WeakerAccess")
 public class Utils {
     public static final String SERVER_LIST = "SERVER_LIST";
     public static final String NOTIFICATION_TYPES = "NOTIFICATION_TYPES";
@@ -59,9 +61,8 @@ public class Utils {
     public static final String NOTIFICATION_TYPE_VIDEO_RECORDED = "videoRecorded";
     public static final String NOTIFICATION_TYPE_ALL = "all";
     public static final String NOTIFICATION_TYPE_MUTE = "mute";
-    public static final String HOURLY_REPORT_MUTE = "mute";
+    public static final Locale currentLocale = getAppContext().getResources().getConfiguration().locale;
     private static final String HOURLY_REPORT_STATE = "HOURLY_REPORT_STATE";
-    public static Locale currentLocale = getAppContext().getResources().getConfiguration().locale;
 
     public static String getCurrentTimeAndDateDoubleDotsDelimFrom(Long timeStamp) {
         if (timeStamp == null) {
@@ -90,16 +91,6 @@ public class Utils {
     public static String getSoundNameBy(String soundUri) {
         Ringtone ringtone = RingtoneManager.getRingtone(getAppContext(), Uri.parse(soundUri));
         return ringtone.getTitle(getAppContext());
-    }
-
-    public static boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getAppContext().getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public static boolean isPaired() {
@@ -188,15 +179,16 @@ public class Utils {
         return result;
     }
 
+    @SuppressLint("HardwareIds")
     public static String getDeviceId() {
         String serviceName = Context.TELEPHONY_SERVICE;
         TelephonyManager m_telephonyManager = (TelephonyManager) getAppContext().getSystemService(serviceName);
-        String deviceId = "";
+        String deviceId;
 
         if (ActivityCompat.checkSelfPermission(getAppContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             deviceId = Settings.Secure.getString(getAppContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         } else {
-            deviceId = m_telephonyManager.getDeviceId();
+            deviceId = Objects.requireNonNull(m_telephonyManager).getDeviceId();
         }
 
         return deviceId;
@@ -259,7 +251,7 @@ public class Utils {
         return stringIsEmptyOrNull(getHourlyReportMutedStates().get(serverName)) ? "false" : getHourlyReportMutedStates().get(serverName);
     }
 
-    public static void saveHourlyReportMutedStateForServer(String serverName, String state){
+    public static void saveHourlyReportMutedStateForServer(String serverName, String state) {
         HashMap<String, String> states = getHourlyReportMutedStates();
         states.put(serverName, state);
         saveMapToSettings(states, HOURLY_REPORT_STATE);
@@ -299,27 +291,15 @@ public class Utils {
         return !stringIsEmptyOrNull(string);
     }
 
-    public static boolean switchActiveServerTo(String serverAlias) {
-        HashMap<String, String> serverListMap = getMapWithServers();
-
-        if (serverListMap.containsKey(serverAlias)) {
-            saveStringValueToSettings(ACTIVE_SERVER, serverAlias);
-            return true;
-        } else {
-            return false;
-        }
+    public static void switchActiveServerTo(String serverAlias) {
+        saveStringValueToSettings(ACTIVE_SERVER, serverAlias);
     }
 
-    public static boolean removeServerFromServersList(String serverAlias) {
+    public static void removeServerFromServersList(String serverAlias) {
         HashMap<String, String> serverListMap = getMapWithServers();
 
-        if (serverListMap.containsKey(serverAlias)) {
-            serverListMap.remove(serverAlias);
-            saveMapToSettings(serverListMap, SERVER_LIST);
-            return true;
-        } else {
-            return false;
-        }
+        serverListMap.remove(serverAlias);
+        saveMapToSettings(serverListMap, SERVER_LIST);
     }
 
     public static String getActiveServerAlias() {
@@ -377,10 +357,11 @@ public class Utils {
         saveMapToSettings(serversNotificationTypes, NOTIFICATION_TYPES);
     }
 
+    @SuppressWarnings("unchecked")
     private static Map<String, String> getMapFromSettings(String id) {
         String mapJson = getStringValueFromSettings(id);
         Gson gson = new Gson();
-        return gson.fromJson(mapJson, HashMap.class) == null ? new HashMap<String, String>() : new HashMap<>(gson.fromJson(mapJson, HashMap.class));
+        return gson.fromJson(mapJson, HashMap.class) == null ? new HashMap<>() : new HashMap<>(gson.fromJson(mapJson, HashMap.class));
     }
 
     public static void saveMapToSettings(Map<String, String> map, String id) {
@@ -421,6 +402,7 @@ public class Utils {
             final File motionImage = new File(directory, imageName);
 
             if (!motionImage.exists()) {
+                //noinspection ResultOfMethodCallIgnored
                 motionImage.createNewFile();
             }
 

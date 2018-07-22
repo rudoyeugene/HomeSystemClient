@@ -76,11 +76,7 @@ public class DatabaseProvider {
         }
         cursor.close();
 
-        if (result == null) {
-            return 0L;
-        } else {
-            return result;
-        }
+        return result;
     }
 
     public static void deleteIdFromSettings(String id) {

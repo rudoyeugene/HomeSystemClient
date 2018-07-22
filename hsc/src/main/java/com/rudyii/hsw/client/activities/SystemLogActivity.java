@@ -30,13 +30,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.helpers.LogItem;
 import com.rudyii.hsw.client.helpers.LogListAdapter;
+import com.rudyii.hsw.client.helpers.ToastDrawer;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
@@ -44,22 +43,26 @@ import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDot
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateSingleDotDelimFrom;
 import static com.rudyii.hsw.client.helpers.Utils.saveImageFromCamera;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
+import static java.util.Collections.reverse;
 
 /**
- * Created by j-a-c on 14.01.2018.
+ * Created by Jack on 14.01.2018.
  */
 
 public class SystemLogActivity extends AppCompatActivity {
-    public static String HSC_SYSTEM_LOG_ITEM_CLICKED = "com.rudyii.hsw.client.HSC_SYSTEM_LOG_ITEM_CLICKED";
+    public static final String HSC_SYSTEM_LOG_ITEM_CLICKED = "com.rudyii.hsw.client.HSC_SYSTEM_LOG_ITEM_CLICKED";
 
+    @SuppressWarnings("FieldCanBeLocal")
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
+
+    @SuppressWarnings("FieldCanBeLocal")
     private LinearLayoutManager mLayoutManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private ArrayList<LogItem> systemLog = new ArrayList<>();
+    private final ArrayList<LogItem> systemLog = new ArrayList<>();
     private DatabaseReference logRef;
     private ValueEventListener logValueEventListener;
-    private SystemLogBroadcastReceiver systemLogBroadcastReceiver = new SystemLogBroadcastReceiver();
+    private final SystemLogBroadcastReceiver systemLogBroadcastReceiver = new SystemLogBroadcastReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,24 +168,22 @@ public class SystemLogActivity extends AppCompatActivity {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final HashMap<String, Map<String, Object>> logMap = (HashMap<String, Map<String, Object>>) dataSnapshot.getValue();
+                @SuppressWarnings("unchecked") final HashMap<String, Map<String, Object>> logMap = (HashMap<String, Map<String, Object>>) dataSnapshot.getValue();
 
                 if (logMap == null) {
+                    new ToastDrawer().showToast(getString(R.string.text_system_log_is_empty));
                     return;
                 }
-
-                TreeMap<String, Map<String, Object>> treeMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-                treeMap.putAll(logMap);
 
                 mSwipeRefreshLayout.setRefreshing(true);
                 systemLog.clear();
 
-                TreeSet<LogItem> sortedLogItems = new TreeSet<>();
-                for (Map.Entry<String, Map<String, Object>> entry : treeMap.entrySet()) {
-                    sortedLogItems.add(buildAndFillLogItem(Long.valueOf(entry.getKey()), entry.getValue()));
+                for (Map.Entry<String, Map<String, Object>> entry : logMap.entrySet()) {
+                    systemLog.add(buildAndFillLogItem(Long.valueOf(entry.getKey()), entry.getValue()));
                 }
 
-                systemLog.addAll(sortedLogItems);
+                reverse(systemLog);
+
                 mSwipeRefreshLayout.setRefreshing(false);
                 mAdapter.notifyDataSetChanged();
             }
@@ -197,7 +198,7 @@ public class SystemLogActivity extends AppCompatActivity {
     private LogItem buildAndFillLogItem(Long logRecordId, Map<String, Object> logRecordData) {
         String reason = (String) logRecordData.get("reason");
         String title = getCurrentTimeAndDateDoubleDotsDelimFrom(logRecordId);
-        Intent intent = null;
+        Intent intent;
         LogItem logItem = null;
         Bitmap image = null;
         String description = null;

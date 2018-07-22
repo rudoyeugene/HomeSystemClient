@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.rudyii.hsw.client.R;
 
 /**
- * Created by j-a-c on 29.12.2017.
+ * Created by Jack on 29.12.2017.
  */
 
 public class AboutActivity extends AppCompatActivity {
@@ -22,9 +22,8 @@ public class AboutActivity extends AppCompatActivity {
         String applicationVersion = "0";
         try {
             PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
-            String appVersion = pInfo.versionName;
 
-            applicationVersion = appVersion;
+            applicationVersion = pInfo.versionName;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }

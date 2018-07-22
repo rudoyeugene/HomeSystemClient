@@ -21,7 +21,7 @@ import static com.rudyii.hsw.client.listeners.MotionListener.HSC_MOTION_DETECTED
 import static com.rudyii.hsw.client.listeners.VideoUploadedListener.HSC_VIDEO_UPLOADED;
 
 /**
- * Created by j-a-c on 27.12.2017.
+ * Created by Jack on 27.12.2017.
  */
 
 public class FirebaseListenersFactory {
@@ -30,7 +30,7 @@ public class FirebaseListenersFactory {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final Map<String, Object> motion = (Map<String, Object>) dataSnapshot.getValue();
+                @SuppressWarnings("unchecked") final Map<String, Object> motion = (Map<String, Object>) dataSnapshot.getValue();
 
                 if (motion == null) {
                     Log.w(TAG, "Got obsolete motion link!");
@@ -78,7 +78,7 @@ public class FirebaseListenersFactory {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final Map<String, Object> record = (Map<String, Object>) dataSnapshot.getValue();
+                @SuppressWarnings("unchecked") final Map<String, Object> record = (Map<String, Object>) dataSnapshot.getValue();
 
                 if (record == null) {
                     Log.w(TAG, "Got obsolete record link!");

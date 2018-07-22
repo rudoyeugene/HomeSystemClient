@@ -16,7 +16,7 @@ public class DBInitializer extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE SETTINGS (_ID STRING UNIQUE, VALUE STRING)");
+        db.execSQL("CREATE TABLE SETTINGS (_ID TEXT UNIQUE, VALUE TEXT)");
     }
 
     @Override

@@ -13,16 +13,17 @@ import android.support.v4.app.NotificationCompat;
 import com.rudyii.hsw.client.R;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import static com.rudyii.hsw.client.helpers.Utils.INFO_SOUND;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 
 public class VideoUploadedListener extends BroadcastReceiver {
-    public static String HSC_VIDEO_UPLOADED = "com.rudyii.hsw.client.HSC_VIDEO_UPLOADED";
+    public static final String HSC_VIDEO_UPLOADED = "com.rudyii.hsw.client.HSC_VIDEO_UPLOADED";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        HashMap<String, Object> motionData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_VIDEO_UPLOADED");
+        @SuppressWarnings("unchecked") HashMap<String, Object> motionData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_VIDEO_UPLOADED");
         String serverName = (String) motionData.get("serverName");
         String url = (String) motionData.get("url");
         String fileName = (String) motionData.get("fileName");
@@ -43,7 +44,7 @@ public class VideoUploadedListener extends BroadcastReceiver {
         mBuilder.setContentIntent(openUrlIntent);
 
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify((int) System.currentTimeMillis(), mBuilder.build());
+        Objects.requireNonNull(mNotificationManager).notify((int) System.currentTimeMillis(), mBuilder.build());
 
     }
 }

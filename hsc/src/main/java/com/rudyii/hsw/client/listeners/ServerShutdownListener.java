@@ -13,19 +13,20 @@ import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.activities.MainActivity;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 
 /**
- * Created by j-a-c on 28.12.2017.
+ * Created by Jack on 28.12.2017.
  */
 
 public class ServerShutdownListener extends BroadcastReceiver {
-    public static String HSC_SERVER_STOPPED = "com.rudyii.hsw.client.HSC_SERVER_STOPPED";
+    public static final String HSC_SERVER_STOPPED = "com.rudyii.hsw.client.HSC_SERVER_STOPPED";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        HashMap<String, Object> startupData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_SERVER_STOPPED");
+        @SuppressWarnings("unchecked") HashMap<String, Object> startupData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_SERVER_STOPPED");
         String serverName = (String) startupData.get("serverName");
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
@@ -40,6 +41,6 @@ public class ServerShutdownListener extends BroadcastReceiver {
                 .setSound(Uri.parse(getStringValueFromSettings("INFO_SOUND")), AudioManager.STREAM_NOTIFICATION);
 
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify((int) System.currentTimeMillis(), mBuilder.build());
+        Objects.requireNonNull(mNotificationManager).notify((int) System.currentTimeMillis(), mBuilder.build());
     }
 }

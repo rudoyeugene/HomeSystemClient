@@ -7,11 +7,11 @@ import static com.rudyii.hsw.client.helpers.Utils.getActiveServerKey;
 import static com.rudyii.hsw.client.helpers.Utils.stringIsEmptyOrNull;
 
 /**
- * Created by j-a-c on 08.12.2017.
+ * Created by Jack on 08.12.2017.
  */
 
 public class FirebaseDatabaseProvider {
-    private static FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private static final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
     public static DatabaseReference getRootReference() {
         String serverKey = getActiveServerKey();

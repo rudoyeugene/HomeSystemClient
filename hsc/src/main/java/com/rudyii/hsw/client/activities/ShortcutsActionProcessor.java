@@ -10,12 +10,13 @@ import com.rudyii.hsw.client.R;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
 
 /**
- * Created by j-a-c on 29.12.2017.
+ * Created by Jack on 29.12.2017.
  */
 
 public class ShortcutsActionProcessor extends Activity {
@@ -41,7 +42,7 @@ public class ShortcutsActionProcessor extends Activity {
 
         Map<String, String> stateRequest = new HashMap<>();
 
-        switch (action) {
+        switch (Objects.requireNonNull(action)) {
             case "com.rudyii.hsw.client.ARM":
                 stateRequest.put("armedMode", "MANUAL");
                 stateRequest.put("armedState", "ARMED");

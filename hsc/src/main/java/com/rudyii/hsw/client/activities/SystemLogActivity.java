@@ -244,7 +244,7 @@ public class SystemLogActivity extends AppCompatActivity {
 
                 String directory = Environment.getExternalStorageDirectory().getAbsolutePath() + "/HomeSystemMotions/" + serverName + "/" + cameraName + "/";
                 String imageName = getCurrentTimeAndDateSingleDotDelimFrom(logRecordId);
-                String fileLocation = directory + imageName + ".png";
+                String fileLocation = directory + imageName + ".jpg";
                 File imageFile = new File(fileLocation);
 
                 if (!imageFile.exists()) {

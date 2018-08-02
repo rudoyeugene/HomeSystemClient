@@ -13,10 +13,10 @@ import android.support.v4.app.NotificationCompat;
 import com.rudyii.hsw.client.R;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 import static com.rudyii.hsw.client.helpers.Utils.INFO_SOUND;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
+import static java.util.Objects.requireNonNull;
 
 public class VideoUploadedListener extends BroadcastReceiver {
     public static final String HSC_VIDEO_UPLOADED = "com.rudyii.hsw.client.HSC_VIDEO_UPLOADED";
@@ -44,7 +44,7 @@ public class VideoUploadedListener extends BroadcastReceiver {
         mBuilder.setContentIntent(openUrlIntent);
 
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        Objects.requireNonNull(mNotificationManager).notify((int) System.currentTimeMillis(), mBuilder.build());
+        requireNonNull(mNotificationManager).notify((int) System.currentTimeMillis(), mBuilder.build());
 
     }
 }

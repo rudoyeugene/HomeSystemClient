@@ -13,9 +13,9 @@ import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.activities.MainActivity;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Created by Jack on 19.12.2017.
@@ -42,6 +42,6 @@ public class ServerStartupListener extends BroadcastReceiver {
                 .setSound(Uri.parse(getStringValueFromSettings("INFO_SOUND")), AudioManager.STREAM_NOTIFICATION);
 
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        Objects.requireNonNull(mNotificationManager).notify((int) System.currentTimeMillis(), mBuilder.build());
+        requireNonNull(mNotificationManager).notify((int) System.currentTimeMillis(), mBuilder.build());
     }
 }

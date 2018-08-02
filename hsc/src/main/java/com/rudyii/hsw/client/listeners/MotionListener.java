@@ -17,6 +17,7 @@ import java.util.Objects;
 
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDotsDelimFrom;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Created by Jack on 16.12.2017.
@@ -46,6 +47,6 @@ public class MotionListener extends BroadcastReceiver {
         }
 
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        Objects.requireNonNull(mNotificationManager).notify((int) System.currentTimeMillis(), mBuilder.build());
+        requireNonNull(mNotificationManager).notify((int) System.currentTimeMillis(), mBuilder.build());
     }
 }

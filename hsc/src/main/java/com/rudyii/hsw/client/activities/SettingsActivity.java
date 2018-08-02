@@ -42,7 +42,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static android.media.RingtoneManager.ACTION_RINGTONE_PICKER;
 import static android.media.RingtoneManager.EXTRA_RINGTONE_EXISTING_URI;
@@ -63,6 +62,7 @@ import static com.rudyii.hsw.client.providers.DatabaseProvider.deleteIdFromSetti
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueToSettings;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
+import static java.util.Objects.requireNonNull;
 
 public class SettingsActivity extends AppCompatActivity {
     private static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
@@ -487,7 +487,7 @@ public class SettingsActivity extends AppCompatActivity {
                 break;
 
             case INFORMATION_NOTIFICATION_SOUND_CODE:
-                soundUri = (Uri) Objects.requireNonNull(intent.getExtras()).get("android.intent.extra.ringtone.PICKED_URI");
+                soundUri = (Uri) requireNonNull(intent.getExtras()).get("android.intent.extra.ringtone.PICKED_URI");
 
                 if (soundUri == null) {
                     deleteIdFromSettings(Utils.INFO_SOUND);
@@ -502,7 +502,7 @@ public class SettingsActivity extends AppCompatActivity {
                 break;
 
             case MOTION_NOTIFICATION_SOUND_CODE:
-                soundUri = (Uri) Objects.requireNonNull(intent.getExtras()).get("android.intent.extra.ringtone.PICKED_URI");
+                soundUri = (Uri) requireNonNull(intent.getExtras()).get("android.intent.extra.ringtone.PICKED_URI");
 
                 if (soundUri == null) {
                     deleteIdFromSettings(Utils.MOTION_SOUND);
@@ -555,7 +555,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
 
             final TextView textView = (TextView) view.getTag();
-            textView.setText(Objects.requireNonNull(info).getInfo().loadLabel(getPackageManager()));
+            textView.setText(requireNonNull(info).getInfo().loadLabel(getPackageManager()));
 
             return view;
         }

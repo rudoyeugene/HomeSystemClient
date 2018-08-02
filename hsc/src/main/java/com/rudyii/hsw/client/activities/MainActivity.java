@@ -61,16 +61,16 @@ import static com.rudyii.hsw.client.helpers.Utils.saveNotificationMutedForServer
 import static com.rudyii.hsw.client.helpers.Utils.saveNotificationTypeForServer;
 import static com.rudyii.hsw.client.helpers.Utils.switchActiveServerTo;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
+import static java.util.Objects.requireNonNull;
 
 public class MainActivity extends AppCompatActivity {
     private final Random random = new Random();
+    private final MainActivityBroadcastReceiver mainActivityBroadcastReceiver = new MainActivityBroadcastReceiver();
     private Switch systemMode, systemState, switchPorts;
-
     @SuppressWarnings("FieldCanBeLocal")
     private ImageButton buttonResendHourlyReport, buttonUsageStats, buttonSystemLog, buttonNotificationType;
     private TextView armedModeText, armedStateText;
     private boolean buttonsChangedInternally, buttonNotificationTypeMuted, buttonResendHourlyReportMuted;
-    private final MainActivityBroadcastReceiver mainActivityBroadcastReceiver = new MainActivityBroadcastReceiver();
     private Handler serverLastPingHandler;
     private Runnable serverLastPingRunnable;
     private ColorStateList defaultTextColor;
@@ -439,7 +439,7 @@ public class MainActivity extends AppCompatActivity {
                 Long serverUptime = (long) info.get("uptime");
 
                 TextView serverVersionTextValue = (TextView) findViewById(R.id.textViewServerVersionValue);
-                if (COMPATIBLE_SERVER_VERSION.hashCode() > serverVersion.hashCode()){
+                if (COMPATIBLE_SERVER_VERSION.hashCode() > serverVersion.hashCode()) {
                     serverVersionTextValue.setTextColor(getApplicationContext().getColor(R.color.red));
                 } else {
                     serverVersionTextValue.setTextColor(defaultTextColor);
@@ -628,13 +628,13 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            armedModeText.setText((String) statusesData.get("systemModeText"));
-            armedModeText.setTextColor((int) statusesData.get("systemModeTextColor"));
+            requireNonNull(armedModeText).setText((String) statusesData.get("systemModeText"));
+            requireNonNull(armedModeText).setTextColor((int) statusesData.get("systemModeTextColor"));
 
-            armedStateText.setText((String) statusesData.get("systemStateText"));
-            armedStateText.setTextColor((int) statusesData.get("systemStateTextColor"));
+            requireNonNull(armedStateText).setText((String) statusesData.get("systemStateText"));
+            requireNonNull(armedStateText).setTextColor((int) statusesData.get("systemStateTextColor"));
 
-            switchPorts.setChecked((boolean) statusesData.get("portsState"));
+            requireNonNull(switchPorts).setChecked((boolean) statusesData.get("portsState"));
 
             updateModeStateButtons(statusesData);
 

@@ -17,13 +17,13 @@ import com.google.firebase.FirebaseApp;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import io.fabric.sdk.android.Fabric;
 
 import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
 import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServers;
 import static com.rudyii.hsw.client.helpers.Utils.stringIsEmptyOrNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Created by Jack on 16.12.2017.
@@ -59,7 +59,7 @@ public class HomeSystemClientApplication extends Application {
     private void buildDynamicShortcuts() {
         if (Build.VERSION.SDK_INT >= 25) {
             ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
-            Objects.requireNonNull(shortcutManager).removeAllDynamicShortcuts();
+            requireNonNull(shortcutManager).removeAllDynamicShortcuts();
             List<ShortcutInfo> scInfoFromXml = shortcutManager.getDynamicShortcuts();
 
             ShortcutInfo serverName = new ShortcutInfo.Builder(this, "serverName")

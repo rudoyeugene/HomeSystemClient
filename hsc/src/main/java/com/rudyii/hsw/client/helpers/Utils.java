@@ -34,7 +34,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -43,6 +42,7 @@ import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueToSettings;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getCustomReference;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Created by Jack on 18.12.2017.
@@ -188,7 +188,7 @@ public class Utils {
         if (ActivityCompat.checkSelfPermission(getAppContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             deviceId = Settings.Secure.getString(getAppContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         } else {
-            deviceId = Objects.requireNonNull(m_telephonyManager).getDeviceId();
+            deviceId = requireNonNull(m_telephonyManager).getDeviceId();
         }
 
         return deviceId;

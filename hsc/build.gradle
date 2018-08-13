@@ -30,8 +30,8 @@ android {
         applicationId "com.rudyii.hsw.client"
         minSdkVersion 23
         targetSdkVersion 25
-        versionCode 17
-        versionName "1.1.17"
+        versionCode 18
+        versionName "1.1.18"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
     }
@@ -41,6 +41,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "String", "COMPATIBLE_SERVER_VERSION", "\"1.2.1\""
         }
+        debug {
+            applicationIdSuffix ".debug"
+            debuggable true
+            buildConfigField "String", "COMPATIBLE_SERVER_VERSION", "\"1.2.1\""
+        }
+
     }
     packagingOptions {
         exclude 'LICENSE.txt'

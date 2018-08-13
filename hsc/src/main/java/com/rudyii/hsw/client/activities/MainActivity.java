@@ -591,7 +591,10 @@ public class MainActivity extends AppCompatActivity {
                     currentItem[0] = selected;
                     switchActiveServerTo(selectedServerName);
                     ((TextView) convertView).setText(selectedServerName);
+
                     refreshFirebaseListeners();
+                    resolveHourlyReportIcon();
+                    resolveNotificationType();
 
                     Intent intent = new Intent();
                     intent.setAction(HSC_SERVER_CHANGED);

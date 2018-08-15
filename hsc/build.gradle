@@ -30,8 +30,8 @@ android {
         applicationId "com.rudyii.hsw.client"
         minSdkVersion 23
         targetSdkVersion 25
-        versionCode 18
-        versionName "1.1.18"
+        versionCode 19
+        versionName '1.1.19'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
     }
@@ -42,11 +42,9 @@ android {
             buildConfigField "String", "COMPATIBLE_SERVER_VERSION", "\"1.2.1\""
         }
         debug {
-            applicationIdSuffix ".debug"
             debuggable true
             buildConfigField "String", "COMPATIBLE_SERVER_VERSION", "\"1.2.1\""
         }
-
     }
     packagingOptions {
         exclude 'LICENSE.txt'
@@ -72,7 +70,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:11.6.2'
     implementation 'com.google.firebase:firebase-storage:11.6.2'
     implementation 'com.android.support:design:25.4.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2' //DO NOT UPDATE!!! Can't be a part of the ScrollView
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    //DO NOT UPDATE!!! Can't be a part of the ScrollView
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test:rules:1.0.2'

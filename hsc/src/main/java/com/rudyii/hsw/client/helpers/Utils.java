@@ -197,8 +197,8 @@ public class Utils {
     public static void registerUserDataOnServers() {
         if (!getMapWithServers().isEmpty()) {
             for (Map.Entry<String, String> entry : getMapWithServers().entrySet()) {
+                String serverName = entry.getKey();
                 String serverKey = entry.getValue();
-                String serverName = entry.getValue();
                 registerUserDataOnServer(serverKey, serverName);
             }
         }
@@ -217,7 +217,7 @@ public class Utils {
         clientData.put("notificationType", notificationType);
         clientData.put("notificationsMuted", Boolean.parseBoolean(notificationsMuted));
         clientData.put("hourlyReportMuted", Boolean.parseBoolean(hourlyReportMuted));
-        clientData.put("lastUpdated", System.currentTimeMillis());
+        clientData.put("lastRegistration", System.currentTimeMillis());
         clientData.put("token", getCurrentFcmToken());
         clientData.put("device", android.os.Build.MODEL);
         clientData.put("email", getPrimaryAccountEmail());

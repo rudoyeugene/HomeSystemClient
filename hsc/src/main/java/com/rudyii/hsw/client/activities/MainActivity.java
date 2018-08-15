@@ -595,6 +595,7 @@ public class MainActivity extends AppCompatActivity {
                     refreshFirebaseListeners();
                     resolveHourlyReportIcon();
                     resolveNotificationType();
+                    registerUserDataOnServer(getActiveServerKey(), selectedServerName);
 
                     Intent intent = new Intent();
                     intent.setAction(HSC_SERVER_CHANGED);

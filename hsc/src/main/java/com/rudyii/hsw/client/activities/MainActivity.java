@@ -66,7 +66,7 @@ import static java.util.Objects.requireNonNull;
 public class MainActivity extends AppCompatActivity {
     private final Random random = new Random();
     private final MainActivityBroadcastReceiver mainActivityBroadcastReceiver = new MainActivityBroadcastReceiver();
-    private Switch systemMode, systemState, switchPorts;
+    private Switch systemMode, systemState;
     @SuppressWarnings("FieldCanBeLocal")
     private ImageButton buttonResendHourlyReport, buttonUsageStats, buttonSystemLog, buttonNotificationType;
     private TextView armedModeText, armedStateText;
@@ -151,18 +151,6 @@ public class MainActivity extends AppCompatActivity {
         buttonNotificationType.setOnLongClickListener(v -> {
             muteUnmuteButtonNotificationType();
             return true;
-        });
-        switchPorts = (Switch) findViewById(R.id.switchPorts);
-        switchPorts.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (buttonsChangedInternally) {
-                return;
-            }
-
-            if (isChecked) {
-                getRootReference().child("requests/portsOpen").setValue(true);
-            } else {
-                getRootReference().child("requests/portsOpen").setValue(false);
-            }
         });
 
         systemMode = (Switch) findViewById(R.id.switchSystemMode);
@@ -473,13 +461,10 @@ public class MainActivity extends AppCompatActivity {
 
                 String armedMode = state.get("armedMode").toString();
                 String armedState = state.get("armedState").toString();
-                Boolean portsOpen = Boolean.valueOf(state.get("portsOpen").toString());
-                HashMap<String, Object> buttonsState = buildDataForMainActivityFrom(armedMode, armedState, portsOpen);
+                HashMap<String, Object> buttonsState = buildDataForMainActivityFrom(armedMode, armedState);
 
                 buttonsChangedInternally = true;
                 updateModeStateButtons(buttonsState);
-                switchPorts.setEnabled(true);
-                switchPorts.setChecked(portsOpen);
                 buttonsChangedInternally = false;
 
 
@@ -637,8 +622,6 @@ public class MainActivity extends AppCompatActivity {
 
             requireNonNull(armedStateText).setText((String) statusesData.get("systemStateText"));
             requireNonNull(armedStateText).setTextColor((int) statusesData.get("systemStateTextColor"));
-
-            requireNonNull(switchPorts).setChecked((boolean) statusesData.get("portsState"));
 
             updateModeStateButtons(statusesData);
 

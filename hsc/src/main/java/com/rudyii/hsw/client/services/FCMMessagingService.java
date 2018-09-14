@@ -43,10 +43,9 @@ public class FCMMessagingService extends FirebaseMessagingService {
             case "systemStateChanged":
                 String armedMode = messageData.get("armedMode");
                 String armedState = messageData.get("armedState");
-                Boolean portsOpen = Boolean.valueOf(messageData.get("portsOpen"));
 
                 intent.setAction(HSC_STATUSES_UPDATED);
-                extraData.putAll(buildDataForMainActivityFrom(armedMode, armedState, portsOpen));
+                extraData.putAll(buildDataForMainActivityFrom(armedMode, armedState));
                 intent.putExtra("HSC_STATUSES_UPDATED", extraData);
                 getAppContext().sendBroadcast(intent);
                 break;

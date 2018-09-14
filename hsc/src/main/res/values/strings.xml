@@ -28,7 +28,6 @@
     <string name="notif_text_motion_detected_on_camera">Motion detected on camera:\u0020</string>
     <string name="notif_text_ports_are">Ports\u0020</string>
     <string name="notif_text_ports_closed_text">Ports Closed</string>
-    <string name="notif_text_ports_open_text">Ports Open</string>
     <string name="notif_text_server_started">Server started with PID:\u0020</string>
     <string name="notif_text_server_stopped">Server stopped</string>
     <string name="notif_text_system_state_changed">System state changed</string>

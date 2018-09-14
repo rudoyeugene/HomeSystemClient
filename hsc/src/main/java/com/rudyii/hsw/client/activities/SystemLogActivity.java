@@ -51,18 +51,16 @@ import static java.util.Collections.reverse;
 
 public class SystemLogActivity extends AppCompatActivity {
     public static final String HSC_SYSTEM_LOG_ITEM_CLICKED = "com.rudyii.hsw.client.HSC_SYSTEM_LOG_ITEM_CLICKED";
-
+    private final ArrayList<LogItem> systemLog = new ArrayList<>();
+    private final SystemLogBroadcastReceiver systemLogBroadcastReceiver = new SystemLogBroadcastReceiver();
     @SuppressWarnings("FieldCanBeLocal")
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
-
     @SuppressWarnings("FieldCanBeLocal")
     private LinearLayoutManager mLayoutManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private final ArrayList<LogItem> systemLog = new ArrayList<>();
     private DatabaseReference logRef;
     private ValueEventListener logValueEventListener;
-    private final SystemLogBroadcastReceiver systemLogBroadcastReceiver = new SystemLogBroadcastReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,9 +205,8 @@ public class SystemLogActivity extends AppCompatActivity {
             case "systemStateChanged":
                 String armedMode = (String) logRecordData.get("armedMode");
                 String armedState = (String) logRecordData.get("armedState");
-                Boolean portsOpen = Boolean.valueOf(logRecordData.get("portsOpen").toString());
 
-                HashMap<String, Object> statusesData = buildDataForMainActivityFrom(armedMode, armedState, portsOpen);
+                HashMap<String, Object> statusesData = buildDataForMainActivityFrom(armedMode, armedState);
 
                 switch (armedState) {
                     case "ARMED":
@@ -228,8 +225,7 @@ public class SystemLogActivity extends AppCompatActivity {
 
                 description = getResources().getString(R.string.notif_text_system_state_is)
                         + statusesData.get("systemModeText")
-                        + ":" + statusesData.get("systemStateText")
-                        + ", " + ((boolean) statusesData.get("portsState") ? getResources().getString(R.string.notif_text_ports_open_text) : getResources().getString(R.string.notif_text_ports_closed_text));
+                        + ":" + statusesData.get("systemStateText");
                 break;
 
             case "motionDetected":

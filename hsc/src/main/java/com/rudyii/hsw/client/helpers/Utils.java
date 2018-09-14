@@ -111,7 +111,7 @@ public class Utils {
         return getMapWithServers().get(serverAlias);
     }
 
-    public static HashMap<String, Object> buildDataForMainActivityFrom(String mode, String state, Boolean portsState) {
+    public static HashMap<String, Object> buildDataForMainActivityFrom(String mode, String state) {
         HashMap<String, Object> result = new HashMap<>();
         switch (mode.toLowerCase()) {
             case "automatic":
@@ -137,8 +137,6 @@ public class Utils {
             default:
                 result.put("systemStateText", "UNKNOWN_STATE");
         }
-
-        result.put("portsState", portsState);
 
         if ("auto".equalsIgnoreCase(mode)) {
             result.put("systemModeTextColor", ContextCompat.getColor(getAppContext(), R.color.red));

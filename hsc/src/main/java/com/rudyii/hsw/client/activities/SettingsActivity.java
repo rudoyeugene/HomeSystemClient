@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -49,7 +51,11 @@ import static android.media.RingtoneManager.EXTRA_RINGTONE_PICKED_URI;
 import static android.media.RingtoneManager.EXTRA_RINGTONE_TITLE;
 import static android.media.RingtoneManager.EXTRA_RINGTONE_TYPE;
 import static android.media.RingtoneManager.TYPE_NOTIFICATION;
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.O;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
+import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
+import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.createNotificationChannels;
 import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
 import static com.rudyii.hsw.client.helpers.Utils.getDeviceId;
 import static com.rudyii.hsw.client.helpers.Utils.getSoundNameBy;
@@ -65,10 +71,12 @@ import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootRe
 import static java.util.Objects.requireNonNull;
 
 public class SettingsActivity extends AppCompatActivity {
+    private static final String CAMERA_SETTINGS_MAP = "CAMERA_SETTINGS_MAP";
     private static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
     private final int QR_SCAN_CODE = 111;
     private final int INFORMATION_NOTIFICATION_SOUND_CODE = 222;
     private final int MOTION_NOTIFICATION_SOUND_CODE = 333;
+    private final int CAMERA_SETTINGS_CODE = 444;
 
     @SuppressWarnings("FieldCanBeLocal")
     private Button addServerButton, removeServerButton, infoSoundButton, motionSoundButton;
@@ -90,7 +98,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         final ArrayList<ResolveInfoWrapper> infoWrappers = new ArrayList<>();
 
-        Spinner appsList = (Spinner) findViewById(R.id.spinnerAppsList);
+        Spinner appsList = findViewById(R.id.spinnerAppsList);
         final ActivityAdapter arrayAdapter = new ActivityAdapter(getApplicationContext(), infoWrappers) {
             @NonNull
             @Override
@@ -146,7 +154,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        infoSoundButton = (Button) findViewById(R.id.buttonInfoSound);
+        infoSoundButton = findViewById(R.id.buttonInfoSound);
         infoSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND)));
 
         infoSoundButton.setOnClickListener(v -> {
@@ -158,7 +166,7 @@ public class SettingsActivity extends AppCompatActivity {
             startActivityForResult(infoSoundIntent, INFORMATION_NOTIFICATION_SOUND_CODE);
         });
 
-        motionSoundButton = (Button) findViewById(R.id.buttonMotionSound);
+        motionSoundButton = findViewById(R.id.buttonMotionSound);
         motionSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND)));
 
         motionSoundButton.setOnClickListener(v -> {
@@ -170,7 +178,7 @@ public class SettingsActivity extends AppCompatActivity {
             startActivityForResult(infoSoundIntent, MOTION_NOTIFICATION_SOUND_CODE);
         });
 
-        addServerButton = (Button) findViewById(R.id.buttonPairServer);
+        addServerButton = findViewById(R.id.buttonPairServer);
         addServerButton.setText(getResources().getString(R.string.button_pair_server_pair_server));
         addServerButton.setOnClickListener(v -> {
             try {
@@ -182,7 +190,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        removeServerButton = (Button) findViewById(R.id.buttonUnpairServer);
+        removeServerButton = findViewById(R.id.buttonUnpairServer);
         removeServerButton.setText(getResources().getString(R.string.button_pair_server_unpair_server));
         removeServerButton.setOnClickListener(v -> {
             AlertDialog.Builder unpairServerAlert = new AlertDialog.Builder(SettingsActivity.this);
@@ -216,7 +224,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void resolveOptionsControls() {
-        switchCollectStatsEnabled = (Switch) findViewById(R.id.switchCollectStatsEnabled);
+        switchCollectStatsEnabled = findViewById(R.id.switchCollectStatsEnabled);
         switchCollectStatsEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (buttonsChangedByUser) {
                 optionsChanged = true;
@@ -224,7 +232,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        switchMonitoringEnabled = (Switch) findViewById(R.id.switchMonitoringEnabled);
+        switchMonitoringEnabled = findViewById(R.id.switchMonitoringEnabled);
         switchMonitoringEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (buttonsChangedByUser) {
                 optionsChanged = true;
@@ -232,7 +240,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        switchHourlyReportEnabled = (Switch) findViewById(R.id.switchHourlyReportEnabled);
+        switchHourlyReportEnabled = findViewById(R.id.switchHourlyReportEnabled);
         switchHourlyReportEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (buttonsChangedByUser) {
                 optionsChanged = true;
@@ -240,7 +248,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        switchHourlyReportForced = (Switch) findViewById(R.id.switchHourlyReportForced);
+        switchHourlyReportForced = findViewById(R.id.switchHourlyReportForced);
         switchHourlyReportForced.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (buttonsChangedByUser) {
                 optionsChanged = true;
@@ -248,7 +256,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        switchVerboseOutputEnabled = (Switch) findViewById(R.id.switchVerboseOutputEnabled);
+        switchVerboseOutputEnabled = findViewById(R.id.switchVerboseOutputEnabled);
         switchVerboseOutputEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (buttonsChangedByUser) {
                 optionsChanged = true;
@@ -256,7 +264,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        switchShowMotionAreaEnabled = (Switch) findViewById(R.id.switchShowMotionAreaEnabled);
+        switchShowMotionAreaEnabled = findViewById(R.id.switchShowMotionAreaEnabled);
         switchShowMotionAreaEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (buttonsChangedByUser) {
                 optionsChanged = true;
@@ -264,7 +272,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        editTextForDelayedArmInterval = (EditText) findViewById(R.id.editTextForDelayedArmInterval);
+        editTextForDelayedArmInterval = findViewById(R.id.editTextForDelayedArmInterval);
         editTextForDelayedArmInterval.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -280,7 +288,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        editTextForTextViewKeepDays = (EditText) findViewById(R.id.editTextForTextViewKeepDays);
+        editTextForTextViewKeepDays = findViewById(R.id.editTextForTextViewKeepDays);
         editTextForTextViewKeepDays.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -296,7 +304,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        editTextForTextViewRecordInterval = (EditText) findViewById(R.id.editTextForTextViewRecordInterval);
+        editTextForTextViewRecordInterval = findViewById(R.id.editTextForTextViewRecordInterval);
         editTextForTextViewRecordInterval.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -400,8 +408,26 @@ public class SettingsActivity extends AppCompatActivity {
                 editTextForTextViewRecordInterval.setText("" + (long) options.get("recordInterval"));
                 editTextForTextViewRecordInterval.setEnabled(true);
 
+                ConstraintLayout constraintLayout = findViewById(R.id.settingsLayout);
+                ConstraintSet set = new ConstraintSet();
+                int margin = 0;
 
-                buttonsChangedByUser = true;
+                for (Map.Entry<String, Object> cameraOptions : ((Map<String, Object>) options.get("cameras")).entrySet()) {
+                    Button aCameraOptionsButton = new Button(getAppContext());
+
+                    aCameraOptionsButton.setId(cameraOptions.getKey().hashCode());
+                    aCameraOptionsButton.setText(cameraOptions.getKey());
+
+                    aCameraOptionsButton.setOnClickListener(view -> System.out.println("done!"));
+
+                    set.connect(aCameraOptionsButton.getId(), ConstraintSet.BOTTOM, R.id.space4, ConstraintSet.BOTTOM, margin);
+                    ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_CONSTRAINT, ConstraintLayout.LayoutParams.MATCH_CONSTRAINT);
+                    constraintLayout.addView(aCameraOptionsButton, layoutParams);
+
+                    margin = +40;
+                }
+
+                set.applyTo(constraintLayout);
             }
 
             @Override
@@ -499,6 +525,11 @@ public class SettingsActivity extends AppCompatActivity {
                     new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_changed_to) + soundName);
                 }
                 infoSoundButton.setText(soundName);
+
+                if (SDK_INT >= O) {
+                    createNotificationChannels();
+                }
+
                 break;
 
             case MOTION_NOTIFICATION_SOUND_CODE:
@@ -514,6 +545,15 @@ public class SettingsActivity extends AppCompatActivity {
                     new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_changed_to) + soundName);
                 }
                 motionSoundButton.setText(soundName);
+
+                if (SDK_INT >= O) {
+                    createNotificationChannels();
+                }
+
+                break;
+
+            case CAMERA_SETTINGS_CODE:
+                Map<String, Map<String, Object>> cameraSettings = (Map<String, Map<String, Object>>) requireNonNull(intent.getExtras()).get(CAMERA_SETTINGS_MAP);
                 break;
         }
     }

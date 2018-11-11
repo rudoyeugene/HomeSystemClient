@@ -25,12 +25,10 @@
     <string name="notif_text_current_ip">, текущий IP адрес:\u0020</string>
     <string name="notif_text_current_isp">Текущий провайдер:\u0020</string>
     <string name="notif_text_isp_changed">Провайдер изменен</string>
-    <string name="notif_text_motion_detected_on_camera">Обнаружено движение на камере:\u0020</string>
-    <string name="notif_text_ports_are">Порты\u0020</string>
-    <string name="notif_text_ports_closed_text">Порты закрыты</string>
-    <string name="notif_text_server_started">Сервер запущен, ID процесса:\u0020</string>
-    <string name="notif_text_server_stopped">Сервер остановлен</string>
-    <string name="notif_text_system_state_changed">Состояние системы изменилось</string>
+    <string name="notif_text_motion_detected_on_camera">Движение:\u0020</string>
+    <string name="notif_text_server_started">Запущен</string>
+    <string name="notif_text_server_started_with_pid">ID процесса:\u0020</string>
+    <string name="notif_text_server_stopped">Остановлен</string>
     <string name="notif_text_system_state_is">Система в\u0020</string>
     <string name="notif_text_video_uploaded">Загружено новое видео</string>
 

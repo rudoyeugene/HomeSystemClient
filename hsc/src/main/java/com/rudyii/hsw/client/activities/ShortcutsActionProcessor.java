@@ -26,9 +26,9 @@ public class ShortcutsActionProcessor extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shortcuts);
 
-        TextView shortcutsActivityDialogText = (TextView) findViewById(R.id.shortcutsActivityDialogText);
+        TextView shortcutsActivityDialogText = findViewById(R.id.shortcutsActivityDialogText);
 
-        TextView textView = (TextView) findViewById(android.R.id.title);
+        TextView textView = findViewById(android.R.id.title);
         if (textView != null) {
             textView.setGravity(Gravity.CENTER);
         }

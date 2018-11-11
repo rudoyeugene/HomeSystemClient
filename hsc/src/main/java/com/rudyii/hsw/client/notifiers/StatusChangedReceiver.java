@@ -1,8 +1,7 @@
-package com.rudyii.hsw.client.listeners;
+package com.rudyii.hsw.client.notifiers;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -14,6 +13,8 @@ import com.rudyii.hsw.client.activities.MainActivity;
 
 import java.util.HashMap;
 
+import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
+import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_NORMAL;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static java.util.Objects.requireNonNull;
 
@@ -21,24 +22,19 @@ import static java.util.Objects.requireNonNull;
  * Created by Jack on 17.12.2017.
  */
 
-public class StatusesListener extends BroadcastReceiver {
-    public static final String HSC_STATUSES_UPDATED = "com.rudyii.hsw.client.HSC_STATUSES_UPDATED";
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        @SuppressWarnings("unchecked") HashMap<String, Object> statusesData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_STATUSES_UPDATED");
+public class StatusChangedReceiver {
+    public static void notifyAboutSystemStateChanged(HashMap<String, Object> statusesData) {
+        Context context = getAppContext();
         String serverName = (String) statusesData.get("serverName");
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_NORMAL)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle(serverName + ": " + context.getResources().getString(R.string.notif_text_system_state_changed))
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(context.getResources().getString(R.string.notif_text_system_state_is)
-                                + statusesData.get("systemModeText")
-                                + ":" + statusesData.get("systemStateText")))
+                .setContentTitle(serverName + ": "
+                        + statusesData.get("systemModeText")
+                        + ":" + statusesData.get("systemStateText"))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[]{0, 500})

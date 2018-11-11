@@ -1,8 +1,7 @@
-package com.rudyii.hsw.client.listeners;
+package com.rudyii.hsw.client.notifiers;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,25 +13,24 @@ import com.rudyii.hsw.client.R;
 
 import java.util.HashMap;
 
+import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
+import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_NORMAL;
 import static com.rudyii.hsw.client.helpers.Utils.INFO_SOUND;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static java.util.Objects.requireNonNull;
 
-public class VideoUploadedListener extends BroadcastReceiver {
-    public static final String HSC_VIDEO_UPLOADED = "com.rudyii.hsw.client.HSC_VIDEO_UPLOADED";
+public class VideoUploadedReceiver {
+    public static void notifyAboutNewVideoUploaded(HashMap<String, Object> videoData) {
+        Context context = getAppContext();
+        String serverName = (String) videoData.get("serverName");
+        String url = (String) videoData.get("url");
+        String fileName = (String) videoData.get("fileName");
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        @SuppressWarnings("unchecked") HashMap<String, Object> motionData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_VIDEO_UPLOADED");
-        String serverName = (String) motionData.get("serverName");
-        String url = (String) motionData.get("url");
-        String fileName = (String) motionData.get("fileName");
-
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_NORMAL)
                 .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle(serverName + ": " + context.getResources().getString(R.string.notif_text_video_uploaded))
                 .setContentText(fileName)
-                .setStyle(new NotificationCompat.BigPictureStyle().bigPicture((Bitmap) motionData.get("image")))
+                .setStyle(new NotificationCompat.BigPictureStyle().bigPicture((Bitmap) videoData.get("image")))
                 .setAutoCancel(true)
                 .setVibrate(new long[]{0, 200, 200, 200, 200, 200})
                 .setSound(Uri.parse(getStringValueFromSettings(INFO_SOUND)), AudioManager.STREAM_NOTIFICATION);
@@ -45,6 +43,5 @@ public class VideoUploadedListener extends BroadcastReceiver {
 
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         requireNonNull(mNotificationManager).notify((int) System.currentTimeMillis(), mBuilder.build());
-
     }
 }

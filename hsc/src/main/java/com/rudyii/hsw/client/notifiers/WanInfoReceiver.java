@@ -1,8 +1,7 @@
-package com.rudyii.hsw.client.listeners;
+package com.rudyii.hsw.client.notifiers;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -14,6 +13,8 @@ import com.rudyii.hsw.client.activities.MainActivity;
 
 import java.util.HashMap;
 
+import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
+import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_HIGH;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static java.util.Objects.requireNonNull;
 
@@ -21,18 +22,15 @@ import static java.util.Objects.requireNonNull;
  * Created by Jack on 18.12.2017.
  */
 
-public class WanInfoListener extends BroadcastReceiver {
-    public static final String HSC_WAN_IP_CHANGED = "com.rudyii.hsw.client.HSC_WAN_IP_CHANGED";
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        @SuppressWarnings("unchecked") HashMap<String, Object> wanInfoData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_WAN_IP_CHANGED");
+public class WanInfoReceiver {
+    public static void notifyAboutWanChanges(HashMap<String, Object> wanInfoData) {
+        Context context = getAppContext();
         String serverName = (String) wanInfoData.get("serverName");
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_HIGH)
                 .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle(serverName + ": " + context.getResources().getString(R.string.notif_text_isp_changed))
                 .setStyle(new NotificationCompat.BigTextStyle()

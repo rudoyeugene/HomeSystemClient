@@ -1,6 +1,5 @@
 package com.rudyii.hsw.client.helpers;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
@@ -14,11 +13,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
-import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateSingleDotDelimFrom;
 import static com.rudyii.hsw.client.helpers.Utils.saveImageFromCamera;
-import static com.rudyii.hsw.client.listeners.MotionListener.HSC_MOTION_DETECTED;
-import static com.rudyii.hsw.client.listeners.VideoUploadedListener.HSC_VIDEO_UPLOADED;
+import static com.rudyii.hsw.client.notifiers.MotionDetectedNotifier.notifyAboutMotionDetected;
+import static com.rudyii.hsw.client.notifiers.VideoUploadedReceiver.notifyAboutNewVideoUploaded;
 
 /**
  * Created by Jack on 27.12.2017.
@@ -61,10 +59,7 @@ public class FirebaseListenersFactory {
 
                 motionData.put("image", bitmap);
 
-                Intent intent = new Intent();
-                intent.setAction(HSC_MOTION_DETECTED);
-                intent.putExtra("HSC_MOTION_DETECTED", motionData);
-                getAppContext().sendBroadcast(intent);
+                notifyAboutMotionDetected(motionData);
             }
 
             @Override
@@ -104,10 +99,7 @@ public class FirebaseListenersFactory {
 
                 recordData.put("image", bitmap);
 
-                Intent intent = new Intent();
-                intent.setAction(HSC_VIDEO_UPLOADED);
-                intent.putExtra("HSC_VIDEO_UPLOADED", recordData);
-                getAppContext().sendBroadcast(intent);
+                notifyAboutNewVideoUploaded(recordData);
             }
 
             @Override

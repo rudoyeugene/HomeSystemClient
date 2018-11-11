@@ -76,11 +76,11 @@ public class SystemLogActivity extends AppCompatActivity {
 
         logRef.addValueEventListener(logValueEventListener);
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setEnabled(false);
         mSwipeRefreshLayout.setRefreshing(false);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.logRecyclerView);
+        mRecyclerView = findViewById(R.id.logRecyclerView);
         mRecyclerView.setHasFixedSize(false);
 
         DefaultItemAnimator itemAnimator = new DefaultItemAnimator();

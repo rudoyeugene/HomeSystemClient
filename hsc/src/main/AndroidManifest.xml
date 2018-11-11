@@ -92,48 +92,6 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".listeners.MotionListener">
-            <intent-filter>
-                <action android:name="com.rudyii.hsw.client.HSC_MOTION_DETECTED" />
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".listeners.VideoUploadedListener">
-            <intent-filter>
-                <action android:name="com.rudyii.hsw.client.HSC_VIDEO_UPLOADED" />
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".listeners.StatusesListener">
-            <intent-filter>
-                <action android:name="com.rudyii.hsw.client.HSC_STATUSES_UPDATED" />
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".listeners.WanInfoListener">
-            <intent-filter>
-                <action android:name="com.rudyii.hsw.client.HSC_WAN_IP_CHANGED" />
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".listeners.OfflineDeviceListener">
-            <intent-filter>
-                <action android:name="com.rudyii.hsw.client.HSC_DEVICE_REBOOT" />
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".listeners.ServerStartupListener">
-            <intent-filter>
-                <action android:name="com.rudyii.hsw.client.HSC_SERVER_STARTED" />
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".listeners.ServerShutdownListener">
-            <intent-filter>
-                <action android:name="com.rudyii.hsw.client.HSC_SERVER_STOPPED" />
-            </intent-filter>
-        </receiver>
-
         <service android:name=".services.FCMService" />
 
         <service android:name=".services.FCMMessagingService">

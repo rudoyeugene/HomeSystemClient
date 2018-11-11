@@ -1,8 +1,7 @@
-package com.rudyii.hsw.client.listeners;
+package com.rudyii.hsw.client.notifiers;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -14,28 +13,26 @@ import com.rudyii.hsw.client.activities.MainActivity;
 
 import java.util.HashMap;
 
+import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
+import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_HIGH;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Created by Jack on 18.12.2017.
+ * Created by Jack on 28.12.2017.
  */
 
-public class OfflineDeviceListener extends BroadcastReceiver {
-    public static final String HSC_DEVICE_REBOOT = "com.rudyii.hsw.client.HSC_DEVICE_REBOOT";
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        @SuppressWarnings("unchecked") HashMap<String, Object> offlineDeviceData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_DEVICE_REBOOT");
-        String offlineDevice = (String) offlineDeviceData.get("cameraName");
-        String serverName = (String) offlineDeviceData.get("serverName");
+public class ServerShutdownNotifier {
+    public static void notifyAboutServerStopped(HashMap<String, Object> shutdownData) {
+        Context context = getAppContext();
+        String serverName = (String) shutdownData.get("serverName");
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_HIGH)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle(serverName + ": " + offlineDevice + context.getResources().getString(R.string.notif_text_camera_is_rebooting))
+                .setContentTitle(serverName + ": " + context.getResources().getString(R.string.notif_text_server_stopped))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[]{0, 500})

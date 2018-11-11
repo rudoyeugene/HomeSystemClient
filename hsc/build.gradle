@@ -4,12 +4,15 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'io.fabric.tools:gradle:1.26.1'
     }
 }
 apply plugin: 'com.android.application'
 
 repositories {
+    google()
+    jcenter()
+    mavenLocal()
     maven { url 'https://maven.fabric.io/public' }
 }
 
@@ -19,19 +22,19 @@ android {
         config {
             keyAlias 'jack'
             keyPassword 'scienide'
-            storeFile file('D:/Dropbox/Jack/Android/play_store.jks')
+            storeFile file('C:/Dropbox/Jack/Android/play_store.jks')
             storePassword 'scienide'
         }
     }
-    compileSdkVersion 26
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 27
+    buildToolsVersion '28.0.3'
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.rudyii.hsw.client"
         minSdkVersion 23
-        targetSdkVersion 25
-        versionCode 20
-        versionName '1.1.20'
+        targetSdkVersion 27
+        versionCode 27
+        versionName '1.1.27'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
     }
@@ -58,24 +61,26 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.android.gms:play-services-auth:16.0.0'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.volley:volley:1.1.0'
+    implementation 'com.android.volley:volley:1.1.1'
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.google.firebase:firebase-core:16.0.3'
-    implementation 'com.google.firebase:firebase-messaging:17.3.0'
-    implementation 'com.google.firebase:firebase-database:16.0.1'
-    implementation 'com.google.firebase:firebase-storage:16.0.1'
-    implementation 'com.android.support:design:26.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    //DO NOT UPDATE!!! Can't be a part of the ScrollView
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'com.android.support:support-annotations:27.1.1'
+    //GMS part
+    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    implementation 'com.google.firebase:firebase-core:16.0.5'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
+    implementation 'com.google.firebase:firebase-database:16.0.4'
+    implementation 'com.google.firebase:firebase-storage:16.0.4'
+
+    //DO NOT UPDATE all the below
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
-    androidTestImplementation 'com.android.support:support-annotations:26.1.0'
 }
 
 apply plugin: 'io.fabric'

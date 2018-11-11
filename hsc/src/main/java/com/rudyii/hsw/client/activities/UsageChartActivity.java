@@ -37,9 +37,9 @@ import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootRe
 
 public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener,
         OnChartGestureListener, OnChartValueSelectedListener {
+    private final DatabaseReference usageRef = getRootReference().child("/usageStats");
     private BarChart barChart;
     private TreeMap<String, Object> usageStats;
-    private final DatabaseReference usageRef = getRootReference().child("/usageStats");
     private Handler usageHandler;
     private Runnable usageRunnable;
 
@@ -51,7 +51,7 @@ public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnS
 
         setContentView(R.layout.activity_usage_chart);
 
-        barChart = (BarChart) findViewById(R.id.usageChart);
+        barChart = findViewById(R.id.usageChart);
         barChart.setOnChartGestureListener(this);
         barChart.setOnChartValueSelectedListener(this);
         barChart.setDrawGridBackground(false);

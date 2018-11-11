@@ -28,7 +28,7 @@ public class AboutActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        TextView aboutTextView = (TextView) findViewById(R.id.aboutTextView);
+        TextView aboutTextView = findViewById(R.id.aboutTextView);
         aboutTextView.setText(String.format(getResources().getString(R.string.text_about), applicationVersion));
     }
 }

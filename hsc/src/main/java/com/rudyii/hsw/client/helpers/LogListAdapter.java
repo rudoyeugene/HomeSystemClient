@@ -62,9 +62,9 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
 
         ViewHolder(View itemView) {
             super(itemView);
-            logDescriptionHeader = (TextView) itemView.findViewById(R.id.logDescriptionHeader);
-            logDescriptionDetails = (TextView) itemView.findViewById(R.id.logDescriptionDetails);
-            imageView = (ImageView) itemView.findViewById(R.id.logImage);
+            logDescriptionHeader = itemView.findViewById(R.id.logDescriptionHeader);
+            logDescriptionDetails = itemView.findViewById(R.id.logDescriptionDetails);
+            imageView = itemView.findViewById(R.id.logImage);
 
             itemView.setOnClickListener(v -> {
                 System.out.println(getLayoutPosition());

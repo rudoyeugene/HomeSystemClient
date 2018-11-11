@@ -1,6 +1,5 @@
 package com.rudyii.hsw.client.services;
 
-import android.content.Intent;
 import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
@@ -12,16 +11,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
-import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.helpers.FirebaseListenersFactory.buildMotionRefValueEventListener;
 import static com.rudyii.hsw.client.helpers.FirebaseListenersFactory.buildRecordRefValueEventListener;
 import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
 import static com.rudyii.hsw.client.helpers.Utils.getServerKeyFromAlias;
-import static com.rudyii.hsw.client.listeners.OfflineDeviceListener.HSC_DEVICE_REBOOT;
-import static com.rudyii.hsw.client.listeners.ServerShutdownListener.HSC_SERVER_STOPPED;
-import static com.rudyii.hsw.client.listeners.ServerStartupListener.HSC_SERVER_STARTED;
-import static com.rudyii.hsw.client.listeners.StatusesListener.HSC_STATUSES_UPDATED;
-import static com.rudyii.hsw.client.listeners.WanInfoListener.HSC_WAN_IP_CHANGED;
+import static com.rudyii.hsw.client.notifiers.OfflineDeviceReceiver.notifyAboutDeviceGoneOffline;
+import static com.rudyii.hsw.client.notifiers.ServerShutdownNotifier.notifyAboutServerStopped;
+import static com.rudyii.hsw.client.notifiers.ServerStartupNotifier.notifyAboutServerStarted;
+import static com.rudyii.hsw.client.notifiers.StatusChangedReceiver.notifyAboutSystemStateChanged;
+import static com.rudyii.hsw.client.notifiers.WanInfoReceiver.notifyAboutWanChanges;
 
 /**
  * Created by Jack on 26.12.2017.
@@ -33,21 +31,18 @@ public class FCMMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage message) {
         Map<String, String> messageData = message.getData();
-        HashMap<String, Object> extraData = new HashMap<>();
+        HashMap<String, Object> data = new HashMap<>();
         String serverName = messageData.get("serverName");
-        extraData.put("serverName", serverName);
-
-        Intent intent = new Intent();
+        data.put("serverName", serverName);
 
         switch (message.getData().get("reason")) {
             case "systemStateChanged":
                 String armedMode = messageData.get("armedMode");
                 String armedState = messageData.get("armedState");
 
-                intent.setAction(HSC_STATUSES_UPDATED);
-                extraData.putAll(buildDataForMainActivityFrom(armedMode, armedState));
-                intent.putExtra("HSC_STATUSES_UPDATED", extraData);
-                getAppContext().sendBroadcast(intent);
+                data.putAll(buildDataForMainActivityFrom(armedMode, armedState));
+
+                notifyAboutSystemStateChanged(data);
                 break;
 
             case "motionDetected":
@@ -66,23 +61,18 @@ public class FCMMessagingService extends FirebaseMessagingService {
                 String currentIsp = messageData.get("isp");
                 String currentWanIp = messageData.get("ip");
 
-                extraData.put("wanIp", currentWanIp);
-                extraData.put("isp", currentIsp);
+                data.put("wanIp", currentWanIp);
+                data.put("isp", currentIsp);
 
-                intent = new Intent();
-                intent.setAction(HSC_WAN_IP_CHANGED);
-                intent.putExtra("HSC_WAN_IP_CHANGED", extraData);
-                getAppContext().sendBroadcast(intent);
+                notifyAboutWanChanges(data);
                 break;
 
             case "cameraReboot":
                 String cameraInReboot = messageData.get("cameraName");
 
-                extraData.put("cameraName", cameraInReboot);
+                data.put("cameraName", cameraInReboot);
 
-                intent.setAction(HSC_DEVICE_REBOOT);
-                intent.putExtra("HSC_DEVICE_REBOOT", extraData);
-                getAppContext().sendBroadcast(intent);
+                notifyAboutDeviceGoneOffline(data);
                 break;
 
             case "serverStartupOrShutdown":
@@ -91,22 +81,18 @@ public class FCMMessagingService extends FirebaseMessagingService {
                 switch (action) {
                     case "starting":
                         String serverPid = messageData.get("pid");
-                        extraData.put("serverPid", serverPid);
-                        intent.setAction(HSC_SERVER_STARTED);
-                        intent.putExtra("HSC_SERVER_STARTED", extraData);
+                        data.put("serverPid", serverPid);
+                        notifyAboutServerStarted(data);
                         break;
 
                     case "stopping":
-                        intent.setAction(HSC_SERVER_STOPPED);
-                        intent.putExtra("HSC_SERVER_STOPPED", extraData);
+                        notifyAboutServerStopped(data);
                         break;
 
                     default:
                         Log.e(TAG, "Something wrong is happening with the server, please check urgently!");
                         break;
                 }
-
-                getAppContext().sendBroadcast(intent);
                 break;
 
             default:

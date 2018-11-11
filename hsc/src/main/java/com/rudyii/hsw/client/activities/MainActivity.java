@@ -29,7 +29,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.helpers.ToastDrawer;
-import com.rudyii.hsw.client.listeners.StatusesListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,9 +38,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.N_MR1;
 import static com.rudyii.hsw.client.BuildConfig.COMPATIBLE_SERVER_VERSION;
-import static com.rudyii.hsw.client.HomeSystemClientApplication.HSC_SERVER_CHANGED;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
+import static com.rudyii.hsw.client.helpers.ShortcutsBuilder.buildDynamicShortcuts;
 import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_ALL;
 import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_MOTION_DETECTED;
 import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_MUTE;
@@ -64,6 +65,7 @@ import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootRe
 import static java.util.Objects.requireNonNull;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String HSC_STATUSES_UPDATED = "HSC_STATUSES_UPDATED";
     private final Random random = new Random();
     private final MainActivityBroadcastReceiver mainActivityBroadcastReceiver = new MainActivityBroadcastReceiver();
     private Switch systemMode, systemState;
@@ -84,10 +86,10 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        TextView serverLastPingTextValue = (TextView) findViewById(R.id.textViewServerVersion);
+        TextView serverLastPingTextValue = findViewById(R.id.textViewServerVersion);
         defaultTextColor = serverLastPingTextValue.getTextColors();
 
-        buttonResendHourlyReport = (ImageButton) findViewById(R.id.buttonResendHourly);
+        buttonResendHourlyReport = findViewById(R.id.buttonResendHourly);
         resolveHourlyReportIcon();
         buttonResendHourlyReport.setOnClickListener(v -> {
             if (buttonResendHourlyReportMuted) {
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        buttonUsageStats = (ImageButton) findViewById(R.id.buttonUsageChart);
+        buttonUsageStats = findViewById(R.id.buttonUsageChart);
         buttonUsageStats.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), UsageChartActivity.class)));
         buttonUsageStats.setOnLongClickListener(v -> {
             AlertDialog.Builder cleanupLog = new AlertDialog.Builder(MainActivity.this);
@@ -120,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        buttonSystemLog = (ImageButton) findViewById(R.id.buttonSystemLog);
+        buttonSystemLog = findViewById(R.id.buttonSystemLog);
         buttonSystemLog.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), SystemLogActivity.class)));
         buttonSystemLog.setOnLongClickListener(v -> {
             AlertDialog.Builder cleanupLog = new AlertDialog.Builder(MainActivity.this);
@@ -138,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        buttonNotificationType = (ImageButton) findViewById(R.id.buttonNotificationType);
+        buttonNotificationType = findViewById(R.id.buttonNotificationType);
         resolveNotificationType();
         buttonNotificationType.setOnClickListener(v -> {
             if (buttonNotificationTypeMuted) {
@@ -153,12 +155,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        systemMode = (Switch) findViewById(R.id.switchSystemMode);
+        systemMode = findViewById(R.id.switchSystemMode);
         systemMode.setTextOn(getString(R.string.toggle_button_text_system_mode_state_automatic));
         systemMode.setTextOff(getString(R.string.toggle_button_text_system_mode_manual));
         systemMode.setOnCheckedChangeListener((buttonView, isChecked) -> calculateSystemStateBasedOn(systemMode, systemState));
 
-        systemState = (Switch) findViewById(R.id.switchSystemState);
+        systemState = findViewById(R.id.switchSystemState);
         systemState.setTextOn(getString(R.string.toggle_button_text_system_state_armed));
         systemState.setTextOff(getString(R.string.toggle_button_text_system_state_disarmed));
         systemState.setOnCheckedChangeListener((buttonView, isChecked) -> calculateSystemStateBasedOn(systemMode, systemState));
@@ -201,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         IntentFilter statusesUpdatedIntentFilter = new IntentFilter();
-        statusesUpdatedIntentFilter.addAction(StatusesListener.HSC_STATUSES_UPDATED);
+        statusesUpdatedIntentFilter.addAction(HSC_STATUSES_UPDATED);
         registerReceiver(mainActivityBroadcastReceiver, statusesUpdatedIntentFilter);
 
         subscribeFirebaseListeners();
@@ -426,7 +428,7 @@ public class MainActivity extends AppCompatActivity {
                 serverLastPing = (long) info.get("ping");
                 Long serverUptime = (long) info.get("uptime");
 
-                TextView serverVersionTextValue = (TextView) findViewById(R.id.textViewServerVersionValue);
+                TextView serverVersionTextValue = findViewById(R.id.textViewServerVersionValue);
                 if (COMPATIBLE_SERVER_VERSION.hashCode() > serverVersion.hashCode()) {
                     serverVersionTextValue.setTextColor(getApplicationContext().getColor(R.color.red));
                 } else {
@@ -434,10 +436,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 serverVersionTextValue.setText(serverVersion);
 
-                TextView serverLastPingTextValue = (TextView) findViewById(R.id.textViewServerLastPingValue);
+                TextView serverLastPingTextValue = findViewById(R.id.textViewServerLastPingValue);
                 serverLastPingTextValue.setText(calculatePing(serverLastPing));
 
-                TextView serverUptimeTextValue = (TextView) findViewById(R.id.textViewServerUptimeValue);
+                TextView serverUptimeTextValue = findViewById(R.id.textViewServerUptimeValue);
                 serverUptimeTextValue.setText(calculateUptime(serverUptime));
 
             }
@@ -468,7 +470,7 @@ public class MainActivity extends AppCompatActivity {
                 buttonsChangedInternally = false;
 
 
-                armedModeText = (TextView) findViewById(R.id.textViewForSwitchSystemMode);
+                armedModeText = findViewById(R.id.textViewForSwitchSystemMode);
                 armedModeText.setText(buttonsState.get("systemModeText").toString());
                 if ("auto".equalsIgnoreCase(armedMode)) {
                     armedModeText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.red));
@@ -476,7 +478,7 @@ public class MainActivity extends AppCompatActivity {
                     armedModeText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green));
                 }
 
-                armedStateText = (TextView) findViewById(R.id.textViewForSwitchSystemState);
+                armedStateText = findViewById(R.id.textViewForSwitchSystemState);
                 armedStateText.setText(buttonsState.get("systemStateText").toString());
                 if ("armed".equalsIgnoreCase(armedState)) {
                     armedStateText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.red));
@@ -533,7 +535,7 @@ public class MainActivity extends AppCompatActivity {
         serverLastPingRunnable = new Runnable() {
             @Override
             public void run() {
-                TextView serverLastPingTextValue = (TextView) findViewById(R.id.textViewServerLastPingValue);
+                TextView serverLastPingTextValue = findViewById(R.id.textViewServerLastPingValue);
                 if (serverLastPing > 0 && System.currentTimeMillis() - serverLastPing > 300000) {
                     serverLastPingTextValue.setTextColor(getApplicationContext().getColor(R.color.red));
                     if (serverLastPingTextValue.getVisibility() == View.VISIBLE) {
@@ -553,7 +555,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void buildServersList() {
-        Spinner serversList = (Spinner) findViewById(R.id.spinnerServerList);
+        Spinner serversList = findViewById(R.id.spinnerServerList);
         ArrayAdapter<String> serversArray = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, getServersList());
         serversArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -582,9 +584,9 @@ public class MainActivity extends AppCompatActivity {
                     resolveNotificationType();
                     registerUserDataOnServer(getActiveServerKey(), selectedServerName);
 
-                    Intent intent = new Intent();
-                    intent.setAction(HSC_SERVER_CHANGED);
-                    sendBroadcast(intent);
+                    if (SDK_INT >= N_MR1) {
+                        buildDynamicShortcuts();
+                    }
                 }
             }
 
@@ -611,7 +613,7 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             buttonsChangedInternally = true;
 
-            @SuppressWarnings("unchecked") HashMap<String, Object> statusesData = (HashMap<String, Object>) intent.getSerializableExtra("HSC_STATUSES_UPDATED");
+            @SuppressWarnings("unchecked") HashMap<String, Object> statusesData = (HashMap<String, Object>) intent.getSerializableExtra(HSC_STATUSES_UPDATED);
 
             if (statusesData == null) {
                 return;

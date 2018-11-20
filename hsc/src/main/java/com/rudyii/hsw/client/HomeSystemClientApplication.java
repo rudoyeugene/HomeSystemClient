@@ -10,7 +10,9 @@ import com.google.firebase.FirebaseApp;
 import io.fabric.sdk.android.Fabric;
 
 import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.N;
 import static android.os.Build.VERSION_CODES.N_MR1;
+import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.createNotificationChannels;
 import static com.rudyii.hsw.client.helpers.ShortcutsBuilder.buildDynamicShortcuts;
 import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServers;
 
@@ -36,8 +38,12 @@ public class HomeSystemClientApplication extends Application {
 
         registerUserDataOnServers();
 
-        if (SDK_INT >= N_MR1) {
+        if (SDK_INT > N) {
             buildDynamicShortcuts();
+        }
+
+        if (SDK_INT > N_MR1) {
+            createNotificationChannels();
         }
     }
 }

@@ -25,7 +25,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.helpers.ToastDrawer;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +33,7 @@ import java.util.TreeMap;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
+import static java.lang.String.format;
 
 public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener,
         OnChartGestureListener, OnChartValueSelectedListener {
@@ -115,19 +115,18 @@ public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnS
 
                     int i = 0;
                     for (Map.Entry<String, Object> entry : usageStats.entrySet()) {
-                        BarEntry barEntry = new BarEntry((float) i++, toFloatHours((Long) entry.getValue()), entry.getValue());
+                        Long total = (Long) entry.getValue();
+                        BarEntry barEntry = new BarEntry((float) i++, (total.floatValue() / 60), entry.getValue());
 
-                        long value = (long) entry.getValue();
-
-                        if (value == 1440L) {
+                        if (total == 1440L) {
                             colors.add(R.color.red);
-                        } else if (value > 720 && value < 1440L) {
+                        } else if (total > 720 && total < 1440L) {
                             colors.add(R.color.orange);
-                        } else if (value > 480 && value < 720) {
+                        } else if (total > 480 && total < 720) {
                             colors.add(R.color.yellow);
-                        } else if (value > 240 && value < 480) {
+                        } else if (total > 240 && total < 480) {
                             colors.add(R.color.cyan);
-                        } else if (value < 240) {
+                        } else if (total < 240) {
                             colors.add(R.color.green);
                         }
 
@@ -135,9 +134,13 @@ public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnS
                         labels.add(entry.getKey());
                     }
 
-                    BarDataSet dataSet = new BarDataSet(values, String.format(getResources().getString(R.string.text_bar_data_usage_for),
+                    BarDataSet dataSet = new BarDataSet(values, format(getResources().getString(R.string.text_bar_data_usage_for),
                             usageStats.size(), usageStats.size() > 1 ? getResources().getString(R.string.text_days) : getResources().getString(R.string.text_day)));
                     dataSet.setStackLabels(labels.toArray(new String[labels.size()]));
+                    dataSet.setValueFormatter((value, entry, dataSetIndex, viewPortHandler) -> {
+                        Integer minutes = ((Float)(60 * (value - ((Float) value).intValue()))).intValue();
+                        return ((Float) value).intValue() + ":" + (minutes < 10 ? "0" + minutes : minutes);
+                    });
 
                     int[] colorArray = new int[colors.size()];
                     for (int i1 = 0; i1 < colorArray.length; i1++) {
@@ -172,14 +175,6 @@ public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnS
 
             }
         };
-    }
-
-    private Float toFloatHours(Long minutes) {
-        BigDecimal minsInHours = BigDecimal.valueOf(60L);
-        BigDecimal totalMinutes = BigDecimal.valueOf(minutes);
-
-        BigDecimal[] result = totalMinutes.divideAndRemainder(minsInHours);
-        return Float.parseFloat(result[0] + "." + result[1]);
     }
 
     @Override

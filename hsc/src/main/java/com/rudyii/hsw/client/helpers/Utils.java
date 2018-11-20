@@ -14,6 +14,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
@@ -256,8 +257,7 @@ public class Utils {
     }
 
     private static String getSimplifiedPrimaryAccountName() {
-        AccountManager accountManager = AccountManager.get(getAppContext());
-        Account[] accounts = accountManager.getAccountsByType("com.google");
+        Account[] accounts = getAccounts();
         String simplifiedAccountName = "";
 
         if (accounts.length > 0) {
@@ -270,15 +270,14 @@ public class Utils {
     }
 
     private static String getPrimaryAccountEmail() {
-        AccountManager accountManager = AccountManager.get(getAppContext());
-        Account[] accounts = accountManager.getAccountsByType("com.google");
-        String simplifiedAccountName = "";
+        Account[] accounts = getAccounts();
+        String primaryAccountEmail = "";
 
         if (accounts.length > 0) {
-            simplifiedAccountName = accounts[0].name;
+            primaryAccountEmail = accounts[0].name;
         }
 
-        return simplifiedAccountName;
+        return primaryAccountEmail;
     }
 
     public static boolean stringIsEmptyOrNull(String string) {
@@ -307,7 +306,7 @@ public class Utils {
     public static String getActiveServerKey() {
         HashMap<String, String> availableServers = getMapWithServers();
         String activeServerAlias = getActiveServerAlias();
-        return availableServers.get(activeServerAlias) == null ? "" : availableServers.get(activeServerAlias);
+        return availableServers.get(activeServerAlias) == null ? "dummyServer" : availableServers.get(activeServerAlias);
     }
 
     public static ArrayList<String> getServersList() {
@@ -424,5 +423,10 @@ public class Utils {
                 e.printStackTrace();
             }
         }
+    }
+
+    @NonNull
+    private static Account[] getAccounts() {
+        return AccountManager.get(getAppContext()).getAccountsByType("com.google");
     }
 }

@@ -39,7 +39,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.N_MR1;
+import static android.os.Build.VERSION_CODES.N;
 import static com.rudyii.hsw.client.BuildConfig.COMPATIBLE_SERVER_VERSION;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.helpers.ShortcutsBuilder.buildDynamicShortcuts;
@@ -584,7 +584,7 @@ public class MainActivity extends AppCompatActivity {
                     resolveNotificationType();
                     registerUserDataOnServer(getActiveServerKey(), selectedServerName);
 
-                    if (SDK_INT >= N_MR1) {
+                    if (SDK_INT > N) {
                         buildDynamicShortcuts();
                     }
                 }

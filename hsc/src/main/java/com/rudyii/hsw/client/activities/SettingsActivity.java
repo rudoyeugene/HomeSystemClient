@@ -2,6 +2,8 @@ package com.rudyii.hsw.client.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +12,8 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -55,7 +59,8 @@ import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.O;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
-import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.createNotificationChannels;
+import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_HIGH;
+import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_NORMAL;
 import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
 import static com.rudyii.hsw.client.helpers.Utils.getDeviceId;
 import static com.rudyii.hsw.client.helpers.Utils.getSoundNameBy;
@@ -94,7 +99,11 @@ public class SettingsActivity extends AppCompatActivity {
 
         Log.i(TAG, "Settings Activity created");
 
-        setContentView(R.layout.activity_settings);
+        if (SDK_INT < O) {
+            setContentView(R.layout.activity_settings);
+        } else {
+            setContentView(R.layout.activity_settings_oreo);
+        }
 
         final ArrayList<ResolveInfoWrapper> infoWrappers = new ArrayList<>();
 
@@ -114,7 +123,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        Handler handler = new Handler();
+        Handler handler = new Handler(Looper.getMainLooper());
         handler.post(() -> {
             Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
             mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -154,29 +163,31 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        infoSoundButton = findViewById(R.id.buttonInfoSound);
-        infoSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND)));
+        if (SDK_INT < O) {
+            infoSoundButton = findViewById(R.id.buttonInfoSound);
+            infoSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND)));
 
-        infoSoundButton.setOnClickListener(v -> {
-            Intent infoSoundIntent = new Intent(ACTION_RINGTONE_PICKER);
-            infoSoundIntent.putExtra(EXTRA_RINGTONE_TYPE, TYPE_NOTIFICATION);
-            infoSoundIntent.putExtra(EXTRA_RINGTONE_PICKED_URI, (Uri) null);
-            infoSoundIntent.putExtra(EXTRA_RINGTONE_TITLE, "Select Tone");
-            infoSoundIntent.putExtra(EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
-            startActivityForResult(infoSoundIntent, INFORMATION_NOTIFICATION_SOUND_CODE);
-        });
+            infoSoundButton.setOnClickListener(v -> {
+                Intent infoSoundIntent = new Intent(ACTION_RINGTONE_PICKER);
+                infoSoundIntent.putExtra(EXTRA_RINGTONE_TYPE, TYPE_NOTIFICATION);
+                infoSoundIntent.putExtra(EXTRA_RINGTONE_PICKED_URI, (Uri) null);
+                infoSoundIntent.putExtra(EXTRA_RINGTONE_TITLE, "Select Tone");
+                infoSoundIntent.putExtra(EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
+                startActivityForResult(infoSoundIntent, INFORMATION_NOTIFICATION_SOUND_CODE);
+            });
 
-        motionSoundButton = findViewById(R.id.buttonMotionSound);
-        motionSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND)));
+            motionSoundButton = findViewById(R.id.buttonMotionSound);
+            motionSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND)));
 
-        motionSoundButton.setOnClickListener(v -> {
-            Intent infoSoundIntent = new Intent(ACTION_RINGTONE_PICKER);
-            infoSoundIntent.putExtra(EXTRA_RINGTONE_TYPE, TYPE_NOTIFICATION);
-            infoSoundIntent.putExtra(EXTRA_RINGTONE_PICKED_URI, (Uri) null);
-            infoSoundIntent.putExtra(EXTRA_RINGTONE_TITLE, "Select Tone");
-            infoSoundIntent.putExtra(EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
-            startActivityForResult(infoSoundIntent, MOTION_NOTIFICATION_SOUND_CODE);
-        });
+            motionSoundButton.setOnClickListener(v -> {
+                Intent infoSoundIntent = new Intent(ACTION_RINGTONE_PICKER);
+                infoSoundIntent.putExtra(EXTRA_RINGTONE_TYPE, TYPE_NOTIFICATION);
+                infoSoundIntent.putExtra(EXTRA_RINGTONE_PICKED_URI, (Uri) null);
+                infoSoundIntent.putExtra(EXTRA_RINGTONE_TITLE, "Select Tone");
+                infoSoundIntent.putExtra(EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
+                startActivityForResult(infoSoundIntent, MOTION_NOTIFICATION_SOUND_CODE);
+            });
+        }
 
         addServerButton = findViewById(R.id.buttonPairServer);
         addServerButton.setText(getResources().getString(R.string.button_pair_server_pair_server));
@@ -220,7 +231,6 @@ public class SettingsActivity extends AppCompatActivity {
         resolveOptionsControls();
         deactivateOptionsControls();
         updateOptions();
-
     }
 
     private void resolveOptionsControls() {
@@ -513,43 +523,53 @@ public class SettingsActivity extends AppCompatActivity {
                 break;
 
             case INFORMATION_NOTIFICATION_SOUND_CODE:
-                soundUri = (Uri) requireNonNull(intent.getExtras()).get("android.intent.extra.ringtone.PICKED_URI");
+                if (SDK_INT < O) {
+                    soundUri = (Uri) requireNonNull(intent.getExtras()).get("android.intent.extra.ringtone.PICKED_URI");
 
-                if (soundUri == null) {
-                    deleteIdFromSettings(Utils.INFO_SOUND);
-                    soundName = getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND));
-                    new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_removed));
+                    if (soundUri == null) {
+                        deleteIdFromSettings(Utils.INFO_SOUND);
+                        soundName = getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND));
+                        new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_removed));
+                    } else {
+                        saveStringValueToSettings(Utils.INFO_SOUND, soundUri.toString());
+                        soundName = getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND));
+                        new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_changed_to) + soundName);
+                    }
+                    infoSoundButton.setText(soundName);
                 } else {
-                    saveStringValueToSettings(Utils.INFO_SOUND, soundUri.toString());
-                    soundName = getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND));
-                    new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_changed_to) + soundName);
-                }
-                infoSoundButton.setText(soundName);
+                    NotificationManager notificationManager = (NotificationManager) getAppContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    NotificationChannel notificationChannelNormal = notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_NORMAL);
 
-                if (SDK_INT >= O) {
-                    createNotificationChannels();
+                    intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+                    intent.putExtra(Settings.EXTRA_CHANNEL_ID, notificationChannelNormal.getId());
+                    startActivity(intent);
                 }
-
                 break;
 
             case MOTION_NOTIFICATION_SOUND_CODE:
-                soundUri = (Uri) requireNonNull(intent.getExtras()).get("android.intent.extra.ringtone.PICKED_URI");
+                if (SDK_INT < O) {
+                    soundUri = (Uri) requireNonNull(intent.getExtras()).get("android.intent.extra.ringtone.PICKED_URI");
 
-                if (soundUri == null) {
-                    deleteIdFromSettings(Utils.MOTION_SOUND);
-                    soundName = getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND));
-                    new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_removed));
+                    if (soundUri == null) {
+                        deleteIdFromSettings(Utils.MOTION_SOUND);
+                        soundName = getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND));
+                        new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_removed));
+                    } else {
+                        saveStringValueToSettings(Utils.MOTION_SOUND, soundUri.toString());
+                        soundName = getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND));
+                        new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_changed_to) + soundName);
+                    }
+                    motionSoundButton.setText(soundName);
                 } else {
-                    saveStringValueToSettings(Utils.MOTION_SOUND, soundUri.toString());
-                    soundName = getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND));
-                    new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_changed_to) + soundName);
-                }
-                motionSoundButton.setText(soundName);
+                    NotificationManager notificationManager = (NotificationManager) getAppContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    NotificationChannel notificationChannelHigh = notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_HIGH);
 
-                if (SDK_INT >= O) {
-                    createNotificationChannels();
+                    intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+                    intent.putExtra(Settings.EXTRA_CHANNEL_ID, notificationChannelHigh.getId());
+                    startActivity(intent);
                 }
-
                 break;
 
             case CAMERA_SETTINGS_CODE:

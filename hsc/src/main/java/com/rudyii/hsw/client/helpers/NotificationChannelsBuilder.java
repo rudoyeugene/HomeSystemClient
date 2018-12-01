@@ -4,13 +4,12 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.media.AudioAttributes;
-import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 
 import static android.os.Build.VERSION_CODES.O;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
-import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 
 public class NotificationChannelsBuilder {
     public static final String NOTIFICATION_CHANNEL_HIGH = "HSC_PopUp";
@@ -29,7 +28,7 @@ public class NotificationChannelsBuilder {
         if (notificationChannelHigh == null) {
             int importance = NotificationManager.IMPORTANCE_HIGH;
             notificationChannelHigh = new NotificationChannel(NOTIFICATION_CHANNEL_HIGH, NOTIFICATION_CHANNEL_HIGH, importance);
-            notificationChannelHigh.setSound(Uri.parse(getStringValueFromSettings("MOTION_SOUND")), audioAttributes);
+            notificationChannelHigh.setSound(Settings.System.DEFAULT_NOTIFICATION_URI, audioAttributes);
             enableLightsAndVibration(notificationChannelHigh);
             notificationManager.createNotificationChannel(notificationChannelHigh);
         }
@@ -38,7 +37,7 @@ public class NotificationChannelsBuilder {
         if (notificationChannelNormal == null) {
             int importance = NotificationManager.IMPORTANCE_DEFAULT; //Set the importance level
             notificationChannelNormal = new NotificationChannel(NOTIFICATION_CHANNEL_NORMAL, NOTIFICATION_CHANNEL_NORMAL, importance);
-            notificationChannelNormal.setSound(Uri.parse(getStringValueFromSettings("INFO_SOUND")), audioAttributes);
+            notificationChannelNormal.setSound(Settings.System.DEFAULT_NOTIFICATION_URI, audioAttributes);
             enableLightsAndVibration(notificationChannelNormal);
             notificationManager.createNotificationChannel(notificationChannelNormal);
         }
@@ -47,7 +46,7 @@ public class NotificationChannelsBuilder {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private static void enableLightsAndVibration(NotificationChannel notificationChannelNormal) {
         notificationChannelNormal.enableLights(true);
-        notificationChannelNormal.enableVibration(true); //Set if it is necesssary
+        notificationChannelNormal.enableVibration(true);
     }
 
 }

@@ -59,6 +59,13 @@
         </activity>
 
         <activity
+            android:name=".activities.ServerSharingActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/label_share_server"
+            android:parentActivityName=".activities.MainActivity"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
             android:name=".activities.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/label_settings"
@@ -87,6 +94,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@android:style/Theme.Material.Light.Dialog.Alert" />
 
+
         <receiver android:name=".Autorun">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -95,7 +103,8 @@
 
         <service android:name=".services.FCMService" />
 
-        <service android:name=".services.FCMMessagingService"
+        <service
+            android:name=".services.FCMMessagingService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

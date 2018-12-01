@@ -3,5 +3,6 @@
 
     <item android:title="@string/text_settings" android:id="@+id/settings"/>
     <item android:title="@string/label_download_server" android:id="@+id/download_server"/>
+    <item android:title="@string/label_share_server" android:id="@+id/share_server"/>
     <item android:title="@string/label_about" android:id="@+id/about"/>
 </menu>

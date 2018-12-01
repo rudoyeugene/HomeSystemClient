@@ -261,6 +261,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
 
+            case R.id.share_server:
+                startActivity(new Intent(getApplicationContext(), ServerSharingActivity.class));
+                break;
+
             case R.id.about:
                 startActivity(new Intent(getApplicationContext(), AboutActivity.class));
                 break;

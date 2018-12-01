@@ -12,7 +12,6 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -63,6 +62,7 @@ import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICA
 import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_NORMAL;
 import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
 import static com.rudyii.hsw.client.helpers.Utils.getDeviceId;
+import static com.rudyii.hsw.client.helpers.Utils.getLooper;
 import static com.rudyii.hsw.client.helpers.Utils.getSoundNameBy;
 import static com.rudyii.hsw.client.helpers.Utils.isPaired;
 import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServer;
@@ -123,7 +123,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        Handler handler = new Handler(Looper.getMainLooper());
+        Handler handler = new Handler(getLooper());
         handler.post(() -> {
             Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
             mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -135,7 +135,7 @@ public class SettingsActivity extends AppCompatActivity {
                 infoWrappers.add(new ResolveInfoWrapper(resolveInfo));
             }
 
-            arrayAdapter.notifyDataSetChanged();
+            runOnUiThread(arrayAdapter::notifyDataSetChanged);
         });
 
         appsList.setAdapter(arrayAdapter);

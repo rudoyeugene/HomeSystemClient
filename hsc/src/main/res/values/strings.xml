@@ -17,6 +17,7 @@
     <string name="label_app_name">Home System Client</string>
     <string name="label_download_server">Download Server</string>
     <string name="label_settings">Settings</string>
+    <string name="label_share_server">Share server</string>
     <string name="label_system_log">System log</string>
     <string name="label_usage_chart">Usage chart</string>
 
@@ -81,7 +82,7 @@
     <string name="text_textViewForTextViewRecordInterval">Record video for, sec:</string>
     <string name="text_textViewSelectCameraApp">Camera app</string>
     <string name="text_toast_notification_muted">Notifications muted, unmute to change</string>
-    <string name="text_toast_notification_type_both">You\'ll be notofoed twice: as soon as new motion detected and right after video uploaded</string>
+    <string name="text_toast_notification_type_both">You\'ll be notofied twice: as soon as new motion detected and right after video uploaded</string>
     <string name="text_toast_notification_type_motion_detected">You\'ll be notified as soon as new motion detected</string>
     <string name="text_toast_notification_type_video_recorded">You\'ll be notified as soon as video recoreded and uploaded</string>
 

@@ -13,6 +13,8 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -35,6 +37,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -382,6 +385,11 @@ public class Utils {
         }
     }
 
+    public static Looper getLooper(){
+        HandlerThread thread = new HandlerThread("Thread: " + new Random().nextInt(1000));
+        thread.start();
+        return thread.getLooper();
+    }
     public static void saveImageFromCamera(Bitmap bitmap, String serverName, String cameraName, String imageName) {
         imageName = imageName + ".jpg";
 

@@ -2,8 +2,6 @@ package com.rudyii.hsw.client.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -12,10 +10,7 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -42,7 +37,6 @@ import com.rudyii.hsw.client.helpers.ToastDrawer;
 import com.rudyii.hsw.client.helpers.Utils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -57,9 +51,11 @@ import static android.media.RingtoneManager.TYPE_NOTIFICATION;
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.O;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
-import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
-import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_HIGH;
-import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_NORMAL;
+import static com.rudyii.hsw.client.activities.CameraSettingsActivity.HEALTH_CHECK_ENABLED;
+import static com.rudyii.hsw.client.activities.CameraSettingsActivity.INTERVAL;
+import static com.rudyii.hsw.client.activities.CameraSettingsActivity.MOTION_AREA;
+import static com.rudyii.hsw.client.activities.CameraSettingsActivity.NOISE_LEVEL;
+import static com.rudyii.hsw.client.activities.CameraSettingsActivity.REBOOT_TIMEOUT;
 import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
 import static com.rudyii.hsw.client.helpers.Utils.getDeviceId;
 import static com.rudyii.hsw.client.helpers.Utils.getLooper;
@@ -73,18 +69,17 @@ import static com.rudyii.hsw.client.providers.DatabaseProvider.deleteIdFromSetti
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueToSettings;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
+import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
 public class SettingsActivity extends AppCompatActivity {
-    private static final String CAMERA_SETTINGS_MAP = "CAMERA_SETTINGS_MAP";
+    public static final int CAMERA_SETTINGS_CODE = 444;
     private static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
     private final int QR_SCAN_CODE = 111;
     private final int INFORMATION_NOTIFICATION_SOUND_CODE = 222;
     private final int MOTION_NOTIFICATION_SOUND_CODE = 333;
-    private final int CAMERA_SETTINGS_CODE = 444;
-
     @SuppressWarnings("FieldCanBeLocal")
-    private Button addServerButton, removeServerButton, infoSoundButton, motionSoundButton;
+    private Button addServerButton, removeServerButton, infoSoundButton, motionSoundButton, cameraSettings;
     private Switch switchCollectStatsEnabled, switchMonitoringEnabled, switchHourlyReportEnabled, switchHourlyReportForced, switchVerboseOutputEnabled, switchShowMotionAreaEnabled;
     private EditText editTextForDelayedArmInterval, editTextForTextViewKeepDays, editTextForTextViewRecordInterval;
     private DatabaseReference optionsReference;
@@ -92,6 +87,8 @@ public class SettingsActivity extends AppCompatActivity {
     private Map<String, Object> options;
     private boolean optionsChanged = false;
     private boolean buttonsChangedByUser = true;
+    private Intent cameraSettingActivityIntent;
+    private boolean cameraSettingsChanged = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -105,6 +102,155 @@ public class SettingsActivity extends AppCompatActivity {
             setContentView(R.layout.activity_settings_oreo);
         }
 
+        buildAppsListSpinner();
+
+        if (SDK_INT < O) {
+            buildSoundSelectionButtons();
+        }
+
+        buildAddServerButton();
+
+        buildRemoveServerButton();
+
+        resolveOptionsControls();
+        deactivateOptionsControls();
+        updateOptions();
+    }
+
+    private void buildCamerasSpinner() {
+        Spinner cameras = findViewById(R.id.spinnerCameras);
+        cameraSettings = findViewById(R.id.buttonCameraSettings);
+
+        cameraSettings.setOnClickListener(view1 -> {
+            startActivityForResult(cameraSettingActivityIntent, CAMERA_SETTINGS_CODE);
+        });
+
+        final ArrayList<String> cameraNames = new ArrayList<>();
+
+        Map<String, Map<String, Object>> camerasSettings = (Map<String, Map<String, Object>>) options.get("cameras");
+
+        for (Map.Entry<String, Map<String, Object>> entrySet : camerasSettings.entrySet()) {
+            cameraNames.add(entrySet.getKey());
+        }
+
+
+        ArrayAdapter<String> camerasArray = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, cameraNames);
+        camerasArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        cameras.setAdapter(camerasArray);
+
+        final int[] currentItem = new int[1];
+        try {
+            currentItem[0] = camerasArray.getPosition(cameraNames.get(0));
+        } catch (IndexOutOfBoundsException e) {
+            Log.w(TAG, "No cameras found");
+        }
+
+        cameras.setSelection(currentItem[0]);
+        cameras.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View convertView, int selected, long current) {
+                String cameraName = (String) parent.getItemAtPosition(selected);
+                buildCameraSettingActivityIntent(cameraName);
+
+                ((TextView) convertView).setText(cameraName);
+
+                if (currentItem[0] != selected) {
+                    currentItem[0] = selected;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    @NonNull
+    private void buildCameraSettingActivityIntent(String cameraName) {
+        cameraSettingActivityIntent = new Intent(getApplicationContext(), CameraSettingsActivity.class);
+        Bundle dataBundle = new Bundle();
+        Map<String, Object> cameraOptions = (Map<String, Object>) ((Map<String, Object>) options.get("cameras")).get(cameraName);
+
+        dataBundle.putString("cameraName", cameraName);
+        for (Map.Entry<String, Object> entry : cameraOptions.entrySet()) {
+            dataBundle.putString(entry.getKey(), entry.getValue().toString());
+        }
+
+        cameraSettingActivityIntent.putExtras(dataBundle);
+    }
+
+    private void buildRemoveServerButton() {
+        removeServerButton = findViewById(R.id.buttonUnpairServer);
+        removeServerButton.setText(getResources().getString(R.string.button_pair_server_unpair_server));
+        removeServerButton.setOnClickListener(v -> {
+            AlertDialog.Builder unpairServerAlert = new AlertDialog.Builder(SettingsActivity.this);
+            unpairServerAlert.setTitle(getResources().getString(R.string.dialog_server_unpair_alert_title));
+            unpairServerAlert.setMessage(getResources().getString(R.string.dialog_server_unpair_alert_message));
+
+            unpairServerAlert.setPositiveButton(getResources().getString(R.string.dialog_yes), (dialogInterface, i) -> {
+                String accountName = getDeviceId();
+                if (!stringIsEmptyOrNull(accountName)) {
+                    getRootReference().child("/connectedClients/" + accountName).removeValue();
+                }
+
+                removeServerFromServersList(getActiveServerAlias());
+                deleteIdFromSettings(Utils.ACTIVE_SERVER);
+
+                new ToastDrawer().showToast(isPaired() ? getActiveServerAlias() + ": " + getResources().getString(R.string.toast_server_unpair_failure) : getResources().getString(R.string.toast_server_unpair_success));
+                addServerButton.setText(R.string.button_pair_server_pair_server);
+            });
+
+            unpairServerAlert.setNegativeButton(getResources().getString(R.string.dialog_no), (dialogInterface, i) -> {
+
+            });
+
+            unpairServerAlert.show();
+        });
+    }
+
+    private void buildAddServerButton() {
+        addServerButton = findViewById(R.id.buttonPairServer);
+        addServerButton.setText(getResources().getString(R.string.button_pair_server_pair_server));
+        addServerButton.setOnClickListener(v -> {
+            try {
+                Intent intent = new Intent(ACTION_SCAN);
+                intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+                startActivityForResult(intent, QR_SCAN_CODE);
+            } catch (ActivityNotFoundException anfe) {
+                showDialogToDownloadQrCodeScanner(SettingsActivity.this);
+            }
+        });
+    }
+
+    private void buildSoundSelectionButtons() {
+        infoSoundButton = findViewById(R.id.buttonInfoSound);
+        infoSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND)));
+
+        infoSoundButton.setOnClickListener(v -> {
+            Intent infoSoundIntent = new Intent(ACTION_RINGTONE_PICKER);
+            infoSoundIntent.putExtra(EXTRA_RINGTONE_TYPE, TYPE_NOTIFICATION);
+            infoSoundIntent.putExtra(EXTRA_RINGTONE_PICKED_URI, (Uri) null);
+            infoSoundIntent.putExtra(EXTRA_RINGTONE_TITLE, "Select Tone");
+            infoSoundIntent.putExtra(EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
+            startActivityForResult(infoSoundIntent, INFORMATION_NOTIFICATION_SOUND_CODE);
+        });
+
+        motionSoundButton = findViewById(R.id.buttonMotionSound);
+        motionSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND)));
+
+        motionSoundButton.setOnClickListener(v -> {
+            Intent infoSoundIntent = new Intent(ACTION_RINGTONE_PICKER);
+            infoSoundIntent.putExtra(EXTRA_RINGTONE_TYPE, TYPE_NOTIFICATION);
+            infoSoundIntent.putExtra(EXTRA_RINGTONE_PICKED_URI, (Uri) null);
+            infoSoundIntent.putExtra(EXTRA_RINGTONE_TITLE, "Select Tone");
+            infoSoundIntent.putExtra(EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
+            startActivityForResult(infoSoundIntent, MOTION_NOTIFICATION_SOUND_CODE);
+        });
+    }
+
+    private void buildAppsListSpinner() {
         final ArrayList<ResolveInfoWrapper> infoWrappers = new ArrayList<>();
 
         Spinner appsList = findViewById(R.id.spinnerAppsList);
@@ -162,75 +308,6 @@ public class SettingsActivity extends AppCompatActivity {
 
             }
         });
-
-        if (SDK_INT < O) {
-            infoSoundButton = findViewById(R.id.buttonInfoSound);
-            infoSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND)));
-
-            infoSoundButton.setOnClickListener(v -> {
-                Intent infoSoundIntent = new Intent(ACTION_RINGTONE_PICKER);
-                infoSoundIntent.putExtra(EXTRA_RINGTONE_TYPE, TYPE_NOTIFICATION);
-                infoSoundIntent.putExtra(EXTRA_RINGTONE_PICKED_URI, (Uri) null);
-                infoSoundIntent.putExtra(EXTRA_RINGTONE_TITLE, "Select Tone");
-                infoSoundIntent.putExtra(EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
-                startActivityForResult(infoSoundIntent, INFORMATION_NOTIFICATION_SOUND_CODE);
-            });
-
-            motionSoundButton = findViewById(R.id.buttonMotionSound);
-            motionSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND)));
-
-            motionSoundButton.setOnClickListener(v -> {
-                Intent infoSoundIntent = new Intent(ACTION_RINGTONE_PICKER);
-                infoSoundIntent.putExtra(EXTRA_RINGTONE_TYPE, TYPE_NOTIFICATION);
-                infoSoundIntent.putExtra(EXTRA_RINGTONE_PICKED_URI, (Uri) null);
-                infoSoundIntent.putExtra(EXTRA_RINGTONE_TITLE, "Select Tone");
-                infoSoundIntent.putExtra(EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
-                startActivityForResult(infoSoundIntent, MOTION_NOTIFICATION_SOUND_CODE);
-            });
-        }
-
-        addServerButton = findViewById(R.id.buttonPairServer);
-        addServerButton.setText(getResources().getString(R.string.button_pair_server_pair_server));
-        addServerButton.setOnClickListener(v -> {
-            try {
-                Intent intent = new Intent(ACTION_SCAN);
-                intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-                startActivityForResult(intent, QR_SCAN_CODE);
-            } catch (ActivityNotFoundException anfe) {
-                showDialogToDownloadQrCodeScanner(SettingsActivity.this);
-            }
-        });
-
-        removeServerButton = findViewById(R.id.buttonUnpairServer);
-        removeServerButton.setText(getResources().getString(R.string.button_pair_server_unpair_server));
-        removeServerButton.setOnClickListener(v -> {
-            AlertDialog.Builder unpairServerAlert = new AlertDialog.Builder(SettingsActivity.this);
-            unpairServerAlert.setTitle(getResources().getString(R.string.dialog_server_unpair_alert_title));
-            unpairServerAlert.setMessage(getResources().getString(R.string.dialog_server_unpair_alert_message));
-
-            unpairServerAlert.setPositiveButton(getResources().getString(R.string.dialog_yes), (dialogInterface, i) -> {
-                String accountName = getDeviceId();
-                if (!stringIsEmptyOrNull(accountName)) {
-                    getRootReference().child("/connectedClients/" + accountName).removeValue();
-                }
-
-                removeServerFromServersList(getActiveServerAlias());
-                deleteIdFromSettings(Utils.ACTIVE_SERVER);
-
-                new ToastDrawer().showToast(isPaired() ? getActiveServerAlias() + ": " + getResources().getString(R.string.toast_server_unpair_failure) : getResources().getString(R.string.toast_server_unpair_success));
-                addServerButton.setText(R.string.button_pair_server_pair_server);
-            });
-
-            unpairServerAlert.setNegativeButton(getResources().getString(R.string.dialog_no), (dialogInterface, i) -> {
-
-            });
-
-            unpairServerAlert.show();
-        });
-
-        resolveOptionsControls();
-        deactivateOptionsControls();
-        updateOptions();
     }
 
     private void resolveOptionsControls() {
@@ -349,7 +426,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         optionsReference.removeEventListener(optionsValueEventListener);
 
-        if (optionsChanged) {
+        if (optionsChanged || cameraSettingsChanged) {
             pushOptions();
         }
     }
@@ -360,7 +437,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         optionsReference.removeEventListener(optionsValueEventListener);
 
-        if (optionsChanged) {
+        if (optionsChanged || cameraSettingsChanged) {
             pushOptions();
         }
     }
@@ -391,6 +468,8 @@ public class SettingsActivity extends AppCompatActivity {
 
                 buttonsChangedByUser = false;
 
+                buildCamerasSpinner();
+
                 switchCollectStatsEnabled.setChecked((boolean) options.get("collectStatistics"));
                 switchCollectStatsEnabled.setEnabled(true);
 
@@ -417,27 +496,6 @@ public class SettingsActivity extends AppCompatActivity {
 
                 editTextForTextViewRecordInterval.setText("" + (long) options.get("recordInterval"));
                 editTextForTextViewRecordInterval.setEnabled(true);
-
-                ConstraintLayout constraintLayout = findViewById(R.id.settingsLayout);
-                ConstraintSet set = new ConstraintSet();
-                int margin = 0;
-
-                for (Map.Entry<String, Object> cameraOptions : ((Map<String, Object>) options.get("cameras")).entrySet()) {
-                    Button aCameraOptionsButton = new Button(getAppContext());
-
-                    aCameraOptionsButton.setId(cameraOptions.getKey().hashCode());
-                    aCameraOptionsButton.setText(cameraOptions.getKey());
-
-                    aCameraOptionsButton.setOnClickListener(view -> System.out.println("done!"));
-
-                    set.connect(aCameraOptionsButton.getId(), ConstraintSet.BOTTOM, R.id.space4, ConstraintSet.BOTTOM, margin);
-                    ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_CONSTRAINT, ConstraintLayout.LayoutParams.MATCH_CONSTRAINT);
-                    constraintLayout.addView(aCameraOptionsButton, layoutParams);
-
-                    margin = +40;
-                }
-
-                set.applyTo(constraintLayout);
             }
 
             @Override
@@ -492,7 +550,7 @@ public class SettingsActivity extends AppCompatActivity {
         switch (requestCode) {
             case QR_SCAN_CODE:
                 contents = intent.getStringExtra("SCAN_RESULT");
-                ArrayList<String> serverData = new ArrayList<>(Arrays.asList(contents.split(":")));
+                ArrayList<String> serverData = new ArrayList<>(asList(contents.split(":")));
 
                 String serverAlias = serverData.get(0);
                 String serverKey = serverData.get(1);
@@ -523,57 +581,46 @@ public class SettingsActivity extends AppCompatActivity {
                 break;
 
             case INFORMATION_NOTIFICATION_SOUND_CODE:
-                if (SDK_INT < O) {
-                    soundUri = (Uri) requireNonNull(intent.getExtras()).get("android.intent.extra.ringtone.PICKED_URI");
+                soundUri = (Uri) requireNonNull(intent.getExtras()).get("android.intent.extra.ringtone.PICKED_URI");
 
-                    if (soundUri == null) {
-                        deleteIdFromSettings(Utils.INFO_SOUND);
-                        soundName = getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND));
-                        new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_removed));
-                    } else {
-                        saveStringValueToSettings(Utils.INFO_SOUND, soundUri.toString());
-                        soundName = getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND));
-                        new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_changed_to) + soundName);
-                    }
-                    infoSoundButton.setText(soundName);
+                if (soundUri == null) {
+                    deleteIdFromSettings(Utils.INFO_SOUND);
+                    soundName = getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND));
+                    new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_removed));
                 } else {
-                    NotificationManager notificationManager = (NotificationManager) getAppContext().getSystemService(Context.NOTIFICATION_SERVICE);
-                    NotificationChannel notificationChannelNormal = notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_NORMAL);
-
-                    intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
-                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
-                    intent.putExtra(Settings.EXTRA_CHANNEL_ID, notificationChannelNormal.getId());
-                    startActivity(intent);
+                    saveStringValueToSettings(Utils.INFO_SOUND, soundUri.toString());
+                    soundName = getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND));
+                    new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_changed_to) + soundName);
                 }
+                infoSoundButton.setText(soundName);
                 break;
 
             case MOTION_NOTIFICATION_SOUND_CODE:
-                if (SDK_INT < O) {
-                    soundUri = (Uri) requireNonNull(intent.getExtras()).get("android.intent.extra.ringtone.PICKED_URI");
+                soundUri = (Uri) requireNonNull(intent.getExtras()).get("android.intent.extra.ringtone.PICKED_URI");
 
-                    if (soundUri == null) {
-                        deleteIdFromSettings(Utils.MOTION_SOUND);
-                        soundName = getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND));
-                        new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_removed));
-                    } else {
-                        saveStringValueToSettings(Utils.MOTION_SOUND, soundUri.toString());
-                        soundName = getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND));
-                        new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_changed_to) + soundName);
-                    }
-                    motionSoundButton.setText(soundName);
+                if (soundUri == null) {
+                    deleteIdFromSettings(Utils.MOTION_SOUND);
+                    soundName = getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND));
+                    new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_removed));
                 } else {
-                    NotificationManager notificationManager = (NotificationManager) getAppContext().getSystemService(Context.NOTIFICATION_SERVICE);
-                    NotificationChannel notificationChannelHigh = notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_HIGH);
-
-                    intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
-                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
-                    intent.putExtra(Settings.EXTRA_CHANNEL_ID, notificationChannelHigh.getId());
-                    startActivity(intent);
+                    saveStringValueToSettings(Utils.MOTION_SOUND, soundUri.toString());
+                    soundName = getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND));
+                    new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_changed_to) + soundName);
                 }
+                motionSoundButton.setText(soundName);
                 break;
 
             case CAMERA_SETTINGS_CODE:
-                Map<String, Map<String, Object>> cameraSettings = (Map<String, Map<String, Object>>) requireNonNull(intent.getExtras()).get(CAMERA_SETTINGS_MAP);
+                cameraSettingsChanged = true;
+
+                Map<String, Object> cameraSettings = (Map<String, Object>) ((Map<String, Object>) options.get("cameras")).get(intent.getStringExtra("cameraName"));
+
+                cameraSettings.put(HEALTH_CHECK_ENABLED, intent.getBooleanExtra(HEALTH_CHECK_ENABLED, true));
+                cameraSettings.put(INTERVAL, intent.getLongExtra(INTERVAL, 500L));
+                cameraSettings.put(MOTION_AREA, intent.getLongExtra(MOTION_AREA, 20L));
+                cameraSettings.put(NOISE_LEVEL, intent.getLongExtra(NOISE_LEVEL, 5L));
+                cameraSettings.put(REBOOT_TIMEOUT, intent.getLongExtra(REBOOT_TIMEOUT, 60000L));
+
                 break;
         }
     }

@@ -41,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.N;
 import static com.rudyii.hsw.client.BuildConfig.COMPATIBLE_SERVER_VERSION;
+import static com.rudyii.hsw.client.BuildConfig.SERVER_DOWNLOAD_URL;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.helpers.ShortcutsBuilder.buildDynamicShortcuts;
 import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_ALL;
@@ -255,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.download_server:
-                Uri serverUrl = Uri.parse("https://mega.nz/#F!oJ4lwJjR!jfzAAOZSsYVxt-g5sWWoHA");
+                Uri serverUrl = Uri.parse(SERVER_DOWNLOAD_URL);
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(serverUrl);
                 startActivity(intent);

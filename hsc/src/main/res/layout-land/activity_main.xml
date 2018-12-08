@@ -13,12 +13,15 @@
 
         <TextView
             android:id="@+id/textViewCurrentServer"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="left|center"
             android:text="@string/text_current_server"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/text_current_server" />
@@ -26,127 +29,121 @@
         <Spinner
             android:id="@+id/spinnerServerList"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="left|center"
             android:hapticFeedbackEnabled="true"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewCurrentServer"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textViewCurrentServer"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toTopOf="@+id/textViewCurrentServer" />
 
         <TextView
             android:id="@+id/textViewServerVersion"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_height="35dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="left|center"
             android:text="@string/text_server_version"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/textViewServerVersionValue"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinnerServerList" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewCurrentServer" />
 
         <TextView
             android:id="@+id/textViewServerVersionValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="left|center"
             android:text="@string/text_retrieving_data"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewServerVersion"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textViewServerVersion"
-            app:layout_constraintTop_toBottomOf="@+id/spinnerServerList" />
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toTopOf="@+id/textViewServerVersion" />
 
         <TextView
             android:id="@+id/textViewServerLastPing"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_height="35dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="left|center"
             android:text="@string/text_server_ping"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/textViewServerLastPingValue"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewServerVersion" />
 
         <TextView
             android:id="@+id/textViewServerLastPingValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="left|center"
             android:text="@string/text_retrieving_data"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewServerLastPing"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textViewServerLastPing"
-            app:layout_constraintTop_toBottomOf="@+id/textViewServerVersionValue" />
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toTopOf="@+id/textViewServerLastPing" />
 
         <TextView
             android:id="@+id/textViewServerUptime"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_height="35dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="left|center"
             android:text="@string/text_server_uptime"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/textViewServerUptimeValue"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewServerLastPing" />
 
         <TextView
             android:id="@+id/textViewServerUptimeValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/text_retrieving_data"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textViewServerUptime"
-            app:layout_constraintTop_toBottomOf="@+id/textViewServerLastPingValue" />
-
-        <Space
-            android:id="@+id/space1"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="left|center"
+            android:text="@string/text_retrieving_data"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewServerUptime"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewServerUptime" />
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toTopOf="@+id/textViewServerUptime" />
 
         <ImageButton
             android:id="@+id/buttonResendHourly"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="32dp"
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/text_resend_hourly_text"
             android:drawableTop="@mipmap/button_hourly"
             android:hapticFeedbackEnabled="true"
             android:longClickable="true"
             android:textAllCaps="false"
-            app:layout_constraintEnd_toStartOf="@+id/buttonUsageChart"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/space1"
+            app:layout_constraintDimensionRatio="w,1:1"
+            app:layout_constraintEnd_toEndOf="@+id/textViewForButtonResendHourly"
+            app:layout_constraintStart_toStartOf="@+id/textViewForButtonResendHourly"
+            app:layout_constraintTop_toBottomOf="@+id/textViewServerUptime"
             app:srcCompat="@mipmap/button_hourly" />
 
         <TextView
             android:id="@+id/textViewForButtonResendHourly"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_height="35dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:gravity="center"
             android:lines="2"
             android:text="@string/text_horly_report_button"
@@ -156,157 +153,148 @@
 
         <ImageButton
             android:id="@+id/buttonUsageChart"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/text_resend_weekly_text"
             android:drawableTop="@mipmap/button_chart"
             android:hapticFeedbackEnabled="true"
             android:longClickable="true"
             android:textAllCaps="false"
-            app:layout_constraintEnd_toStartOf="@+id/buttonSystemLog"
-            app:layout_constraintStart_toEndOf="@+id/buttonResendHourly"
-            app:layout_constraintTop_toBottomOf="@+id/space1"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonResendHourly"
+            app:layout_constraintDimensionRatio="w,1:1"
+            app:layout_constraintEnd_toEndOf="@+id/textViewForButtonStatistics"
+            app:layout_constraintStart_toStartOf="@+id/textViewForButtonStatistics"
+            app:layout_constraintTop_toTopOf="@+id/buttonResendHourly"
             app:srcCompat="@mipmap/button_chart" />
 
         <TextView
             android:id="@+id/textViewForButtonStatistics"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
             android:gravity="center"
             android:text="@string/text_stats_button"
-            app:layout_constraintEnd_toStartOf="@+id/textViewForButtonLog"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewForButtonResendHourly"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toEndOf="@+id/textViewForButtonResendHourly"
-            app:layout_constraintTop_toBottomOf="@+id/buttonUsageChart" />
+            app:layout_constraintTop_toTopOf="@+id/textViewForButtonResendHourly" />
 
         <ImageButton
             android:id="@+id/buttonSystemLog"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:background="?android:selectableItemBackground"
             android:drawableTop="@mipmap/button_log"
             android:hapticFeedbackEnabled="true"
-            app:layout_constraintEnd_toStartOf="@+id/buttonNotificationType"
-            app:layout_constraintStart_toEndOf="@+id/buttonUsageChart"
-            app:layout_constraintTop_toTopOf="@+id/space1"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonUsageChart"
+            app:layout_constraintDimensionRatio="w,1:1"
+            app:layout_constraintEnd_toEndOf="@+id/textViewForButtonLog"
+            app:layout_constraintStart_toStartOf="@+id/textViewForButtonLog"
+            app:layout_constraintTop_toTopOf="@+id/buttonUsageChart"
             app:srcCompat="@mipmap/button_log" />
 
         <TextView
             android:id="@+id/textViewForButtonLog"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="12dp"
             android:gravity="center"
             android:text="@string/text_log_button"
-            app:layout_constraintEnd_toStartOf="@+id/textViewForNotificationTypeButton"
-            app:layout_constraintStart_toEndOf="@+id/textViewForButtonStatistics"
-            app:layout_constraintTop_toBottomOf="@+id/buttonSystemLog" />
+            app:layout_constraintBottom_toBottomOf="@+id/textViewForButtonStatistics"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toTopOf="@+id/textViewForButtonStatistics" />
 
         <ImageButton
             android:id="@+id/buttonNotificationType"
             style="@android:style/TextAppearance.Material.Widget.TextView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/text_camera_app_text"
             android:drawableTop="@mipmap/image_warning"
             android:hapticFeedbackEnabled="true"
             android:longClickable="true"
             android:textAllCaps="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/buttonSystemLog"
-            app:layout_constraintTop_toBottomOf="@+id/space1"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonSystemLog"
+            app:layout_constraintDimensionRatio="w,1:1"
+            app:layout_constraintEnd_toEndOf="@+id/textViewForNotificationTypeButton"
+            app:layout_constraintStart_toStartOf="@+id/textViewForNotificationTypeButton"
+            app:layout_constraintTop_toTopOf="@+id/buttonSystemLog"
             app:srcCompat="@mipmap/image_warning" />
 
         <TextView
             android:id="@+id/textViewForNotificationTypeButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="1dp"
             android:gravity="center"
             android:text="@string/text_notification_type_button"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewForButtonLog"
             app:layout_constraintStart_toEndOf="@+id/textViewForButtonLog"
-            app:layout_constraintTop_toBottomOf="@+id/buttonNotificationType" />
-
-        <Space
-            android:id="@+id/space2"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="24dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewForButtonLog" />
+            app:layout_constraintTop_toTopOf="@+id/textViewForButtonLog" />
 
         <TextView
             android:id="@+id/textViewForSwitchSystemMode"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="32dp"
+            android:gravity="center_vertical"
             android:text="@string/text_armed_mode"
             android:textAllCaps="false"
             android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/space2" />
+            app:layout_constraintBottom_toBottomOf="@+id/textViewForSwitchSystemState"
+            app:layout_constraintEnd_toStartOf="@+id/textViewForSwitchSystemState"
+            app:layout_constraintTop_toTopOf="@+id/textViewForSwitchSystemState" />
 
         <Switch
             android:id="@+id/switchSystemMode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
             android:enabled="false"
             android:hapticFeedbackEnabled="true"
             android:textOff="|"
             android:textOn="0"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/textViewForSwitchSystemMode"
+            app:layout_constraintStart_toStartOf="@+id/textViewForSwitchSystemMode"
             app:layout_constraintTop_toBottomOf="@+id/textViewForSwitchSystemMode" />
 
         <TextView
             android:id="@+id/textViewForSwitchSystemState"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:gravity="center_vertical"
             android:text="@string/text_armed_state"
             android:textAllCaps="false"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/space2" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewServerUptimeValue" />
 
         <Switch
             android:id="@+id/switchSystemState"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
             android:enabled="false"
             android:hapticFeedbackEnabled="true"
             android:textOff="|"
             android:textOn="0"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/textViewForSwitchSystemState"
+            app:layout_constraintStart_toStartOf="@+id/textViewForSwitchSystemState"
             app:layout_constraintTop_toBottomOf="@+id/textViewForSwitchSystemState" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".30" />
 
     </android.support.constraint.ConstraintLayout>
 

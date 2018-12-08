@@ -41,6 +41,7 @@ import java.util.Random;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import static android.text.TextUtils.isDigitsOnly;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
@@ -385,11 +386,12 @@ public class Utils {
         }
     }
 
-    public static Looper getLooper(){
+    public static Looper getLooper() {
         HandlerThread thread = new HandlerThread("Thread: " + new Random().nextInt(1000));
         thread.start();
         return thread.getLooper();
     }
+
     public static void saveImageFromCamera(Bitmap bitmap, String serverName, String cameraName, String imageName) {
         imageName = imageName + ".jpg";
 
@@ -436,5 +438,24 @@ public class Utils {
     @NonNull
     private static Account[] getAccounts() {
         return AccountManager.get(getAppContext()).getAccountsByType("com.google");
+    }
+
+    public static HashMap<String, Object> convertToStringObjectMap(Map<String, String> map) {
+        HashMap<String, Object> result = new HashMap<>();
+
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
+                result.put(key, Boolean.parseBoolean(value));
+            } else if (isDigitsOnly(value)) {
+                result.put(key, Long.parseLong(value));
+            } else {
+                result.put(key, value);
+            }
+        }
+
+        return result;
     }
 }

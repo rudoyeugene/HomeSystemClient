@@ -66,6 +66,12 @@
             android:windowSoftInputMode="stateHidden" />
 
         <activity
+            android:name=".activities.CameraSettingsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="Camera settings"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
             android:name=".activities.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/label_settings"

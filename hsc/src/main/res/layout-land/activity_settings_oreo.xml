@@ -14,55 +14,51 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:theme="@android:style/Theme.Material.Light">
+        android:theme="@android:style/Theme.Material.Light"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewForSwitchVerboseOutputEnabled"
+        app:layout_constraintTop_toBottomOf="@+id/textViewForSwitchVerboseOutputEnabled">
 
         <TextView
             android:id="@+id/textViewForSpinnerAppsList"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="35dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:gravity="left|center"
             android:text="@string/text_textViewSelectCameraApp"
-            android:textAlignment="viewStart"
-            app:layout_constraintBottom_toTopOf="@+id/spinnerAppsList"
-            app:layout_constraintEnd_toEndOf="@+id/space3"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            app:layout_constraintTop_toBottomOf="@+id/buttonCameraSettings" />
 
         <Spinner
             android:id="@+id/spinnerAppsList"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:hapticFeedbackEnabled="true"
-            android:maxWidth="150dp"
-            app:layout_constraintBottom_toTopOf="@+id/space3"
-            app:layout_constraintEnd_toStartOf="@+id/space4"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewForSpinnerAppsList" />
-
-        <Button
-            android:id="@+id/buttonPairServer"
-            style="@android:style/TextAppearance.Material.Widget.TextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:gravity="left|center"
+            android:hapticFeedbackEnabled="true"
+            android:maxWidth="150dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinnerCameras" />
+
+        <Button
+            android:id="@+id/buttonPairServer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:hapticFeedbackEnabled="true"
             android:text="@string/button_pair_server_pair_server"
             android:textAlignment="center"
             android:textAllCaps="false"
-            app:layout_constraintBottom_toTopOf="@+id/buttonUnpairServer"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/space3"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_constraintBottom_creator="1"
             tools:layout_constraintLeft_creator="1"
@@ -77,39 +73,24 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:fontFamily="sans-serif"
             android:hapticFeedbackEnabled="true"
             android:text="@string/button_pair_server_unpair_server"
             android:textAlignment="center"
             android:textAllCaps="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/space3"
-            app:layout_constraintTop_toBottomOf="@+id/buttonPairServer"
-            tools:text="@string/button_pair_server_unpair_server" />
-
-        <Space
-            android:id="@+id/space3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/textViewForSwitchCollectStats"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+            tools:text="@string/button_pair_server_unpair_server" />
 
         <TextView
             android:id="@+id/textViewForSwitchCollectStats"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:gravity="left|center"
             android:text="@string/text_textViewForSwitchCollectStats"
-            android:textAlignment="viewStart"
+            app:layout_constraintBottom_toBottomOf="@+id/switchCollectStatsEnabled"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/switchCollectStatsEnabled"
             app:layout_constraintTop_toTopOf="@+id/switchCollectStatsEnabled" />
@@ -117,7 +98,7 @@
         <Switch
             android:id="@+id/switchCollectStatsEnabled"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
@@ -126,17 +107,18 @@
             android:hapticFeedbackEnabled="true"
             android:textAllCaps="false"
             app:layout_constraintEnd_toStartOf="@+id/textViewForSwitchCollectStats"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonUnpairServer" />
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textViewForSwitchMonitoringEnabled"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:gravity="left|center"
             android:text="@string/text_textViewForSwitchMonitoringEnabled"
-            android:textAlignment="viewStart"
+            app:layout_constraintBottom_toBottomOf="@+id/switchMonitoringEnabled"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/switchMonitoringEnabled"
             app:layout_constraintTop_toTopOf="@+id/switchMonitoringEnabled" />
@@ -144,7 +126,7 @@
         <Switch
             android:id="@+id/switchMonitoringEnabled"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
@@ -153,17 +135,18 @@
             android:hapticFeedbackEnabled="true"
             android:textAllCaps="false"
             app:layout_constraintEnd_toStartOf="@+id/textViewForSwitchMonitoringEnabled"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/switchCollectStatsEnabled" />
 
         <TextView
             android:id="@+id/textViewForSwitchHourlyReportEnabled"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:gravity="left|center"
             android:text="@string/text_textViewForSwitchHourlyReportEnabled"
-            android:textAlignment="viewStart"
+            app:layout_constraintBottom_toBottomOf="@+id/switchHourlyReportEnabled"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/switchHourlyReportEnabled"
             app:layout_constraintTop_toTopOf="@+id/switchHourlyReportEnabled" />
@@ -171,7 +154,7 @@
         <Switch
             android:id="@+id/switchHourlyReportEnabled"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
@@ -180,17 +163,18 @@
             android:hapticFeedbackEnabled="true"
             android:textAllCaps="false"
             app:layout_constraintEnd_toStartOf="@+id/textViewForSwitchHourlyReportEnabled"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/switchMonitoringEnabled" />
 
         <TextView
             android:id="@+id/textViewForSwitchHourlyReportForced"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:gravity="left|center"
             android:text="@string/text_textViewForSwitchHourlyReportForced"
-            android:textAlignment="viewStart"
+            app:layout_constraintBottom_toBottomOf="@+id/switchHourlyReportForced"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/switchHourlyReportForced"
             app:layout_constraintTop_toTopOf="@+id/switchHourlyReportForced" />
@@ -198,7 +182,7 @@
         <Switch
             android:id="@+id/switchHourlyReportForced"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
@@ -207,17 +191,18 @@
             android:hapticFeedbackEnabled="true"
             android:textAllCaps="false"
             app:layout_constraintEnd_toStartOf="@+id/textViewForSwitchHourlyReportForced"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/switchHourlyReportEnabled" />
 
         <TextView
             android:id="@+id/textViewForSwitchVerboseOutputEnabled"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:gravity="left|center"
             android:text="@string/text_textViewForSwitchVerboseOutputEnabled"
-            android:textAlignment="viewStart"
+            app:layout_constraintBottom_toBottomOf="@+id/switchVerboseOutputEnabled"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/switchVerboseOutputEnabled"
             app:layout_constraintTop_toTopOf="@+id/switchVerboseOutputEnabled" />
@@ -225,7 +210,7 @@
         <Switch
             android:id="@+id/switchVerboseOutputEnabled"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
@@ -234,17 +219,18 @@
             android:hapticFeedbackEnabled="true"
             android:textAllCaps="false"
             app:layout_constraintEnd_toStartOf="@+id/textViewForSwitchVerboseOutputEnabled"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/switchHourlyReportForced" />
 
         <TextView
             android:id="@+id/textViewForSwitchShowMotionAreaEnabled"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:gravity="left|center"
             android:text="@string/text_textViewForSwitchShowMotionAreaEnabled"
-            android:textAlignment="viewStart"
+            app:layout_constraintBottom_toBottomOf="@+id/switchShowMotionAreaEnabled"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/switchShowMotionAreaEnabled"
             app:layout_constraintTop_toTopOf="@+id/switchShowMotionAreaEnabled" />
@@ -252,7 +238,7 @@
         <Switch
             android:id="@+id/switchShowMotionAreaEnabled"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
@@ -261,122 +247,156 @@
             android:hapticFeedbackEnabled="true"
             android:textAllCaps="false"
             app:layout_constraintEnd_toStartOf="@+id/textViewForSwitchShowMotionAreaEnabled"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/switchVerboseOutputEnabled" />
 
         <TextView
             android:id="@+id/textViewForTextViewDelayedArmInterval"
             android:layout_width="0dp"
-            android:layout_height="35dp"
+            android:layout_height="45dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
+            android:gravity="left|center"
+            android:maxLines="2"
             android:text="@string/text_textViewForTextViewDelayedArmInterval"
-            android:textAlignment="viewStart"
-            app:layout_constraintEnd_toStartOf="@+id/editTextForDelayedArmInterval"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/switchShowMotionAreaEnabled" />
+            app:layout_constraintTop_toBottomOf="@+id/spinnerAppsList" />
 
         <EditText
             android:id="@+id/editTextForDelayedArmInterval"
             android:layout_width="0dp"
-            android:layout_height="35dp"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:ems="10"
             android:enabled="false"
+            android:gravity="bottom|left"
             android:inputType="number"
+            android:maxLines="2"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:text="60"
-            android:textAlignment="viewStart"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/editTextForTextViewKeepDays"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textViewForTextViewDelayedArmInterval"
-            app:layout_constraintTop_toBottomOf="@+id/switchShowMotionAreaEnabled" />
+            app:layout_constraintBottom_toBottomOf="@+id/textViewForTextViewDelayedArmInterval"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            app:layout_constraintTop_toTopOf="@+id/textViewForTextViewDelayedArmInterval" />
 
         <TextView
             android:id="@+id/textViewForTextViewKeepDays"
             android:layout_width="0dp"
-            android:layout_height="35dp"
+            android:layout_height="45dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:gravity="left|center"
+            android:maxLines="2"
             android:text="@string/text_textViewForTextViewKeepDays"
-            android:textAlignment="viewStart"
-            app:layout_constraintEnd_toStartOf="@+id/editTextForTextViewKeepDays"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewForTextViewDelayedArmInterval" />
 
         <EditText
             android:id="@+id/editTextForTextViewKeepDays"
             android:layout_width="0dp"
-            android:layout_height="35dp"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:ems="10"
             android:enabled="false"
+            android:gravity="bottom|left"
             android:inputType="number"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:text="30"
-            android:textAlignment="viewStart"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/editTextForTextViewRecordInterval"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textViewForTextViewKeepDays"
-            app:layout_constraintTop_toBottomOf="@+id/textViewForTextViewDelayedArmInterval" />
+            app:layout_constraintBottom_toBottomOf="@+id/textViewForTextViewKeepDays"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            app:layout_constraintTop_toTopOf="@+id/textViewForTextViewKeepDays"
+            app:layout_constraintVertical_bias="1.0" />
 
         <TextView
             android:id="@+id/textViewForTextViewRecordInterval"
             android:layout_width="0dp"
-            android:layout_height="35dp"
+            android:layout_height="45dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:gravity="left|center"
+            android:maxLines="2"
             android:text="@string/text_textViewForTextViewRecordInterval"
-            android:textAlignment="viewStart"
-            app:layout_constraintEnd_toStartOf="@+id/editTextForTextViewRecordInterval"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewForTextViewKeepDays" />
 
         <EditText
             android:id="@+id/editTextForTextViewRecordInterval"
             android:layout_width="0dp"
-            android:layout_height="35dp"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:ems="10"
             android:enabled="false"
+            android:gravity="bottom|left"
             android:inputType="number"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:text="10"
-            android:textAlignment="viewStart"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textViewForTextViewRecordInterval"
-            app:layout_constraintTop_toBottomOf="@+id/textViewForTextViewKeepDays" />
+            app:layout_constraintBottom_toBottomOf="@+id/textViewForTextViewRecordInterval"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            app:layout_constraintTop_toTopOf="@+id/textViewForTextViewRecordInterval" />
 
-        <Space
-            android:id="@+id/space4"
-            android:layout_width="wrap_content"
+        <Spinner
+            android:id="@+id/spinnerCameras"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="left|center"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonPairServer" />
+
+        <Button
+            android:id="@+id/buttonCameraSettings"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextForTextViewRecordInterval" />
+            android:text="@string/text_camera_settings"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            app:layout_constraintTop_toBottomOf="@+id/buttonUnpairServer" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.25" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
 
     </android.support.constraint.ConstraintLayout>
 

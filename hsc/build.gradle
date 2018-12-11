@@ -33,8 +33,8 @@ android {
         applicationId "com.rudyii.hsw.client"
         minSdkVersion 23
         targetSdkVersion 27
-        versionCode 41
-        versionName '1.1.41'
+        versionCode 42
+        versionName '1.1.42'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
     }

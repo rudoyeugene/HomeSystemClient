@@ -43,7 +43,7 @@ import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDot
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateSingleDotDelimFrom;
 import static com.rudyii.hsw.client.helpers.Utils.saveImageFromCamera;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
-import static java.util.Collections.reverse;
+import static java.util.Collections.sort;
 
 /**
  * Created by Jack on 14.01.2018.
@@ -94,7 +94,6 @@ public class SystemLogActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mAdapter = new LogListAdapter(getApplicationContext(), systemLog);
-        mAdapter.setHasStableIds(true);
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -180,7 +179,15 @@ public class SystemLogActivity extends AppCompatActivity {
                     systemLog.add(buildAndFillLogItem(Long.valueOf(entry.getKey()), entry.getValue()));
                 }
 
-                reverse(systemLog);
+                sort(systemLog, (logItem1, logItem2) -> {
+                    if (logItem1.getTimestamp().equals(logItem2.getTimestamp())) {
+                        return 0;
+                    } else if (logItem1.getTimestamp() > logItem2.getTimestamp()) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
 
                 mSwipeRefreshLayout.setRefreshing(false);
                 mAdapter.notifyDataSetChanged();

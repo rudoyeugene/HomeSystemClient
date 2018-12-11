@@ -25,12 +25,12 @@
     <string name="notif_text_camera_is_rebooting">\u0020 camera is rebooting</string>
     <string name="notif_text_current_ip">, current WAN IP address:\u0020</string>
     <string name="notif_text_current_isp">Current ISP:\u0020</string>
-    <string name="notif_text_isp_changed">ISP changed</string>
+    <string name="notif_text_isp_changed">ISP changed:\u0020</string>
     <string name="notif_text_motion_detected_on_camera">Motion:\u0020</string>
-    <string name="notif_text_server_started">Started</string>
+    <string name="notif_text_server_started">Started with PID:\u0020</string>
     <string name="notif_text_server_started_with_pid">PID:\u0020</string>
-    <string name="notif_text_server_stopped">Stopped</string>
-    <string name="notif_text_system_state_is">System state is\u0020</string>
+    <string name="notif_text_server_stopped">Stopped:\u0020</string>
+    <string name="notif_text_system_state_is">System state is:\u0020</string>
     <string name="notif_text_video_uploaded">New video uploaded</string>
 
     <string name="shortcut_arm">Arm</string>

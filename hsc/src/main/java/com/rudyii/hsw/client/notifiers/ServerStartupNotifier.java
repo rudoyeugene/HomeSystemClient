@@ -6,7 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.support.v4.app.NotificationCompat;
+
+import androidx.core.app.NotificationCompat;
 
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.activities.MainActivity;

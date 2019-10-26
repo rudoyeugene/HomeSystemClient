@@ -3,8 +3,9 @@ package com.rudyii.hsw.client.activities;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.rudyii.hsw.client.R;
 

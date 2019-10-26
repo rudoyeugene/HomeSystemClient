@@ -16,11 +16,12 @@ import android.os.Environment;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -56,6 +57,7 @@ import static java.util.Objects.requireNonNull;
 @SuppressWarnings("WeakerAccess")
 public class Utils {
     public static final String SERVER_LIST = "SERVER_LIST";
+    public static final String DELAYED_ARM_DELAY_SECS = "DELAYED_ARM_DELAY_SECS";
     public static final String NOTIFICATION_TYPES = "NOTIFICATION_TYPES";
     public static final String NOTIFICATIONS_MUTED = "NOTIFICATIONS_MUTED";
     public static final String ACTIVE_SERVER = "ACTIVE_SERVER";
@@ -197,17 +199,17 @@ public class Utils {
         return deviceId;
     }
 
-    public static void registerUserDataOnServers() {
+    public static void registerUserDataOnServers(String token) {
         if (!getMapWithServers().isEmpty()) {
             for (Map.Entry<String, String> entry : getMapWithServers().entrySet()) {
                 String serverName = entry.getKey();
                 String serverKey = entry.getValue();
-                registerUserDataOnServer(serverKey, serverName);
+                registerUserDataOnServer(serverKey, serverName, token);
             }
         }
     }
 
-    public static void registerUserDataOnServer(String serverKey, String serverName) {
+    public static void registerUserDataOnServer(String serverKey, String serverName, String token) {
         String simplifiedPrimaryAccountName = getSimplifiedPrimaryAccountName();
         String deviceId = getDeviceId();
 
@@ -221,7 +223,7 @@ public class Utils {
         clientData.put("notificationsMuted", Boolean.parseBoolean(notificationsMuted));
         clientData.put("hourlyReportMuted", Boolean.parseBoolean(hourlyReportMuted));
         clientData.put("lastRegistration", System.currentTimeMillis());
-        clientData.put("token", getCurrentFcmToken());
+        clientData.put("token", token);
         clientData.put("device", android.os.Build.MODEL);
         clientData.put("email", getPrimaryAccountEmail());
 

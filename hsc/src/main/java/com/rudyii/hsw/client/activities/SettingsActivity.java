@@ -1,7 +1,6 @@
 package com.rudyii.hsw.client.activities;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -10,9 +9,6 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -26,6 +22,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -51,11 +51,13 @@ import static android.media.RingtoneManager.TYPE_NOTIFICATION;
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.O;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
+import static com.rudyii.hsw.client.HomeSystemClientApplication.getToken;
 import static com.rudyii.hsw.client.activities.CameraSettingsActivity.HEALTH_CHECK_ENABLED;
 import static com.rudyii.hsw.client.activities.CameraSettingsActivity.INTERVAL;
 import static com.rudyii.hsw.client.activities.CameraSettingsActivity.MOTION_AREA;
 import static com.rudyii.hsw.client.activities.CameraSettingsActivity.NOISE_LEVEL;
 import static com.rudyii.hsw.client.activities.CameraSettingsActivity.REBOOT_TIMEOUT;
+import static com.rudyii.hsw.client.helpers.Utils.DELAYED_ARM_DELAY_SECS;
 import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
 import static com.rudyii.hsw.client.helpers.Utils.getDeviceId;
 import static com.rudyii.hsw.client.helpers.Utils.getLooper;
@@ -98,15 +100,12 @@ public class SettingsActivity extends AppCompatActivity {
 
         if (SDK_INT < O) {
             setContentView(R.layout.activity_settings);
+            buildSoundSelectionButtons();
         } else {
             setContentView(R.layout.activity_settings_oreo);
         }
 
         buildAppsListSpinner();
-
-        if (SDK_INT < O) {
-            buildSoundSelectionButtons();
-        }
 
         buildAddServerButton();
 
@@ -450,6 +449,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void pushOptions() {
         options.put("delayedArmInterval", Long.valueOf(editTextForDelayedArmInterval.getText().toString()));
+        saveStringValueToSettings(DELAYED_ARM_DELAY_SECS, editTextForDelayedArmInterval.getText().toString());
         options.put("keepDays", Long.valueOf(editTextForTextViewKeepDays.getText().toString()));
         options.put("recordInterval", Long.valueOf(editTextForTextViewRecordInterval.getText().toString()));
 
@@ -505,7 +505,7 @@ public class SettingsActivity extends AppCompatActivity {
         };
     }
 
-    private void showDialogToDownloadQrCodeScanner(final Activity act) {
+    private void showDialogToDownloadQrCodeScanner(final AppCompatActivity act) {
         AlertDialog.Builder downloadDialog = new AlertDialog.Builder(act);
         downloadDialog.setTitle(getResources().getString(R.string.dialog_download_qr_scanner_title));
         downloadDialog.setMessage(getResources().getString(R.string.dialog_download_qr_scanner_message));
@@ -541,6 +541,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     @SuppressWarnings("unchecked")
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
         if (intent == null) {
             return;
         }
@@ -571,7 +572,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                 if (serverKeyIsValid(serverKey)) {
                     saveStringValueToSettings(Utils.ACTIVE_SERVER, serverAlias);
-                    registerUserDataOnServer(serverKey, serverAlias);
+                    registerUserDataOnServer(serverKey, serverAlias, getToken());
 
                     new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.toast_server_paired_success) : getResources().getString(R.string.toast_server_paired_failure));
                 } else {

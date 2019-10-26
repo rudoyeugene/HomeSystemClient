@@ -3,6 +3,8 @@
     package="com.rudyii.hsw.client">
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,7 +19,6 @@
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/label_app_name"
-        android:resizeableActivity="true"
         android:theme="@style/AppTheme">
 
         <meta-data
@@ -31,7 +32,8 @@
         <activity
             android:name=".activities.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/label_app_name">
+            android:label="@string/label_app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -41,13 +43,10 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
                 <data
                     android:host="www.example.com"
                     android:pathPrefix="/hsc"
                     android:scheme="http" />
-                <!-- note that the leading "/" is required for pathPrefix-->
-                <!-- Accepts URIs that begin with "example://gizmos” -->
                 <data
                     android:host="hsc"
                     android:scheme="example" />
@@ -63,12 +62,14 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/label_share_server"
             android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".activities.CameraSettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="Camera settings"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
 
         <activity
@@ -76,29 +77,34 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/label_settings"
             android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".activities.AboutActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/label_about"
-            android:parentActivityName=".activities.MainActivity" />
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".activities.SystemLogActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/label_system_log"
-            android:parentActivityName=".activities.MainActivity" />
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".activities.UsageChartActivity"
             android:label="@string/label_usage_chart"
-            android:parentActivityName=".activities.MainActivity" />
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".activities.ShortcutsActionProcessor"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.Material.Light.Dialog.Alert" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
 
 
         <receiver android:name=".Autorun">
@@ -106,8 +112,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
-        <service android:name=".services.FCMService" />
 
         <service
             android:name=".services.FCMMessagingService"

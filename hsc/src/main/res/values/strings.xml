@@ -25,6 +25,7 @@
     <string name="notif_text_camera_is_rebooting">\u0020 camera is rebooting</string>
     <string name="notif_text_current_ip">, current WAN IP address:\u0020</string>
     <string name="notif_text_current_isp">Current ISP:\u0020</string>
+    <string name="notif_text_delayed_arm">System will be armed in\u0020</string>
     <string name="notif_text_isp_changed">ISP changed:\u0020</string>
     <string name="notif_text_motion_detected_on_camera">Motion:\u0020</string>
     <string name="notif_text_server_started">Started with PID:\u0020</string>
@@ -54,6 +55,7 @@
     <string name="text_current_server">Current server:</string>
     <string name="text_day">\u0020day\u0020</string>
     <string name="text_days">\u0020days\u0020</string>
+    <string name="text_delayed_arm">Arm later</string>
     <string name="text_health_check_switch">Enable health check</string>
     <string name="text_horly_report_button">Hourly\nreport</string>
     <string name="text_info_sound">Info sound</string>
@@ -65,12 +67,13 @@
     <string name="text_no_server">NO SERVER</string>
     <string name="text_noise_level">Noise level</string>
     <string name="text_notification_type_button">Notification\ntype</string>
-    <string name="text_reboot_delay">Reboot delay (s)</string>
+    <string name="text_reboot_delay">Reboot delay (sec)</string>
     <string name="text_resend_hourly_request_muted">Hourly report muted, unmute to send</string>
     <string name="text_resend_hourly_request_text">Hourly report requested</string>
     <string name="text_resend_hourly_text">Resend hourly report</string>
     <string name="text_resend_weekly_text">Open usage chart</string>
     <string name="text_retrieving_data">retrieving data</string>
+    <string name="text_seconds">\u0020seconds</string>
     <string name="text_server_ping">Last time online:</string>
     <string name="text_server_uptime">Server uptime:</string>
     <string name="text_server_version">Server version:</string>
@@ -87,6 +90,8 @@
     <string name="text_textViewForTextViewKeepDays">Keep history for, days:</string>
     <string name="text_textViewForTextViewRecordInterval">Record video for, sec:</string>
     <string name="text_textViewSelectCameraApp">Camera app</string>
+    <string name="text_toast_automatic_mode_selected">Automatic mode selected, disable it first</string>
+    <string name="text_toast_delayed_arm_in_progress">Delayed arm already in progress</string>
     <string name="text_toast_notification_muted">Notifications muted, unmute to change</string>
     <string name="text_toast_notification_type_both">You\'ll be notofied twice: as soon as new motion detected and right after video uploaded</string>
     <string name="text_toast_notification_type_motion_detected">You\'ll be notified as soon as new motion detected</string>

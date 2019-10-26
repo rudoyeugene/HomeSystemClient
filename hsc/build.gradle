@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.26.1'
+        classpath 'io.fabric.tools:gradle:1.27.1'
     }
 }
 apply plugin: 'com.android.application'
@@ -22,20 +22,20 @@ android {
         config {
             keyAlias 'jack'
             keyPassword 'scienide'
-            storeFile file('C:/Dropbox/Jack/Android/play_store.jks')
+            storeFile file('c:\\Users\\j-a-c\\Dropbox\\Jack\\Android\\play_store.jks')
             storePassword 'scienide'
         }
     }
-    compileSdkVersion 27
+    compileSdkVersion 28
     buildToolsVersion '28.0.3'
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.rudyii.hsw.client"
         minSdkVersion 23
         targetSdkVersion 27
-        versionCode 42
-        versionName '1.1.42'
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionCode 43
+        versionName '1.1.43'
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
     }
     buildTypes {
@@ -63,32 +63,32 @@ android {
 }
 
 dependencies {
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.android.volley:volley:1.1.1'
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:design:27.1.1'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'com.google.android.material:material:1.0.0'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     //GMS part
-    implementation 'com.google.android.gms:play-services-auth:16.0.1'
-    implementation 'com.google.firebase:firebase-core:16.0.5'
-    implementation 'com.google.firebase:firebase-messaging:17.3.4'
-    implementation 'com.google.firebase:firebase-database:16.0.4'
-    implementation 'com.google.firebase:firebase-storage:16.0.4'
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.firebase:firebase-core:17.2.0'
+    implementation 'com.google.firebase:firebase-messaging:20.0.0'
+    implementation 'com.google.firebase:firebase-database:19.2.0'
+    implementation 'com.google.firebase:firebase-storage:19.1.0'
 
     //3rd party deps
     implementation 'com.google.zxing:core:3.2.1'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 
     //DO NOT UPDATE all the below
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     //test
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    androidTestImplementation 'com.android.support:support-annotations:27.1.1'
-    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    androidTestImplementation 'androidx.annotation:annotation:1.0.0'
+    androidTestImplementation 'androidx.test:rules:1.1.1'
 }
 
 apply plugin: 'io.fabric'

@@ -4,11 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="true"
+    android:fillViewport="true"
     tools:context=".activities.MainActivity">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <TextView
@@ -125,7 +128,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:background="?android:selectableItemBackground"
+            android:background="?attr/selectableItemBackground"
             android:contentDescription="@string/text_resend_hourly_text"
             android:drawableTop="@mipmap/button_hourly"
             android:hapticFeedbackEnabled="true"
@@ -156,7 +159,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:background="?android:selectableItemBackground"
+            android:background="?attr/selectableItemBackground"
             android:contentDescription="@string/text_resend_weekly_text"
             android:drawableTop="@mipmap/button_chart"
             android:hapticFeedbackEnabled="true"
@@ -187,7 +190,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:background="?android:selectableItemBackground"
+            android:background="?attr/selectableItemBackground"
             android:drawableTop="@mipmap/button_log"
             android:hapticFeedbackEnabled="true"
             app:layout_constraintBottom_toBottomOf="@+id/buttonUsageChart"
@@ -215,7 +218,7 @@
             style="@android:style/TextAppearance.Material.Widget.TextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="?android:selectableItemBackground"
+            android:background="?attr/selectableItemBackground"
             android:contentDescription="@string/text_camera_app_text"
             android:drawableTop="@mipmap/image_warning"
             android:hapticFeedbackEnabled="true"
@@ -247,23 +250,21 @@
             android:layout_width="wrap_content"
             android:layout_height="35dp"
             android:layout_marginTop="32dp"
-            android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
             android:text="@string/text_armed_mode"
             android:textAllCaps="false"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/switchSystemMode"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintHorizontal_bias="0.52"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/switchSystemMode"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewForButtonResendHourly" />
 
         <Switch
             android:id="@+id/switchSystemMode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
             android:enabled="false"
             android:hapticFeedbackEnabled="true"
             android:textOff="|"
@@ -277,22 +278,19 @@
             android:layout_width="wrap_content"
             android:layout_height="35dp"
             android:layout_marginTop="32dp"
-            android:layout_marginEnd="16dp"
             android:gravity="center_vertical"
-            android:text="@string/text_armed_state"
+            android:text=""
             android:textAllCaps="false"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/switchSystemState"
-            app:layout_constraintStart_toStartOf="@+id/switchSystemState"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
             app:layout_constraintTop_toBottomOf="@+id/textViewForButtonResendHourly" />
 
         <Switch
             android:id="@+id/switchSystemState"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
             android:enabled="false"
             android:hapticFeedbackEnabled="true"
             android:textOff="|"
@@ -301,13 +299,26 @@
             app:layout_constraintStart_toStartOf="@+id/guideline2"
             app:layout_constraintTop_toBottomOf="@+id/textViewForSwitchSystemState" />
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="397dp"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.50" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintGuide_percent="0.50"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </android.support.constraint.ConstraintLayout>
+        <Button
+            android:id="@+id/buttonDelayedArm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_delayed_arm"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switchSystemMode" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

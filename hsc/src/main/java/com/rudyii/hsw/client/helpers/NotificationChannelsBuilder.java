@@ -6,7 +6,8 @@ import android.content.Context;
 import android.media.AudioAttributes;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.annotation.RequiresApi;
+
+import androidx.annotation.RequiresApi;
 
 import static android.os.Build.VERSION_CODES.O;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
@@ -14,6 +15,7 @@ import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 public class NotificationChannelsBuilder {
     public static final String NOTIFICATION_CHANNEL_HIGH = "HSC_PopUp";
     public static final String NOTIFICATION_CHANNEL_NORMAL = "HSC_Notify";
+    public static final String NOTIFICATION_CHANNEL_MUTED = "HSC_Muted";
 
     @RequiresApi(api = O)
     public static void createNotificationChannels() {
@@ -23,6 +25,13 @@ public class NotificationChannelsBuilder {
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                 .build();
+
+        NotificationChannel notificationChannelMuted = notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_MUTED);
+        if (notificationChannelMuted == null) {
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            notificationChannelMuted = new NotificationChannel(NOTIFICATION_CHANNEL_MUTED, NOTIFICATION_CHANNEL_MUTED, importance);
+            notificationManager.createNotificationChannel(notificationChannelMuted);
+        }
 
         NotificationChannel notificationChannelHigh = notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_HIGH);
         if (notificationChannelHigh == null) {
@@ -35,7 +44,7 @@ public class NotificationChannelsBuilder {
 
         NotificationChannel notificationChannelNormal = notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_NORMAL);
         if (notificationChannelNormal == null) {
-            int importance = NotificationManager.IMPORTANCE_DEFAULT; //Set the importance level
+            int importance = NotificationManager.IMPORTANCE_HIGH; //Set the importance level
             notificationChannelNormal = new NotificationChannel(NOTIFICATION_CHANNEL_NORMAL, NOTIFICATION_CHANNEL_NORMAL, importance);
             notificationChannelNormal.setSound(Settings.System.DEFAULT_NOTIFICATION_URI, audioAttributes);
             enableLightsAndVibration(notificationChannelNormal);

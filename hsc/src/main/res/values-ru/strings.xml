@@ -25,6 +25,7 @@
     <string name="notif_text_camera_is_rebooting">\u0020 камера перезагружается</string>
     <string name="notif_text_current_ip">, текущий IP адрес:\u0020</string>
     <string name="notif_text_current_isp">Текущий провайдер:\u0020</string>
+    <string name="notif_text_delayed_arm">Система будет включена через\u0020</string>
     <string name="notif_text_isp_changed">Провайдер изменен:\u0020</string>
     <string name="notif_text_motion_detected_on_camera">Движение:\u0020</string>
     <string name="notif_text_server_started">Запущен процесс с ID:\u0020</string>
@@ -53,6 +54,7 @@
     <string name="text_current_server">Текущий сервер:</string>
     <string name="text_day">\u0020день\u0020</string>
     <string name="text_days">\u0020дней\u0020</string>
+    <string name="text_delayed_arm">Включить с задержкой</string>
     <string name="text_health_check_switch">Мониторинг здоровья</string>
     <string name="text_horly_report_button">Отчеты</string>
     <string name="text_info_sound">Звук уведомления</string>
@@ -70,6 +72,7 @@
     <string name="text_resend_hourly_text">Получить ежечасный отчет</string>
     <string name="text_resend_weekly_text">Открыть график использования</string>
     <string name="text_retrieving_data">получаем данные</string>
+    <string name="text_seconds">\u0020секунд</string>
     <string name="text_server_ping">Последний раз в сети:</string>
     <string name="text_server_uptime">Время в работе:</string>
     <string name="text_server_version">Версия сервера:</string>
@@ -86,6 +89,8 @@
     <string name="text_textViewForTextViewKeepDays">Хранить историю, дней:</string>
     <string name="text_textViewForTextViewRecordInterval">Запись видео, сек:</string>
     <string name="text_textViewSelectCameraApp">Приложение для камер</string>
+    <string name="text_toast_automatic_mode_selected">Отключите автоматический режим</string>
+    <string name="text_toast_delayed_arm_in_progress">Включение с задержкой уже активно</string>
     <string name="text_toast_notification_muted">Уведомления отключены, включите чтобы изменить</string>
     <string name="text_toast_notification_type_both">Вы будете уведомлены в момент дважды: в момент обнаружения движения и в момент загрузки видео</string>
     <string name="text_toast_notification_type_motion_detected">Вы будете уведомлены в момент обнаружения движения</string>

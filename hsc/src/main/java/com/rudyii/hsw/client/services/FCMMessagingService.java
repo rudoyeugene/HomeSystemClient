@@ -2,6 +2,8 @@ package com.rudyii.hsw.client.services;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -11,10 +13,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
+import static com.rudyii.hsw.client.HomeSystemClientApplication.updateToken;
 import static com.rudyii.hsw.client.helpers.FirebaseListenersFactory.buildMotionRefValueEventListener;
 import static com.rudyii.hsw.client.helpers.FirebaseListenersFactory.buildRecordRefValueEventListener;
 import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
 import static com.rudyii.hsw.client.helpers.Utils.getServerKeyFromAlias;
+import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServers;
 import static com.rudyii.hsw.client.notifiers.OfflineDeviceReceiver.notifyAboutDeviceGoneOffline;
 import static com.rudyii.hsw.client.notifiers.ServerShutdownNotifier.notifyAboutServerStopped;
 import static com.rudyii.hsw.client.notifiers.ServerStartupNotifier.notifyAboutServerStarted;
@@ -27,6 +31,13 @@ import static com.rudyii.hsw.client.notifiers.WanInfoReceiver.notifyAboutWanChan
 
 public class FCMMessagingService extends FirebaseMessagingService {
     private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+
+    @Override
+    public void onNewToken(@NonNull String token) {
+        super.onNewToken(token);
+        updateToken(token);
+        registerUserDataOnServers(token);
+    }
 
     @Override
     public void onMessageReceived(RemoteMessage message) {

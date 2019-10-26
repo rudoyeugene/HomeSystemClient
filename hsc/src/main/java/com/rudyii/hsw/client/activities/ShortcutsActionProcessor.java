@@ -1,10 +1,11 @@
 package com.rudyii.hsw.client.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.rudyii.hsw.client.R;
 
@@ -19,7 +20,7 @@ import static java.util.Objects.requireNonNull;
  * Created by Jack on 29.12.2017.
  */
 
-public class ShortcutsActionProcessor extends Activity {
+public class ShortcutsActionProcessor extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

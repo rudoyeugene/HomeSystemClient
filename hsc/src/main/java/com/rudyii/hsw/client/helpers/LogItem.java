@@ -3,8 +3,9 @@ package com.rudyii.hsw.client.helpers;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.annotation.NonNull;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 import com.rudyii.hsw.client.R;
 

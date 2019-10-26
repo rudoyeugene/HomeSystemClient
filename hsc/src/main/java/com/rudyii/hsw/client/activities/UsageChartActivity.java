@@ -2,10 +2,11 @@ package com.rudyii.hsw.client.activities;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.SeekBar;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -138,7 +139,7 @@ public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnS
                             usageStats.size(), usageStats.size() > 1 ? getResources().getString(R.string.text_days) : getResources().getString(R.string.text_day)));
                     dataSet.setStackLabels(labels.toArray(new String[labels.size()]));
                     dataSet.setValueFormatter((value, entry, dataSetIndex, viewPortHandler) -> {
-                        Integer minutes = ((Float)(60 * (value - ((Float) value).intValue()))).intValue();
+                        Integer minutes = ((Float) (60 * (value - ((Float) value).intValue()))).intValue();
                         return ((Float) value).intValue() + ":" + (minutes < 10 ? "0" + minutes : minutes);
                     });
 

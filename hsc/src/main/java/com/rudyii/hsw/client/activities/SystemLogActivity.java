@@ -8,8 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Base64;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,12 +27,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.rudyii.hsw.client.BuildConfig;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.helpers.LogItem;
 import com.rudyii.hsw.client.helpers.LogListAdapter;
 import com.rudyii.hsw.client.helpers.ToastDrawer;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,8 +43,9 @@ import java.util.Map;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDotsDelimFrom;
-import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateSingleDotDelimFrom;
-import static com.rudyii.hsw.client.helpers.Utils.saveImageFromCamera;
+import static com.rudyii.hsw.client.helpers.Utils.getLooper;
+import static com.rudyii.hsw.client.helpers.Utils.readImageFromUrl;
+import static com.rudyii.hsw.client.helpers.Utils.saveDataFromUrl;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
 import static java.util.Collections.sort;
 
@@ -204,7 +207,6 @@ public class SystemLogActivity extends AppCompatActivity {
     private LogItem buildAndFillLogItem(Long logRecordId, Map<String, Object> logRecordData) {
         String reason = (String) logRecordData.get("reason");
         String title = getCurrentTimeAndDateDoubleDotsDelimFrom(logRecordId);
-        Intent intent;
         LogItem logItem = null;
         Bitmap image = null;
         String description = null;
@@ -237,34 +239,37 @@ public class SystemLogActivity extends AppCompatActivity {
                 break;
 
             case "motionDetected":
-                String imageString = (String) logRecordData.get("image");
-                String serverName = (String) logRecordData.get("serverName");
+                final String[] imageUrl = {(String) logRecordData.get("imageUrl")};
+                Long motionArea = (Long) logRecordData.get("motionArea");
                 String cameraName = (String) logRecordData.get("cameraName");
 
-                byte[] decodedImageString = Base64.decode(imageString, Base64.DEFAULT);
+                image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_snapshot);
+                description = cameraName + ":" + motionArea + "%";
 
-                image = BitmapFactory.decodeByteArray(decodedImageString, 0, decodedImageString.length);
-                description = logRecordData.get("cameraName") + ":" + logRecordData.get("motionArea") + "%";
-
-                String directory = Environment.getExternalStorageDirectory().getAbsolutePath() + "/HomeSystemMotions/" + serverName + "/" + cameraName + "/";
-                String imageName = getCurrentTimeAndDateSingleDotDelimFrom(logRecordId);
-                String fileLocation = directory + imageName + ".jpg";
-                File imageFile = new File(fileLocation);
-
-                if (!imageFile.exists()) {
-                    saveImageFromCamera(image, serverName, cameraName, getCurrentTimeAndDateSingleDotDelimFrom(logRecordId));
-                }
-
-                Uri photoURI = FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".com.rudyii.hsc", imageFile);
-
-                intent = new Intent(Intent.ACTION_VIEW, photoURI);
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                final Intent finalIntentForMotion = intent;
                 logItem = new LogItem(getApplicationContext()) {
                     @Override
                     public void fireAction() {
-                        startActivity(finalIntentForMotion);
+                        Handler handler = new Handler(getLooper());
+                        handler.post(() -> {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(imageUrl[0]));
+                            File outputDir = getApplicationContext().getCacheDir();
+                            try {
+                                File outputFile = File.createTempFile(logRecordId.toString(), ".jpg", outputDir);
+                                if (outputFile.length() == 0) {
+                                    Bitmap bitmap = readImageFromUrl(imageUrl[0]);
+                                    FileOutputStream fos = new FileOutputStream(outputFile);
+                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                                    fos.close();
+                                }
+                                intent = new Intent(Intent.ACTION_VIEW, FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID + ".provider", outputFile));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } finally {
+                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                                startActivity(intent);
+                            }
+                        });
                     }
                 };
 
@@ -274,14 +279,29 @@ public class SystemLogActivity extends AppCompatActivity {
             case "videoRecorded":
                 image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_video);
                 description = logRecordData.get("fileName").toString();
-                String url = (String) logRecordData.get("url");
-                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                final String[] videoUrl = {(String) logRecordData.get("videoUrl")};
 
-                final Intent finalIntentForVideoRecorded = intent;
                 logItem = new LogItem(getApplicationContext()) {
                     @Override
                     public void fireAction() {
-                        startActivity(finalIntentForVideoRecorded);
+                        Handler handler = new Handler(getLooper());
+                        handler.post(() -> {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl[0]));
+                            File outputDir = getApplicationContext().getCacheDir();
+                            try {
+                                File outputFile = File.createTempFile(logRecordId.toString(), ".mp4", outputDir);
+                                if (outputFile.length() == 0) {
+                                    saveDataFromUrl(videoUrl[0], outputFile);
+                                }
+                                intent = new Intent(Intent.ACTION_VIEW, FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID + ".provider", outputFile));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            } finally {
+                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                                startActivity(intent);
+                            }
+                        });
                     }
                 };
 

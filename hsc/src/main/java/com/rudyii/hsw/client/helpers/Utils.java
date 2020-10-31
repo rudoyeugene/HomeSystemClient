@@ -8,7 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -28,9 +30,13 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.rudyii.hsw.client.R;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -437,6 +443,46 @@ public class Utils {
         }
     }
 
+    public static Bitmap readImageFromUrl(String imageUrl) {
+        Bitmap bitmap = null;
+
+        try (InputStream iStream = new URL(imageUrl).openConnection().getInputStream()) {
+            bitmap = BitmapFactory.decodeStream(iStream);
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to load file", e);
+        }
+        return bitmap;
+    }
+
+    public static void saveDataFromUrl(String dataUrl, File destination) {
+        try (InputStream iStream = new URL(dataUrl).openConnection().getInputStream()) {
+            BufferedInputStream inStream = new BufferedInputStream(iStream, 8192);
+            FileOutputStream fos = new FileOutputStream(destination);
+            int len;
+            byte[] buff = new byte[8192];
+            while ((len = inStream.read(buff)) != -1) {
+                fos.write(buff, 0, len);
+            }
+            fos.flush();
+            fos.close();
+            inStream.close();
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to load file", e);
+        }
+    }
+
+    public static byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
+
     @NonNull
     private static Account[] getAccounts() {
         return AccountManager.get(getAppContext()).getAccountsByType("com.google");
@@ -459,5 +505,12 @@ public class Utils {
         }
 
         return result;
+    }
+
+    public static boolean systemIsOnDarkMode() {
+        int nightModeFlags =
+                getAppContext().getResources().getConfiguration().uiMode &
+                        Configuration.UI_MODE_NIGHT_MASK;
+        return nightModeFlags == Configuration.UI_MODE_NIGHT_YES;
     }
 }

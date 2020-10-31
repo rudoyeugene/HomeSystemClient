@@ -1,0 +1,10 @@
+build
+release
+gradle
+.idea
+.gradle
+/local.properties
+**/fabric.properties
+**/google-services.json
+**/key.json
+*.iml

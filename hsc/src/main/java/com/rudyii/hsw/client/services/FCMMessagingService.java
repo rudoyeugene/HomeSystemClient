@@ -9,16 +9,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.updateToken;
-import static com.rudyii.hsw.client.helpers.FirebaseListenersFactory.buildMotionRefValueEventListener;
 import static com.rudyii.hsw.client.helpers.FirebaseListenersFactory.buildRecordRefValueEventListener;
 import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
+import static com.rudyii.hsw.client.helpers.Utils.currentLocale;
 import static com.rudyii.hsw.client.helpers.Utils.getServerKeyFromAlias;
 import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServers;
+import static com.rudyii.hsw.client.notifiers.MotionDetectedNotifier.notifyAboutMotionDetected;
 import static com.rudyii.hsw.client.notifiers.OfflineDeviceReceiver.notifyAboutDeviceGoneOffline;
 import static com.rudyii.hsw.client.notifiers.ServerShutdownNotifier.notifyAboutServerStopped;
 import static com.rudyii.hsw.client.notifiers.ServerStartupNotifier.notifyAboutServerStarted;
@@ -42,9 +47,8 @@ public class FCMMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage message) {
         Map<String, String> messageData = message.getData();
-        HashMap<String, Object> data = new HashMap<>();
+        HashMap<String, Object> data = new HashMap<>(messageData);
         String serverName = messageData.get("serverName");
-        data.put("serverName", serverName);
 
         switch (message.getData().get("reason")) {
             case "systemStateChanged":
@@ -57,9 +61,10 @@ public class FCMMessagingService extends FirebaseMessagingService {
                 break;
 
             case "motionDetected":
-                Long motionId = Long.valueOf(messageData.get("motionId"));
-                DatabaseReference motionsRef = firebaseDatabase.getReference(getServerKeyFromAlias(serverName) + "/log/" + motionId);
-                motionsRef.addListenerForSingleValueEvent(buildMotionRefValueEventListener(serverName));
+                Date date = new Date(Long.parseLong(messageData.get("eventId")));
+                DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy_HH-mm-ss", currentLocale);
+                dateFormat.setTimeZone(TimeZone.getDefault());
+                notifyAboutMotionDetected(messageData);
                 break;
 
             case "videoRecorded":

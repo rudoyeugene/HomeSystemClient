@@ -15,7 +15,6 @@ import java.util.Map;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateSingleDotDelimFrom;
 import static com.rudyii.hsw.client.helpers.Utils.saveImageFromCamera;
-import static com.rudyii.hsw.client.notifiers.MotionDetectedNotifier.notifyAboutMotionDetected;
 import static com.rudyii.hsw.client.notifiers.VideoUploadedReceiver.notifyAboutNewVideoUploaded;
 
 /**
@@ -59,7 +58,7 @@ public class FirebaseListenersFactory {
 
                 motionData.put("image", bitmap);
 
-                notifyAboutMotionDetected(motionData);
+//                notifyAboutMotionDetected(motionData);
             }
 
             @Override

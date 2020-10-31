@@ -48,9 +48,8 @@ import static android.media.RingtoneManager.EXTRA_RINGTONE_PICKED_URI;
 import static android.media.RingtoneManager.EXTRA_RINGTONE_TITLE;
 import static android.media.RingtoneManager.EXTRA_RINGTONE_TYPE;
 import static android.media.RingtoneManager.TYPE_NOTIFICATION;
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.O;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
+import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getToken;
 import static com.rudyii.hsw.client.activities.CameraSettingsActivity.HEALTH_CHECK_ENABLED;
 import static com.rudyii.hsw.client.activities.CameraSettingsActivity.INTERVAL;
@@ -98,12 +97,8 @@ public class SettingsActivity extends AppCompatActivity {
 
         Log.i(TAG, "Settings Activity created");
 
-        if (SDK_INT < O) {
-            setContentView(R.layout.activity_settings);
-            buildSoundSelectionButtons();
-        } else {
-            setContentView(R.layout.activity_settings_oreo);
-        }
+        setContentView(R.layout.activity_settings);
+        buildSoundSelectionButtons();
 
         buildAppsListSpinner();
 
@@ -212,6 +207,7 @@ public class SettingsActivity extends AppCompatActivity {
     private void buildAddServerButton() {
         addServerButton = findViewById(R.id.buttonPairServer);
         addServerButton.setText(getResources().getString(R.string.button_pair_server_pair_server));
+        addServerButton.setTextColor(getAppContext().getColor(R.color.textColor));
         addServerButton.setOnClickListener(v -> {
             try {
                 Intent intent = new Intent(ACTION_SCAN);
@@ -225,6 +221,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void buildSoundSelectionButtons() {
         infoSoundButton = findViewById(R.id.buttonInfoSound);
+        infoSoundButton.setTextColor(getAppContext().getColor(R.color.textColor));
         infoSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND)));
 
         infoSoundButton.setOnClickListener(v -> {
@@ -237,6 +234,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         motionSoundButton = findViewById(R.id.buttonMotionSound);
+        motionSoundButton.setTextColor(getAppContext().getColor(R.color.textColor));
         motionSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND)));
 
         motionSoundButton.setOnClickListener(v -> {
@@ -261,6 +259,7 @@ public class SettingsActivity extends AppCompatActivity {
                     convertView = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_spinner_item, parent, false);
 
                 ((TextView) convertView).setText(getCameraAppName());
+                ((TextView) convertView).setTextColor(getAppContext().getColor(R.color.textColor));
 
                 return convertView;
             }
@@ -359,6 +358,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         editTextForDelayedArmInterval = findViewById(R.id.editTextForDelayedArmInterval);
+        editTextForDelayedArmInterval.setTextColor(getAppContext().getColor(R.color.textColor));
         editTextForDelayedArmInterval.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -375,6 +375,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         editTextForTextViewKeepDays = findViewById(R.id.editTextForTextViewKeepDays);
+        editTextForTextViewKeepDays.setTextColor(getAppContext().getColor(R.color.textColor));
         editTextForTextViewKeepDays.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -391,6 +392,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         editTextForTextViewRecordInterval = findViewById(R.id.editTextForTextViewRecordInterval);
+        editTextForTextViewRecordInterval.setTextColor(getAppContext().getColor(R.color.textColor));
         editTextForTextViewRecordInterval.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -663,6 +665,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
 
             final TextView textView = (TextView) view.getTag();
+            textView.setTextColor(getAppContext().getColor(R.color.textColor));
             textView.setText(requireNonNull(info).getInfo().loadLabel(getPackageManager()));
 
             return view;

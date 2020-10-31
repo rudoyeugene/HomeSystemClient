@@ -64,7 +64,9 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
         ViewHolder(View itemView) {
             super(itemView);
             logDescriptionHeader = itemView.findViewById(R.id.logDescriptionHeader);
+            logDescriptionHeader.setTextColor(getAppContext().getColor(R.color.textColor));
             logDescriptionDetails = itemView.findViewById(R.id.logDescriptionDetails);
+            logDescriptionDetails.setTextColor(getAppContext().getColor(R.color.textColor));
             imageView = itemView.findViewById(R.id.logImage);
 
             itemView.setOnClickListener(v -> {

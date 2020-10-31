@@ -16,7 +16,7 @@ public class FirebaseDatabaseProvider {
     public static DatabaseReference getRootReference() {
         String serverKey = getActiveServerKey();
 
-        if (stringIsEmptyOrNull(serverKey)){
+        if (stringIsEmptyOrNull(serverKey)) {
             return firebaseDatabase.getReference("nullReference");
         } else {
             return firebaseDatabase.getReference(serverKey);

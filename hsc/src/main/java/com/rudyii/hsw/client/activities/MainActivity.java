@@ -43,8 +43,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.N;
 import static com.rudyii.hsw.client.BuildConfig.COMPATIBLE_SERVER_VERSION;
 import static com.rudyii.hsw.client.BuildConfig.SERVER_DOWNLOAD_URL;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
@@ -73,6 +71,7 @@ import static com.rudyii.hsw.client.helpers.Utils.saveNotificationMutedForServer
 import static com.rudyii.hsw.client.helpers.Utils.saveNotificationTypeForServer;
 import static com.rudyii.hsw.client.helpers.Utils.stringIsEmptyOrNull;
 import static com.rudyii.hsw.client.helpers.Utils.switchActiveServerTo;
+import static com.rudyii.hsw.client.helpers.Utils.systemIsOnDarkMode;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
 import static java.util.Objects.requireNonNull;
@@ -93,17 +92,21 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference infoRef, statusesRef;
     private ValueEventListener infoValueEventListener, statusesValueEventListener;
     private long serverLastPing;
+    private boolean systemIsInDarkMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        systemIsInDarkMode = systemIsOnDarkMode();
         setContentView(R.layout.activity_main);
 
         TextView serverLastPingTextValue = findViewById(R.id.textViewServerVersion);
         defaultTextColor = serverLastPingTextValue.getTextColors();
 
         buttonResendHourlyReport = findViewById(R.id.buttonResendHourly);
+        if (systemIsInDarkMode) {
+            buttonResendHourlyReport.setImageDrawable(getDrawable(R.mipmap.button_hourly_inverted));
+        }
         resolveHourlyReportIcon();
         buttonResendHourlyReport.setOnClickListener(v -> {
             if (buttonResendHourlyReportMuted) {
@@ -119,6 +122,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         buttonUsageStats = findViewById(R.id.buttonUsageChart);
+        if (systemIsInDarkMode) {
+            buttonUsageStats.setImageDrawable(getDrawable(R.mipmap.button_chart_inverted));
+        }
         buttonUsageStats.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), UsageChartActivity.class)));
         buttonUsageStats.setOnLongClickListener(v -> {
             AlertDialog.Builder cleanupLog = new AlertDialog.Builder(MainActivity.this);
@@ -137,6 +143,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         buttonSystemLog = findViewById(R.id.buttonSystemLog);
+        if (systemIsInDarkMode) {
+            buttonSystemLog.setImageDrawable(getDrawable(R.mipmap.button_log_inverted));
+        }
         buttonSystemLog.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), SystemLogActivity.class)));
         buttonSystemLog.setOnLongClickListener(v -> {
             AlertDialog.Builder cleanupLog = new AlertDialog.Builder(MainActivity.this);
@@ -251,10 +260,18 @@ public class MainActivity extends AppCompatActivity {
 
         if (buttonResendHourlyReportMuted) {
             buttonResendHourlyReportMuted = false;
-            icon = getDrawable(R.mipmap.button_hourly);
+            if (systemIsInDarkMode) {
+                icon = getDrawable(R.mipmap.button_hourly_inverted);
+            } else {
+                icon = getDrawable(R.mipmap.button_hourly);
+            }
         } else {
             buttonResendHourlyReportMuted = true;
-            icon = getDrawable(R.mipmap.button_muted);
+            if (systemIsInDarkMode) {
+                icon = getDrawable(R.mipmap.button_muted_inverted);
+            } else {
+                icon = getDrawable(R.mipmap.button_muted);
+            }
         }
 
         buttonResendHourlyReport.setImageDrawable(icon);
@@ -348,17 +365,29 @@ public class MainActivity extends AppCompatActivity {
 
         switch (notificationType) {
             case NOTIFICATION_TYPE_MOTION_DETECTED:
-                icon = getDrawable(R.mipmap.button_on_video_recorded);
+                if (systemIsInDarkMode) {
+                    icon = getDrawable(R.mipmap.button_on_video_recorded_inverted);
+                } else {
+                    icon = getDrawable(R.mipmap.button_on_video_recorded);
+                }
                 saveNotificationTypeForServer(activeServer, NOTIFICATION_TYPE_VIDEO_RECORDED);
                 break;
 
             case NOTIFICATION_TYPE_VIDEO_RECORDED:
-                icon = getDrawable(R.mipmap.button_on_motion_and_video_recorded);
+                if (systemIsInDarkMode) {
+                    icon = getDrawable(R.mipmap.button_on_motion_and_video_recorded_inverted);
+                } else {
+                    icon = getDrawable(R.mipmap.button_on_motion_and_video_recorded);
+                }
                 saveNotificationTypeForServer(activeServer, NOTIFICATION_TYPE_ALL);
                 break;
 
             case NOTIFICATION_TYPE_ALL:
-                icon = getDrawable(R.mipmap.button_on_motion);
+                if (systemIsInDarkMode) {
+                    icon = getDrawable(R.mipmap.button_on_motion_inverted);
+                } else {
+                    icon = getDrawable(R.mipmap.button_on_motion);
+                }
                 saveNotificationTypeForServer(activeServer, NOTIFICATION_TYPE_MOTION_DETECTED);
                 break;
             default:
@@ -377,10 +406,18 @@ public class MainActivity extends AppCompatActivity {
 
         if (buttonResendHourlyReportMuted) {
             buttonResendHourlyReportMuted = true;
-            icon = getDrawable(R.mipmap.button_muted);
+            if (systemIsInDarkMode) {
+                icon = getDrawable(R.mipmap.button_muted_inverted);
+            } else {
+                icon = getDrawable(R.mipmap.button_muted);
+            }
         } else {
             buttonResendHourlyReportMuted = false;
-            icon = getDrawable(R.mipmap.button_hourly);
+            if (systemIsInDarkMode) {
+                icon = getDrawable(R.mipmap.button_hourly_inverted);
+            } else {
+                icon = getDrawable(R.mipmap.button_hourly);
+            }
         }
 
         buttonResendHourlyReport.setImageDrawable(icon);
@@ -394,19 +431,35 @@ public class MainActivity extends AppCompatActivity {
 
         switch (notificationType) {
             case NOTIFICATION_TYPE_MOTION_DETECTED:
-                icon = getDrawable(R.mipmap.button_on_motion);
+                if (systemIsInDarkMode) {
+                    icon = getDrawable(R.mipmap.button_on_motion_inverted);
+                } else {
+                    icon = getDrawable(R.mipmap.button_on_motion);
+                }
                 break;
 
             case NOTIFICATION_TYPE_VIDEO_RECORDED:
-                icon = getDrawable(R.mipmap.button_on_video_recorded);
+                if (systemIsInDarkMode) {
+                    icon = getDrawable(R.mipmap.button_on_video_recorded_inverted);
+                } else {
+                    icon = getDrawable(R.mipmap.button_on_video_recorded);
+                }
                 break;
 
             case NOTIFICATION_TYPE_ALL:
-                icon = getDrawable(R.mipmap.button_on_motion_and_video_recorded);
+                if (systemIsInDarkMode) {
+                    icon = getDrawable(R.mipmap.button_on_motion_and_video_recorded_inverted);
+                } else {
+                    icon = getDrawable(R.mipmap.button_on_motion_and_video_recorded);
+                }
                 break;
 
             case NOTIFICATION_TYPE_MUTE:
-                icon = getDrawable(R.mipmap.button_muted);
+                if (systemIsInDarkMode) {
+                    icon = getDrawable(R.mipmap.button_muted_inverted);
+                } else {
+                    icon = getDrawable(R.mipmap.button_muted);
+                }
                 buttonNotificationTypeMuted = true;
                 break;
 
@@ -416,7 +469,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (buttonNotificationTypeMuted) {
-            icon = getDrawable(R.mipmap.button_muted);
+            if (systemIsInDarkMode) {
+                icon = getDrawable(R.mipmap.button_muted_inverted);
+            } else {
+                icon = getDrawable(R.mipmap.button_muted);
+            }
         }
 
         buttonNotificationType.setImageDrawable(icon);
@@ -646,15 +703,14 @@ public class MainActivity extends AppCompatActivity {
                     currentItem[0] = selected;
                     switchActiveServerTo(selectedServerName);
                     ((TextView) convertView).setText(selectedServerName);
+                    ((TextView) convertView).setTextColor(getAppContext().getColor(R.color.textColor));
 
                     refreshFirebaseListeners();
                     resolveHourlyReportIcon();
                     resolveNotificationType();
                     registerUserDataOnServer(getActiveServerKey(), selectedServerName, getToken());
 
-                    if (SDK_INT > N) {
-                        buildDynamicShortcuts();
-                    }
+                    buildDynamicShortcuts();
                 }
             }
 

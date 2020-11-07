@@ -20,11 +20,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String HSC_STATUSES_UPDATED = "HSC_STATUSES_UPDATED";
     private final Random random = new Random();
     private final MainActivityBroadcastReceiver mainActivityBroadcastReceiver = new MainActivityBroadcastReceiver();
-    private Switch systemMode, systemState;
+    private SwitchCompat systemMode, systemState;
     @SuppressWarnings("FieldCanBeLocal")
     private ImageButton buttonResendHourlyReport, buttonUsageStats, buttonSystemLog, buttonNotificationType;
     private TextView armedModeText, armedStateText;
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
         buttonResendHourlyReport = findViewById(R.id.buttonResendHourly);
         if (systemIsInDarkMode) {
-            buttonResendHourlyReport.setImageDrawable(getDrawable(R.mipmap.button_hourly_inverted));
+            buttonResendHourlyReport.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_hourly_inverted));
         }
         resolveHourlyReportIcon();
         buttonResendHourlyReport.setOnClickListener(v -> {
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
         buttonUsageStats = findViewById(R.id.buttonUsageChart);
         if (systemIsInDarkMode) {
-            buttonUsageStats.setImageDrawable(getDrawable(R.mipmap.button_chart_inverted));
+            buttonUsageStats.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_chart_inverted));
         }
         buttonUsageStats.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), UsageChartActivity.class)));
         buttonUsageStats.setOnLongClickListener(v -> {
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
         buttonSystemLog = findViewById(R.id.buttonSystemLog);
         if (systemIsInDarkMode) {
-            buttonSystemLog.setImageDrawable(getDrawable(R.mipmap.button_log_inverted));
+            buttonSystemLog.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_log_inverted));
         }
         buttonSystemLog.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), SystemLogActivity.class)));
         buttonSystemLog.setOnLongClickListener(v -> {
@@ -261,16 +261,16 @@ public class MainActivity extends AppCompatActivity {
         if (buttonResendHourlyReportMuted) {
             buttonResendHourlyReportMuted = false;
             if (systemIsInDarkMode) {
-                icon = getDrawable(R.mipmap.button_hourly_inverted);
+                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_hourly_inverted);
             } else {
-                icon = getDrawable(R.mipmap.button_hourly);
+                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_hourly);
             }
         } else {
             buttonResendHourlyReportMuted = true;
             if (systemIsInDarkMode) {
-                icon = getDrawable(R.mipmap.button_muted_inverted);
+                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted_inverted);
             } else {
-                icon = getDrawable(R.mipmap.button_muted);
+                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted);
             }
         }
 
@@ -366,32 +366,32 @@ public class MainActivity extends AppCompatActivity {
         switch (notificationType) {
             case NOTIFICATION_TYPE_MOTION_DETECTED:
                 if (systemIsInDarkMode) {
-                    icon = getDrawable(R.mipmap.button_on_video_recorded_inverted);
+                    icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_video_recorded_inverted);
                 } else {
-                    icon = getDrawable(R.mipmap.button_on_video_recorded);
+                    icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_video_recorded);
                 }
                 saveNotificationTypeForServer(activeServer, NOTIFICATION_TYPE_VIDEO_RECORDED);
                 break;
 
             case NOTIFICATION_TYPE_VIDEO_RECORDED:
                 if (systemIsInDarkMode) {
-                    icon = getDrawable(R.mipmap.button_on_motion_and_video_recorded_inverted);
+                    icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_motion_and_video_recorded_inverted);
                 } else {
-                    icon = getDrawable(R.mipmap.button_on_motion_and_video_recorded);
+                    icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_motion_and_video_recorded);
                 }
                 saveNotificationTypeForServer(activeServer, NOTIFICATION_TYPE_ALL);
                 break;
 
             case NOTIFICATION_TYPE_ALL:
                 if (systemIsInDarkMode) {
-                    icon = getDrawable(R.mipmap.button_on_motion_inverted);
+                    icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_motion_inverted);
                 } else {
-                    icon = getDrawable(R.mipmap.button_on_motion);
+                    icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_motion);
                 }
                 saveNotificationTypeForServer(activeServer, NOTIFICATION_TYPE_MOTION_DETECTED);
                 break;
             default:
-                icon = getDrawable(R.mipmap.image_warning);
+                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.image_warning);
                 break;
         }
 
@@ -407,16 +407,16 @@ public class MainActivity extends AppCompatActivity {
         if (buttonResendHourlyReportMuted) {
             buttonResendHourlyReportMuted = true;
             if (systemIsInDarkMode) {
-                icon = getDrawable(R.mipmap.button_muted_inverted);
+                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted_inverted);
             } else {
-                icon = getDrawable(R.mipmap.button_muted);
+                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted);
             }
         } else {
             buttonResendHourlyReportMuted = false;
             if (systemIsInDarkMode) {
-                icon = getDrawable(R.mipmap.button_hourly_inverted);
+                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_hourly_inverted);
             } else {
-                icon = getDrawable(R.mipmap.button_hourly);
+                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_hourly);
             }
         }
 
@@ -432,47 +432,47 @@ public class MainActivity extends AppCompatActivity {
         switch (notificationType) {
             case NOTIFICATION_TYPE_MOTION_DETECTED:
                 if (systemIsInDarkMode) {
-                    icon = getDrawable(R.mipmap.button_on_motion_inverted);
+                    icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_motion_inverted);
                 } else {
-                    icon = getDrawable(R.mipmap.button_on_motion);
+                    icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_motion);
                 }
                 break;
 
             case NOTIFICATION_TYPE_VIDEO_RECORDED:
                 if (systemIsInDarkMode) {
-                    icon = getDrawable(R.mipmap.button_on_video_recorded_inverted);
+                    icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_video_recorded_inverted);
                 } else {
-                    icon = getDrawable(R.mipmap.button_on_video_recorded);
+                    icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_video_recorded);
                 }
                 break;
 
             case NOTIFICATION_TYPE_ALL:
                 if (systemIsInDarkMode) {
-                    icon = getDrawable(R.mipmap.button_on_motion_and_video_recorded_inverted);
+                    icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_motion_and_video_recorded_inverted);
                 } else {
-                    icon = getDrawable(R.mipmap.button_on_motion_and_video_recorded);
+                    icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_motion_and_video_recorded);
                 }
                 break;
 
             case NOTIFICATION_TYPE_MUTE:
                 if (systemIsInDarkMode) {
-                    icon = getDrawable(R.mipmap.button_muted_inverted);
+                    icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted_inverted);
                 } else {
-                    icon = getDrawable(R.mipmap.button_muted);
+                    icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted);
                 }
                 buttonNotificationTypeMuted = true;
                 break;
 
             default:
-                icon = getDrawable(R.mipmap.image_warning);
+                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.image_warning);
                 break;
         }
 
         if (buttonNotificationTypeMuted) {
             if (systemIsInDarkMode) {
-                icon = getDrawable(R.mipmap.button_muted_inverted);
+                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted_inverted);
             } else {
-                icon = getDrawable(R.mipmap.button_muted);
+                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted);
             }
         }
 
@@ -498,7 +498,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void calculateSystemStateBasedOn(Switch systemMode, Switch systemState) {
+    private void calculateSystemStateBasedOn(SwitchCompat systemMode, SwitchCompat systemState) {
         Map<String, String> stateRequest = new HashMap<>();
 
         if (buttonsChangedInternally) {

@@ -14,7 +14,6 @@ import com.rudyii.hsw.client.activities.MainActivity;
 
 import java.util.HashMap;
 
-import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_HIGH;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static java.util.Objects.requireNonNull;
@@ -24,8 +23,7 @@ import static java.util.Objects.requireNonNull;
  */
 
 public class ServerShutdownNotifier {
-    public static void notifyAboutServerStopped(HashMap<String, Object> shutdownData) {
-        Context context = getAppContext();
+    public ServerShutdownNotifier(Context context, HashMap<String, Object> shutdownData) {
         String serverName = (String) shutdownData.get("serverName");
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
@@ -33,7 +31,7 @@ public class ServerShutdownNotifier {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_HIGH)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle(serverName + ": " + context.getResources().getString(R.string.notif_text_server_stopped))
+                .setContentTitle(serverName + ": " + context.getResources().getString(R.string.notif_text_server_stopped) + shutdownData.get("eventDateTime").toString())
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[]{0, 500})

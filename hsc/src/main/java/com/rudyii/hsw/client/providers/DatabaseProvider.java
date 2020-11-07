@@ -68,7 +68,7 @@ public class DatabaseProvider {
     }
 
     public static Long getLongValueFromSettings(String id) {
-        Long result = 0L;
+        long result = 0L;
 
         Cursor cursor = getReadableDatabase().rawQuery("SELECT VALUE FROM SETTINGS WHERE _ID = ?", new String[]{id});
         if (cursor.moveToFirst()) {

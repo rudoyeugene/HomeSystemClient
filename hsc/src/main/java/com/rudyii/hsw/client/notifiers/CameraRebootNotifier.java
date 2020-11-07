@@ -14,7 +14,6 @@ import com.rudyii.hsw.client.activities.MainActivity;
 
 import java.util.HashMap;
 
-import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_HIGH;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static java.util.Objects.requireNonNull;
@@ -23,9 +22,8 @@ import static java.util.Objects.requireNonNull;
  * Created by Jack on 18.12.2017.
  */
 
-public class OfflineDeviceReceiver {
-    public static void notifyAboutDeviceGoneOffline(HashMap<String, Object> offlineDeviceData) {
-        Context context = getAppContext();
+public class CameraRebootNotifier {
+    public CameraRebootNotifier(Context context, HashMap<String, Object> offlineDeviceData) {
         String offlineDevice = (String) offlineDeviceData.get("cameraName");
         String serverName = (String) offlineDeviceData.get("serverName");
 

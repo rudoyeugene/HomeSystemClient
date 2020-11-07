@@ -5,7 +5,6 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -14,7 +13,6 @@ import android.graphics.BitmapFactory;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.provider.Settings;
@@ -25,13 +23,10 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.rudyii.hsw.client.R;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -48,7 +43,6 @@ import java.util.Random;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import static android.text.TextUtils.isDigitsOnly;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
@@ -84,18 +78,6 @@ public class Utils {
 
         Date date = new Date(timeStamp);
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy", currentLocale);
-        dateFormat.setTimeZone(TimeZone.getDefault());
-
-        return dateFormat.format(date);
-    }
-
-    public static String getCurrentTimeAndDateSingleDotDelimFrom(Long timeStamp) {
-        if (timeStamp == null) {
-            return "";
-        }
-
-        Date date = new Date(timeStamp);
-        DateFormat dateFormat = new SimpleDateFormat("HH.mm.ss-dd.MM.yyyy", currentLocale);
         dateFormat.setTimeZone(TimeZone.getDefault());
 
         return dateFormat.format(date);
@@ -378,11 +360,6 @@ public class Utils {
         saveStringValueToSettings(id, gson.toJson(map));
     }
 
-    public static String getCurrentFcmToken() {
-        FirebaseApp.initializeApp(getAppContext());
-        return FirebaseInstanceId.getInstance().getToken();
-    }
-
     public static String[] retrievePermissions() {
         try {
             return getAppContext()
@@ -398,49 +375,6 @@ public class Utils {
         HandlerThread thread = new HandlerThread("Thread: " + new Random().nextInt(1000));
         thread.start();
         return thread.getLooper();
-    }
-
-    public static void saveImageFromCamera(Bitmap bitmap, String serverName, String cameraName, String imageName) {
-        imageName = imageName + ".jpg";
-
-        FileOutputStream fos = null;
-
-        try {
-            final File directory = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/HomeSystemMotions/" + serverName + "/" + cameraName + "/");
-
-            if (!directory.exists()) {
-                if (!directory.mkdirs()) {
-                    Log.e(TAG, "could not create the directories");
-                }
-            }
-
-            final File motionImage = new File(directory, imageName);
-
-            if (!motionImage.exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                motionImage.createNewFile();
-            }
-
-            fos = new FileOutputStream(motionImage);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.close();
-
-            Uri uri = Uri.fromFile(motionImage);
-            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri);
-            getAppContext().sendBroadcast(intent);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        } finally {
-            try {
-                if (fos != null) {
-                    fos.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public static Bitmap readImageFromUrl(String imageUrl) {
@@ -471,40 +405,9 @@ public class Utils {
         }
     }
 
-    public static byte[] getBytes(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-        int bufferSize = 1024;
-        byte[] buffer = new byte[bufferSize];
-
-        int len = 0;
-        while ((len = inputStream.read(buffer)) != -1) {
-            byteBuffer.write(buffer, 0, len);
-        }
-        return byteBuffer.toByteArray();
-    }
-
     @NonNull
     private static Account[] getAccounts() {
         return AccountManager.get(getAppContext()).getAccountsByType("com.google");
-    }
-
-    public static HashMap<String, Object> convertToStringObjectMap(Map<String, String> map) {
-        HashMap<String, Object> result = new HashMap<>();
-
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-
-            if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
-                result.put(key, Boolean.parseBoolean(value));
-            } else if (isDigitsOnly(value)) {
-                result.put(key, Long.parseLong(value));
-            } else {
-                result.put(key, value);
-            }
-        }
-
-        return result;
     }
 
     public static boolean systemIsOnDarkMode() {

@@ -14,7 +14,6 @@ import com.rudyii.hsw.client.activities.MainActivity;
 
 import java.util.HashMap;
 
-import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_NORMAL;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static java.util.Objects.requireNonNull;
@@ -23,9 +22,8 @@ import static java.util.Objects.requireNonNull;
  * Created by Jack on 17.12.2017.
  */
 
-public class StatusChangedReceiver {
-    public static void notifyAboutSystemStateChanged(HashMap<String, Object> statusesData) {
-        Context context = getAppContext();
+public class StatusChangedNotifier {
+    public StatusChangedNotifier(Context context, HashMap<String, Object> statusesData) {
         String serverName = (String) statusesData.get("serverName");
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,

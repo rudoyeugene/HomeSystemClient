@@ -4,9 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
-import android.widget.Switch;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.rudyii.hsw.client.R;
 
@@ -17,7 +17,7 @@ public class CameraSettingsActivity extends AppCompatActivity {
     public static String NOISE_LEVEL = "noiseLevel";
     public static String REBOOT_TIMEOUT = "rebootTimeout";
     private Intent intent;
-    private Switch switchHealthCheckEnabled;
+    private SwitchCompat switchHealthCheckEnabled;
     private boolean isHealthCheckEnabled;
     private EditText editTextForMotionInterval, editTextForMotionArea, editTextForNoiseLevel, editTextForRebootTimeout;
     private String cameraName;

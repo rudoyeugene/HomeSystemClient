@@ -32,6 +32,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.helpers.ToastDrawer;
 import com.rudyii.hsw.client.helpers.Utils;
@@ -76,6 +78,7 @@ import static java.util.Objects.requireNonNull;
 public class SettingsActivity extends AppCompatActivity {
     public static final int CAMERA_SETTINGS_CODE = 444;
     private static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
+    public static final String RINGTONE_PICKED_URI = "android.intent.extra.ringtone.PICKED_URI";
     private final int QR_SCAN_CODE = 111;
     private final int INFORMATION_NOTIFICATION_SOUND_CODE = 222;
     private final int MOTION_NOTIFICATION_SOUND_CODE = 333;
@@ -209,13 +212,8 @@ public class SettingsActivity extends AppCompatActivity {
         addServerButton.setText(getResources().getString(R.string.button_pair_server_pair_server));
         addServerButton.setTextColor(getAppContext().getColor(R.color.textColor));
         addServerButton.setOnClickListener(v -> {
-            try {
-                Intent intent = new Intent(ACTION_SCAN);
-                intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-                startActivityForResult(intent, QR_SCAN_CODE);
-            } catch (ActivityNotFoundException anfe) {
-                showDialogToDownloadQrCodeScanner(SettingsActivity.this);
-            }
+            IntentIntegrator integrator = new IntentIntegrator(this);
+            integrator.initiateScan();
         });
     }
 
@@ -548,83 +546,83 @@ public class SettingsActivity extends AppCompatActivity {
             return;
         }
 
-        String contents, soundName;
-        Uri soundUri;
-        switch (requestCode) {
-            case QR_SCAN_CODE:
-                contents = intent.getStringExtra("SCAN_RESULT");
-                ArrayList<String> serverData = new ArrayList<>(asList(contents.split(":")));
+        IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        if (scanResult != null) {
+            String result = scanResult.getContents();
+            ArrayList<String> serverData = new ArrayList<>(asList(result.split(":")));
 
-                String serverAlias = serverData.get(0);
-                String serverKey = serverData.get(1);
+            String serverAlias = serverData.get(0);
+            String serverKey = serverData.get(1);
 
-                String serverList = getStringValueFromSettings(Utils.SERVER_LIST);
-                Gson gson = new Gson();
-                HashMap<String, String> serverListMap;
+            String serverList = getStringValueFromSettings(Utils.SERVER_LIST);
+            Gson gson = new Gson();
+            HashMap<String, String> serverListMap;
 
-                if (stringIsEmptyOrNull(serverList)) {
-                    serverListMap = new HashMap<>();
-                    serverListMap.put(serverAlias, serverKey);
-                    saveStringValueToSettings(Utils.SERVER_LIST, gson.toJson(serverListMap));
-                } else {
-                    serverListMap = gson.fromJson(serverList, HashMap.class);
-                    serverListMap.put(serverAlias, serverKey);
-                    saveStringValueToSettings(Utils.SERVER_LIST, gson.toJson(serverListMap));
-                }
+            if (stringIsEmptyOrNull(serverList)) {
+                serverListMap = new HashMap<>();
+                serverListMap.put(serverAlias, serverKey);
+                saveStringValueToSettings(Utils.SERVER_LIST, gson.toJson(serverListMap));
+            } else {
+                serverListMap = gson.fromJson(serverList, HashMap.class);
+                serverListMap.put(serverAlias, serverKey);
+                saveStringValueToSettings(Utils.SERVER_LIST, gson.toJson(serverListMap));
+            }
 
-                if (serverKeyIsValid(serverKey)) {
-                    saveStringValueToSettings(Utils.ACTIVE_SERVER, serverAlias);
-                    registerUserDataOnServer(serverKey, serverAlias, getToken());
+            if (serverKeyIsValid(serverKey)) {
+                saveStringValueToSettings(Utils.ACTIVE_SERVER, serverAlias);
+                registerUserDataOnServer(serverKey, serverAlias, getToken());
 
-                    new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.toast_server_paired_success) : getResources().getString(R.string.toast_server_paired_failure));
-                } else {
-                    new ToastDrawer().showToast(getResources().getString(R.string.toast_server_paired_failure_detailed));
-                }
+                new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.toast_server_paired_success) : getResources().getString(R.string.toast_server_paired_failure));
+            } else {
+                new ToastDrawer().showToast(getResources().getString(R.string.toast_server_paired_failure_detailed));
+            }
+        } else {
+            String soundName;
+            Uri soundUri;
+            switch (requestCode) {
+                case INFORMATION_NOTIFICATION_SOUND_CODE:
+                    soundUri = (Uri) requireNonNull(intent.getExtras()).get(RINGTONE_PICKED_URI);
 
-                break;
+                    if (soundUri == null) {
+                        deleteIdFromSettings(Utils.INFO_SOUND);
+                        soundName = getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND));
+                        new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_removed));
+                    } else {
+                        saveStringValueToSettings(Utils.INFO_SOUND, soundUri.toString());
+                        soundName = getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND));
+                        new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_changed_to) + soundName);
+                    }
+                    infoSoundButton.setText(soundName);
+                    break;
 
-            case INFORMATION_NOTIFICATION_SOUND_CODE:
-                soundUri = (Uri) requireNonNull(intent.getExtras()).get("android.intent.extra.ringtone.PICKED_URI");
+                case MOTION_NOTIFICATION_SOUND_CODE:
+                    soundUri = (Uri) requireNonNull(intent.getExtras()).get(RINGTONE_PICKED_URI);
 
-                if (soundUri == null) {
-                    deleteIdFromSettings(Utils.INFO_SOUND);
-                    soundName = getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND));
-                    new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_removed));
-                } else {
-                    saveStringValueToSettings(Utils.INFO_SOUND, soundUri.toString());
-                    soundName = getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND));
-                    new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_changed_to) + soundName);
-                }
-                infoSoundButton.setText(soundName);
-                break;
+                    if (soundUri == null) {
+                        deleteIdFromSettings(Utils.MOTION_SOUND);
+                        soundName = getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND));
+                        new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_removed));
+                    } else {
+                        saveStringValueToSettings(Utils.MOTION_SOUND, soundUri.toString());
+                        soundName = getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND));
+                        new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_changed_to) + soundName);
+                    }
+                    motionSoundButton.setText(soundName);
+                    break;
 
-            case MOTION_NOTIFICATION_SOUND_CODE:
-                soundUri = (Uri) requireNonNull(intent.getExtras()).get("android.intent.extra.ringtone.PICKED_URI");
+                case CAMERA_SETTINGS_CODE:
+                    cameraSettingsChanged = true;
 
-                if (soundUri == null) {
-                    deleteIdFromSettings(Utils.MOTION_SOUND);
-                    soundName = getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND));
-                    new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_removed));
-                } else {
-                    saveStringValueToSettings(Utils.MOTION_SOUND, soundUri.toString());
-                    soundName = getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND));
-                    new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_changed_to) + soundName);
-                }
-                motionSoundButton.setText(soundName);
-                break;
+                    Map<String, Object> cameraSettings = (Map<String, Object>) ((Map<String, Object>) options.get("cameras")).get(intent.getStringExtra("cameraName"));
 
-            case CAMERA_SETTINGS_CODE:
-                cameraSettingsChanged = true;
+                    cameraSettings.put(HEALTH_CHECK_ENABLED, intent.getBooleanExtra(HEALTH_CHECK_ENABLED, true));
+                    cameraSettings.put(INTERVAL, intent.getLongExtra(INTERVAL, 500L));
+                    cameraSettings.put(MOTION_AREA, intent.getLongExtra(MOTION_AREA, 20L));
+                    cameraSettings.put(NOISE_LEVEL, intent.getLongExtra(NOISE_LEVEL, 5L));
+                    cameraSettings.put(REBOOT_TIMEOUT, intent.getLongExtra(REBOOT_TIMEOUT, 60000L));
 
-                Map<String, Object> cameraSettings = (Map<String, Object>) ((Map<String, Object>) options.get("cameras")).get(intent.getStringExtra("cameraName"));
-
-                cameraSettings.put(HEALTH_CHECK_ENABLED, intent.getBooleanExtra(HEALTH_CHECK_ENABLED, true));
-                cameraSettings.put(INTERVAL, intent.getLongExtra(INTERVAL, 500L));
-                cameraSettings.put(MOTION_AREA, intent.getLongExtra(MOTION_AREA, 20L));
-                cameraSettings.put(NOISE_LEVEL, intent.getLongExtra(NOISE_LEVEL, 5L));
-                cameraSettings.put(REBOOT_TIMEOUT, intent.getLongExtra(REBOOT_TIMEOUT, 60000L));
-
-                break;
+                    break;
+            }
         }
     }
 

@@ -14,7 +14,6 @@ import com.rudyii.hsw.client.activities.MainActivity;
 
 import java.util.HashMap;
 
-import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_NORMAL;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static java.util.Objects.requireNonNull;
@@ -24,17 +23,16 @@ import static java.util.Objects.requireNonNull;
  */
 
 public class ServerStartupNotifier {
-    public static void notifyAboutServerStarted(HashMap<String, Object> startupData) {
-        Context context = getAppContext();
+    public ServerStartupNotifier(Context context, HashMap<String, Object> startupData) {
         String serverName = (String) startupData.get("serverName");
-        String serverPid = (String) startupData.get("serverPid");
+        String serverPid = (String) startupData.get("pid");
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_NORMAL)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle(serverName + ": " + context.getResources().getString(R.string.notif_text_server_started))
+                .setContentTitle(serverName + ": " + context.getResources().getString(R.string.notif_text_server_started) + startupData.get("eventDateTime").toString())
                 .setContentText(context.getResources().getString(R.string.notif_text_server_started_with_pid) + serverPid)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)

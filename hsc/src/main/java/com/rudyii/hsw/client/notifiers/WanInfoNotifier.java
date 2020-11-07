@@ -14,7 +14,6 @@ import com.rudyii.hsw.client.activities.MainActivity;
 
 import java.util.HashMap;
 
-import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_HIGH;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static java.util.Objects.requireNonNull;
@@ -23,9 +22,8 @@ import static java.util.Objects.requireNonNull;
  * Created by Jack on 18.12.2017.
  */
 
-public class WanInfoReceiver {
-    public static void notifyAboutWanChanges(HashMap<String, Object> wanInfoData) {
-        Context context = getAppContext();
+public class WanInfoNotifier {
+    public WanInfoNotifier(Context context, HashMap<String, Object> wanInfoData) {
         String serverName = (String) wanInfoData.get("serverName");
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
@@ -38,7 +36,7 @@ public class WanInfoReceiver {
                         .bigText(context.getResources().getString(R.string.notif_text_current_isp)
                                 + wanInfoData.get("isp")
                                 + context.getResources().getString(R.string.notif_text_current_ip)
-                                + wanInfoData.get("wanIp")))
+                                + wanInfoData.get("ip")))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[]{0, 500})

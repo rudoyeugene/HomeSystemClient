@@ -152,6 +152,7 @@ public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnS
                     BarData barData = new BarData(dataSet);
                     barData.setDrawValues(true);
                     barData.setValueTextSize(10f);
+                    barData.setValueTextColor(getApplicationContext().getColor(R.color.textColor));
 
                     barChart.setDrawValueAboveBar(true);
                     barChart.setData(barData);
@@ -166,6 +167,10 @@ public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnS
 
                     barChart.getAxisRight().setEnabled(false);
                     barChart.getAxisLeft().setAxisMaximum(24f);
+
+                    barChart.getXAxis().setTextColor(getApplicationContext().getColor(R.color.textColor));
+                    barChart.getAxisLeft().setTextColor(getApplicationContext().getColor(R.color.textColor));
+                    barChart.getAxisRight().setTextColor(getApplicationContext().getColor(R.color.textColor));
 
                     barChart.invalidate();
                 }

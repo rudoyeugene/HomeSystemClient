@@ -207,6 +207,7 @@ public class SystemLogActivity extends AppCompatActivity {
     private LogItem buildAndFillLogItem(Long logRecordId, Map<String, Object> logRecordData) {
         String reason = (String) logRecordData.get("reason");
         String title = getCurrentTimeAndDateDoubleDotsDelimFrom(logRecordId);
+        String cameraName = (String) logRecordData.get("cameraName");
         LogItem logItem = null;
         Bitmap image = null;
         String description = null;
@@ -241,10 +242,9 @@ public class SystemLogActivity extends AppCompatActivity {
             case "motionDetected":
                 final String[] imageUrl = {(String) logRecordData.get("imageUrl")};
                 Long motionArea = (Long) logRecordData.get("motionArea");
-                String cameraName = (String) logRecordData.get("cameraName");
 
                 image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_snapshot);
-                description = cameraName + ":" + motionArea + "%";
+                description = cameraName + ": " + motionArea + "%";
 
                 logItem = new LogItem(getApplicationContext()) {
                     @Override
@@ -278,7 +278,7 @@ public class SystemLogActivity extends AppCompatActivity {
 
             case "videoRecorded":
                 image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_video);
-                description = logRecordData.get("fileName").toString();
+                description = cameraName + ": " + logRecordData.get("fileName").toString();
                 final String[] videoUrl = {(String) logRecordData.get("videoUrl")};
 
                 logItem = new LogItem(getApplicationContext()) {
@@ -318,17 +318,17 @@ public class SystemLogActivity extends AppCompatActivity {
                 description = logRecordData.get("cameraName") + getResources().getString(R.string.notif_text_camera_is_rebooting);
                 break;
 
-            case "serverStartupOrShutdown":
+            case "serverStateChanged":
                 String action = (String) logRecordData.get("action");
 
                 switch (action) {
-                    case "starting":
+                    case "started":
                         Long serverPid = (Long) logRecordData.get("pid");
                         image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_server_started);
                         description = getResources().getString(R.string.notif_text_server_started) + serverPid;
                         break;
 
-                    case "stopping":
+                    case "stopped":
                         image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_server_stopped);
                         description = getResources().getString(R.string.notif_text_server_stopped);
                         break;

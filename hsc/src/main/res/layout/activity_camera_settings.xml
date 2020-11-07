@@ -17,7 +17,7 @@
         app:layout_constraintStart_toEndOf="@+id/healthCheckEnabled"
         app:layout_constraintTop_toTopOf="@+id/healthCheckEnabled" />
 
-    <Switch
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/healthCheckEnabled"
         android:layout_width="wrap_content"
         android:layout_height="45dp"

@@ -58,6 +58,7 @@ import static com.rudyii.hsw.client.activities.CameraSettingsActivity.INTERVAL;
 import static com.rudyii.hsw.client.activities.CameraSettingsActivity.MOTION_AREA;
 import static com.rudyii.hsw.client.activities.CameraSettingsActivity.NOISE_LEVEL;
 import static com.rudyii.hsw.client.activities.CameraSettingsActivity.REBOOT_TIMEOUT;
+import static com.rudyii.hsw.client.activities.CameraSettingsActivity.USE_MOTION_OBJECT;
 import static com.rudyii.hsw.client.helpers.Utils.DELAYED_ARM_DELAY_SECS;
 import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
 import static com.rudyii.hsw.client.helpers.Utils.getDeviceId;
@@ -77,9 +78,7 @@ import static java.util.Objects.requireNonNull;
 
 public class SettingsActivity extends AppCompatActivity {
     public static final int CAMERA_SETTINGS_CODE = 444;
-    private static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
     public static final String RINGTONE_PICKED_URI = "android.intent.extra.ringtone.PICKED_URI";
-    private final int QR_SCAN_CODE = 111;
     private final int INFORMATION_NOTIFICATION_SOUND_CODE = 222;
     private final int MOTION_NOTIFICATION_SOUND_CODE = 333;
     @SuppressWarnings("FieldCanBeLocal")
@@ -616,6 +615,7 @@ public class SettingsActivity extends AppCompatActivity {
                     Map<String, Object> cameraSettings = (Map<String, Object>) ((Map<String, Object>) options.get("cameras")).get(intent.getStringExtra("cameraName"));
 
                     cameraSettings.put(HEALTH_CHECK_ENABLED, intent.getBooleanExtra(HEALTH_CHECK_ENABLED, true));
+                    cameraSettings.put(USE_MOTION_OBJECT, intent.getBooleanExtra(USE_MOTION_OBJECT, true));
                     cameraSettings.put(INTERVAL, intent.getLongExtra(INTERVAL, 500L));
                     cameraSettings.put(MOTION_AREA, intent.getLongExtra(MOTION_AREA, 20L));
                     cameraSettings.put(NOISE_LEVEL, intent.getLongExtra(NOISE_LEVEL, 5L));

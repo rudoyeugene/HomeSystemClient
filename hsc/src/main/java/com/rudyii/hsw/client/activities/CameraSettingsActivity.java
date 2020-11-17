@@ -12,13 +12,14 @@ import com.rudyii.hsw.client.R;
 
 public class CameraSettingsActivity extends AppCompatActivity {
     public static String HEALTH_CHECK_ENABLED = "healthCheckEnabled";
+    public static String USE_MOTION_OBJECT = "useMotionObject";
     public static String INTERVAL = "interval";
     public static String MOTION_AREA = "motionArea";
     public static String NOISE_LEVEL = "noiseLevel";
     public static String REBOOT_TIMEOUT = "rebootTimeout";
     private Intent intent;
-    private SwitchCompat switchHealthCheckEnabled;
-    private boolean isHealthCheckEnabled;
+    private SwitchCompat switchHealthCheckEnabled, switchUseMotionObject;
+    private boolean isHealthCheckEnabled, isUseMotionObject;
     private EditText editTextForMotionInterval, editTextForMotionArea, editTextForNoiseLevel, editTextForRebootTimeout;
     private String cameraName;
     private Long motionInterval, motionArea, noiseLevel, rebootTimeout;
@@ -39,6 +40,11 @@ public class CameraSettingsActivity extends AppCompatActivity {
         this.isHealthCheckEnabled = Boolean.parseBoolean(intent.getStringExtra(HEALTH_CHECK_ENABLED));
         switchHealthCheckEnabled.setChecked(isHealthCheckEnabled);
         switchHealthCheckEnabled.setEnabled(true);
+
+        switchUseMotionObject = findViewById(R.id.useMotionObject);
+        this.isUseMotionObject = Boolean.parseBoolean(intent.getStringExtra(USE_MOTION_OBJECT));
+        switchUseMotionObject.setChecked(isUseMotionObject);
+        switchUseMotionObject.setEnabled(true);
 
         editTextForMotionInterval = findViewById(R.id.editTextForMotionInterval);
         this.motionInterval = Long.valueOf(intent.getStringExtra(INTERVAL));
@@ -69,12 +75,15 @@ public class CameraSettingsActivity extends AppCompatActivity {
 
     private void verifyChanges() {
         this.isHealthCheckEnabled = switchHealthCheckEnabled.isChecked();
+        this.isUseMotionObject = switchUseMotionObject.isChecked();
         this.motionInterval = Long.valueOf(editTextForMotionInterval.getText().toString());
         this.motionArea = Long.valueOf(editTextForMotionArea.getText().toString());
         this.noiseLevel = Long.valueOf(editTextForNoiseLevel.getText().toString());
         this.rebootTimeout = Long.valueOf(editTextForRebootTimeout.getText().toString());
 
         if (isHealthCheckEnabled != Boolean.parseBoolean(intent.getStringExtra(HEALTH_CHECK_ENABLED))) {
+            setIntent();
+        } else if (isUseMotionObject != Boolean.parseBoolean(intent.getStringExtra(USE_MOTION_OBJECT))) {
             setIntent();
         } else if (!motionInterval.equals(Long.valueOf(intent.getStringExtra(INTERVAL)))) {
             setIntent();
@@ -92,6 +101,7 @@ public class CameraSettingsActivity extends AppCompatActivity {
 
         output.putExtra("cameraName", cameraName);
         output.putExtra(HEALTH_CHECK_ENABLED, isHealthCheckEnabled);
+        output.putExtra(USE_MOTION_OBJECT, isUseMotionObject);
         output.putExtra(INTERVAL, motionInterval);
         output.putExtra(MOTION_AREA, motionArea);
         output.putExtra(NOISE_LEVEL, noiseLevel);

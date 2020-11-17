@@ -96,6 +96,7 @@
     <string name="text_toast_notification_type_both">Вы будете уведомлены в момент дважды: в момент обнаружения движения и в момент загрузки видео</string>
     <string name="text_toast_notification_type_motion_detected">Вы будете уведомлены в момент обнаружения движения</string>
     <string name="text_toast_notification_type_video_recorded">Вы будете уведомлены в момент загрузки видео</string>
+    <string name="text_use_motion_object_switch">Отобразить маску движения</string>
 
     <string name="toast_failed_to_register_on_server">Не удалось зарегестрироваться на сервере, попробуйте позже</string>
     <string name="toast_info_sound_changed_to">Звук уведомлений изменен на:\u0020</string>

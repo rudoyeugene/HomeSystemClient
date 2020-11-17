@@ -97,6 +97,7 @@
     <string name="text_toast_notification_type_both">You\'ll be notofied twice: as soon as new motion detected and right after video uploaded</string>
     <string name="text_toast_notification_type_motion_detected">You\'ll be notified as soon as new motion detected</string>
     <string name="text_toast_notification_type_video_recorded">You\'ll be notified as soon as video recoreded and uploaded</string>
+    <string name="text_use_motion_object_switch">Display motion mask</string>
 
     <string name="toast_failed_to_register_on_server">Failed to register on server, please try again later</string>
     <string name="toast_info_sound_changed_to">Info sound changed to:\u0020</string>

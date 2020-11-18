@@ -1,10 +1,7 @@
 package com.rudyii.hsw.client.helpers;
 
-import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -15,12 +12,9 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.provider.Settings;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
@@ -48,7 +42,6 @@ import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueToSettings;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getCustomReference;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Created by Jack on 18.12.2017.
@@ -70,6 +63,7 @@ public class Utils {
     public static final String NOTIFICATION_TYPE_MUTE = "mute";
     public static final Locale currentLocale = getAppContext().getResources().getConfiguration().locale;
     private static final String HOURLY_REPORT_STATE = "HOURLY_REPORT_STATE";
+    private static final String INSTALLATION_ID = "INSTALLATION_ID";
 
     public static String getCurrentTimeAndDateDoubleDotsDelimFrom(Long timeStamp) {
         if (timeStamp == null) {
@@ -172,19 +166,15 @@ public class Utils {
         return result;
     }
 
-    @SuppressLint("HardwareIds")
     public static String getDeviceId() {
-        String serviceName = Context.TELEPHONY_SERVICE;
-        TelephonyManager m_telephonyManager = (TelephonyManager) getAppContext().getSystemService(serviceName);
-        String deviceId;
+        String installationId = getStringValueFromSettings(INSTALLATION_ID);
 
-        if (ActivityCompat.checkSelfPermission(getAppContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            deviceId = Settings.Secure.getString(getAppContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-        } else {
-            deviceId = requireNonNull(m_telephonyManager).getDeviceId();
+        if (stringIsEmptyOrNull(installationId)) {
+            installationId = UUID.randomUUID().toString();
+            saveStringValueToSettings(INSTALLATION_ID, installationId);
         }
 
-        return deviceId;
+        return installationId;
     }
 
     public static void registerUserDataOnServers(String token) {

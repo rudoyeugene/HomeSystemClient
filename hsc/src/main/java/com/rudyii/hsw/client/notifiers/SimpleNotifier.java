@@ -31,7 +31,7 @@ public class SimpleNotifier {
                 .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle(context.getResources().getString(R.string.notif_text_simple_event) + serverName)
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(new String(Base64.getDecoder().decode(simpleData.get("simpleWatcherNotificationText").toString()), StandardCharsets.UTF_8)))
+                        .bigText(new String(Base64.getDecoder().decode(simpleData.get("simpleWatcherNotificationTextEncoded").toString()), StandardCharsets.UTF_8)))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[]{0, 500})

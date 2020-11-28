@@ -341,7 +341,7 @@ public class SystemLogActivity extends AppCompatActivity {
 
             case "simpleNotification":
                 image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_warning);
-                description = logRecordData.get("simpleWatcherNotificationText").toString();
+                description = logRecordData.get("simpleWatcherNotificationTextOriginal").toString();
                 break;
 
             default:

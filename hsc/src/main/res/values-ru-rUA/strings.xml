@@ -31,6 +31,7 @@
     <string name="notif_text_server_started">Запущен в:\u0020</string>
     <string name="notif_text_server_started_with_pid">ID процесса:\u0020</string>
     <string name="notif_text_server_stopped">Остановлен в:\u0020</string>
+    <string name="notif_text_simple_event">Уведомление от:\u0020</string>
     <string name="notif_text_system_state_is">Система в:\u0020</string>
     <string name="notif_text_video_uploaded">Загружено новое видео</string>
 

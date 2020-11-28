@@ -10,6 +10,7 @@ import com.rudyii.hsw.client.notifiers.CameraRebootNotifier;
 import com.rudyii.hsw.client.notifiers.MotionDetectedNotifier;
 import com.rudyii.hsw.client.notifiers.ServerShutdownNotifier;
 import com.rudyii.hsw.client.notifiers.ServerStartupNotifier;
+import com.rudyii.hsw.client.notifiers.SimpleNotifier;
 import com.rudyii.hsw.client.notifiers.StatusChangedNotifier;
 import com.rudyii.hsw.client.notifiers.VideoUploadedNotifier;
 import com.rudyii.hsw.client.notifiers.WanInfoNotifier;
@@ -73,6 +74,10 @@ public class FCMMessagingService extends FirebaseMessagingService {
 
             case "cameraReboot":
                 new CameraRebootNotifier(getApplicationContext(), data);
+                break;
+
+            case "simpleNotification":
+                new SimpleNotifier(getApplicationContext(), data);
                 break;
 
             case "serverStateChanged":

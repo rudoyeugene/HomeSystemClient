@@ -339,6 +339,11 @@ public class SystemLogActivity extends AppCompatActivity {
                 }
                 break;
 
+            case "simpleNotification":
+                image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_warning);
+                description = logRecordData.get("simpleWatcherNotificationText").toString();
+                break;
+
             default:
                 Log.e(TAG, "Failed to process message with data: " + logRecordData);
 

@@ -17,9 +17,10 @@ public class CameraSettingsActivity extends AppCompatActivity {
     public static String MOTION_AREA = "motionArea";
     public static String NOISE_LEVEL = "noiseLevel";
     public static String REBOOT_TIMEOUT = "rebootTimeout";
+    public static String CONTINUOUS_MONITORING = "continuousMonitoring";
     private Intent intent;
-    private SwitchCompat switchHealthCheckEnabled, switchUseMotionObject;
-    private boolean isHealthCheckEnabled, isUseMotionObject;
+    private SwitchCompat switchHealthCheckEnabled, switchUseMotionObject, switchContinuousMonitoring;
+    private boolean isHealthCheckEnabled, isUseMotionObject, isContinuousEnabled;
     private EditText editTextForMotionInterval, editTextForMotionArea, editTextForNoiseLevel, editTextForRebootTimeout;
     private String cameraName;
     private Long motionInterval, motionArea, noiseLevel, rebootTimeout;
@@ -45,6 +46,11 @@ public class CameraSettingsActivity extends AppCompatActivity {
         this.isUseMotionObject = Boolean.parseBoolean(intent.getStringExtra(USE_MOTION_OBJECT));
         switchUseMotionObject.setChecked(isUseMotionObject);
         switchUseMotionObject.setEnabled(true);
+
+        switchContinuousMonitoring = findViewById(R.id.continuousSwitch);
+        this.isContinuousEnabled = Boolean.parseBoolean(intent.getStringExtra(CONTINUOUS_MONITORING));
+        switchContinuousMonitoring.setChecked(isContinuousEnabled);
+        switchContinuousMonitoring.setEnabled(true);
 
         editTextForMotionInterval = findViewById(R.id.editTextForMotionInterval);
         this.motionInterval = Long.valueOf(intent.getStringExtra(INTERVAL));
@@ -76,6 +82,7 @@ public class CameraSettingsActivity extends AppCompatActivity {
     private void verifyChanges() {
         this.isHealthCheckEnabled = switchHealthCheckEnabled.isChecked();
         this.isUseMotionObject = switchUseMotionObject.isChecked();
+        this.isContinuousEnabled = switchContinuousMonitoring.isChecked();
         this.motionInterval = Long.valueOf(editTextForMotionInterval.getText().toString());
         this.motionArea = Long.valueOf(editTextForMotionArea.getText().toString());
         this.noiseLevel = Long.valueOf(editTextForNoiseLevel.getText().toString());
@@ -85,11 +92,15 @@ public class CameraSettingsActivity extends AppCompatActivity {
             setIntent();
         } else if (isUseMotionObject != Boolean.parseBoolean(intent.getStringExtra(USE_MOTION_OBJECT))) {
             setIntent();
+        } else if (isContinuousEnabled != Boolean.parseBoolean(intent.getStringExtra(CONTINUOUS_MONITORING))) {
+            setIntent();
         } else if (!motionInterval.equals(Long.valueOf(intent.getStringExtra(INTERVAL)))) {
             setIntent();
         } else if (!motionArea.equals(Long.valueOf(intent.getStringExtra(MOTION_AREA)))) {
             setIntent();
         } else if (!noiseLevel.equals(Long.valueOf(intent.getStringExtra(NOISE_LEVEL)))) {
+            setIntent();
+        } else if (!rebootTimeout.equals(Long.valueOf(intent.getStringExtra(REBOOT_TIMEOUT)))) {
             setIntent();
         } else if (!rebootTimeout.equals(Long.valueOf(intent.getStringExtra(REBOOT_TIMEOUT)))) {
             setIntent();
@@ -102,6 +113,7 @@ public class CameraSettingsActivity extends AppCompatActivity {
         output.putExtra("cameraName", cameraName);
         output.putExtra(HEALTH_CHECK_ENABLED, isHealthCheckEnabled);
         output.putExtra(USE_MOTION_OBJECT, isUseMotionObject);
+        output.putExtra(CONTINUOUS_MONITORING, isContinuousEnabled);
         output.putExtra(INTERVAL, motionInterval);
         output.putExtra(MOTION_AREA, motionArea);
         output.putExtra(NOISE_LEVEL, noiseLevel);

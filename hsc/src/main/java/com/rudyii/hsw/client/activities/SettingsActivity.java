@@ -1,7 +1,6 @@
 package com.rudyii.hsw.client.activities;
 
 import android.annotation.SuppressLint;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -53,6 +52,7 @@ import static android.media.RingtoneManager.TYPE_NOTIFICATION;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getToken;
+import static com.rudyii.hsw.client.activities.CameraSettingsActivity.CONTINUOUS_MONITORING;
 import static com.rudyii.hsw.client.activities.CameraSettingsActivity.HEALTH_CHECK_ENABLED;
 import static com.rudyii.hsw.client.activities.CameraSettingsActivity.INTERVAL;
 import static com.rudyii.hsw.client.activities.CameraSettingsActivity.MOTION_AREA;
@@ -504,25 +504,6 @@ public class SettingsActivity extends AppCompatActivity {
         };
     }
 
-    private void showDialogToDownloadQrCodeScanner(final AppCompatActivity act) {
-        AlertDialog.Builder downloadDialog = new AlertDialog.Builder(act);
-        downloadDialog.setTitle(getResources().getString(R.string.dialog_download_qr_scanner_title));
-        downloadDialog.setMessage(getResources().getString(R.string.dialog_download_qr_scanner_message));
-        downloadDialog.setPositiveButton(getResources().getString(R.string.dialog_yes), (dialogInterface, i) -> {
-            Uri uri = Uri.parse("market://search?q=pname:" + "com.google.zxing.client.android");
-            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            try {
-                act.startActivity(intent);
-            } catch (ActivityNotFoundException anfe) {
-                Log.e(TAG, "Failed to open Play Store.");
-            }
-        });
-        downloadDialog.setNegativeButton(getResources().getString(R.string.dialog_no), (dialogInterface, i) -> {
-
-        });
-        downloadDialog.show();
-    }
-
     private String getCameraAppPackageName() {
         return getStringValueFromSettings(Utils.CAMERA_APP);
     }
@@ -616,6 +597,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                     cameraSettings.put(HEALTH_CHECK_ENABLED, intent.getBooleanExtra(HEALTH_CHECK_ENABLED, true));
                     cameraSettings.put(USE_MOTION_OBJECT, intent.getBooleanExtra(USE_MOTION_OBJECT, true));
+                    cameraSettings.put(CONTINUOUS_MONITORING, intent.getBooleanExtra(CONTINUOUS_MONITORING, false));
                     cameraSettings.put(INTERVAL, intent.getLongExtra(INTERVAL, 500L));
                     cameraSettings.put(MOTION_AREA, intent.getLongExtra(MOTION_AREA, 20L));
                     cameraSettings.put(NOISE_LEVEL, intent.getLongExtra(NOISE_LEVEL, 5L));

@@ -35,6 +35,7 @@ public class CameraRebootNotifier {
                 .setContentTitle(serverName + ": " + offlineDevice + context.getResources().getString(R.string.notif_text_camera_is_rebooting))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
+                .setWhen(Long.parseLong(offlineDeviceData.get("eventId").toString()))
                 .setVibrate(new long[]{0, 500})
                 .setSound(Uri.parse(getStringValueFromSettings("INFO_SOUND")), AudioManager.STREAM_NOTIFICATION);
 

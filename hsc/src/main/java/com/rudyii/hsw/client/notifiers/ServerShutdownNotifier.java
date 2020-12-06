@@ -34,6 +34,7 @@ public class ServerShutdownNotifier {
                 .setContentTitle(serverName + ": " + context.getResources().getString(R.string.notif_text_server_stopped) + shutdownData.get("eventDateTime").toString())
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
+                .setWhen(Long.parseLong(shutdownData.get("eventId").toString()))
                 .setVibrate(new long[]{0, 500})
                 .setSound(Uri.parse(getStringValueFromSettings("INFO_SOUND")), AudioManager.STREAM_NOTIFICATION);
 

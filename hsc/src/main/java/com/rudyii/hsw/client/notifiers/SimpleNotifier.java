@@ -34,6 +34,7 @@ public class SimpleNotifier {
                         .bigText(new String(Base64.getDecoder().decode(simpleData.get("simpleWatcherNotificationTextEncoded").toString()), StandardCharsets.UTF_8)))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
+                .setWhen(Long.parseLong(simpleData.get("eventId").toString()))
                 .setVibrate(new long[]{0, 500})
                 .setSound(Uri.parse(getStringValueFromSettings("INFO_SOUND")), AudioManager.STREAM_NOTIFICATION);
 

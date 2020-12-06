@@ -39,6 +39,7 @@ public class WanInfoNotifier {
                                 + wanInfoData.get("ip")))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
+                .setWhen(Long.parseLong(wanInfoData.get("eventId").toString()))
                 .setVibrate(new long[]{0, 500})
                 .setSound(Uri.parse(getStringValueFromSettings("INFO_SOUND")), AudioManager.STREAM_NOTIFICATION);
 

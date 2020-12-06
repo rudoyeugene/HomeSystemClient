@@ -36,6 +36,7 @@ public class ServerStartupNotifier {
                 .setContentText(context.getResources().getString(R.string.notif_text_server_started_with_pid) + serverPid)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
+                .setWhen(Long.parseLong(startupData.get("eventId").toString()))
                 .setVibrate(new long[]{0, 500})
                 .setSound(Uri.parse(getStringValueFromSettings("INFO_SOUND")), AudioManager.STREAM_NOTIFICATION);
 

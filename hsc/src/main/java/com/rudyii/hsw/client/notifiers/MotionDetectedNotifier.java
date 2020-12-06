@@ -32,6 +32,7 @@ public class MotionDetectedNotifier {
                 .setContentText(motionData.get("cameraName") + ": " + motionData.get("motionArea") + "%, " + motionData.get("eventDateTime").toString())
                 .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(readImageFromUrl(motionData.get("imageUrl").toString())))
                 .setAutoCancel(true)
+                .setWhen(Long.parseLong(motionData.get("eventId").toString()))
                 .setVibrate(new long[]{0, 200, 200, 200, 200, 200})
                 .setSound(Uri.parse(getStringValueFromSettings("MOTION_SOUND")), AudioManager.STREAM_NOTIFICATION);
 

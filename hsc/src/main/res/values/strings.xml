@@ -28,7 +28,7 @@
     <string name="notif_text_delayed_arm">System will be armed in\u0020</string>
     <string name="notif_text_isp_changed">ISP changed:\u0020</string>
     <string name="notif_text_motion_detected_on_camera">Motion:\u0020</string>
-    <string name="notif_text_server_started">Started at:\u0020</string>
+    <string name="notif_text_server_started">Started with PID:\u0020</string>
     <string name="notif_text_server_started_with_pid">Server PID:\u0020</string>
     <string name="notif_text_server_stopped">Stopped at:\u0020</string>
     <string name="notif_text_simple_event">Notification from:\u0020</string>

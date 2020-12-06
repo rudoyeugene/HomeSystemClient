@@ -28,7 +28,7 @@
     <string name="notif_text_delayed_arm">Система будет включена через\u0020</string>
     <string name="notif_text_isp_changed">Провайдер изменен:\u0020</string>
     <string name="notif_text_motion_detected_on_camera">Движение:\u0020</string>
-    <string name="notif_text_server_started">Запущен в:\u0020</string>
+    <string name="notif_text_server_started">Запущен с ID процесса:\u0020</string>
     <string name="notif_text_server_started_with_pid">ID процесса:\u0020</string>
     <string name="notif_text_server_stopped">Остановлен в:\u0020</string>
     <string name="notif_text_simple_event">Уведомление от:\u0020</string>

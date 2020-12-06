@@ -30,6 +30,7 @@ public class VideoUploadedNotifier {
                 .setContentText(fileName)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText((videoData.get("eventDateTime").toString())))
                 .setAutoCancel(true)
+                .setWhen(Long.parseLong(videoData.get("eventId").toString()))
                 .setVibrate(new long[]{0, 200, 200, 200, 200, 200})
                 .setSound(Uri.parse(getStringValueFromSettings(INFO_SOUND)), AudioManager.STREAM_NOTIFICATION);
 

@@ -27,4 +27,5 @@
     <color name="white">#FFFFFF</color>
 
     <color name="yellow">#ffff56</color>
+    <color name="bg_launcher_color">#FFFFFF</color>
 </resources>

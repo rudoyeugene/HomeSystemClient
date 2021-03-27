@@ -35,13 +35,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.helpers.ToastDrawer;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import static com.rudyii.hsw.client.BuildConfig.COMPATIBLE_SERVER_VERSION;
 import static com.rudyii.hsw.client.BuildConfig.SERVER_DOWNLOAD_URL;
@@ -89,9 +89,9 @@ public class MainActivity extends AppCompatActivity {
     private Handler serverLastPingHandler;
     private Runnable serverLastPingRunnable;
     private ColorStateList defaultTextColor;
-    private DatabaseReference infoRef, statusesRef;
-    private ValueEventListener infoValueEventListener, statusesValueEventListener;
-    private long serverLastPing;
+    private DatabaseReference infoRef, statusesRef, usageStatsRef;
+    private ValueEventListener infoValueEventListener, statusesValueEventListener, usageStatsEventListener;
+    private long serverLastPing, currentSessionLength;
     private boolean systemIsInDarkMode;
 
     @Override
@@ -311,12 +311,17 @@ public class MainActivity extends AppCompatActivity {
 
         statusesRef = getRootReference().child("/statuses");
         statusesValueEventListener = buildStatusesValueEventListener();
-        statusesRef.addValueEventListener(buildStatusesValueEventListener());
+        statusesRef.addValueEventListener(statusesValueEventListener);
+
+        usageStatsRef = getRootReference().child("/usageStats");
+        usageStatsEventListener = buildUsageStatsEventListener();
+        usageStatsRef.addValueEventListener(usageStatsEventListener);
     }
 
     private void unsubscribeFirebaseListeners() {
         infoRef.removeEventListener(infoValueEventListener);
         statusesRef.removeEventListener(statusesValueEventListener);
+        usageStatsRef.removeEventListener(usageStatsEventListener);
     }
 
     @Override
@@ -565,8 +570,31 @@ public class MainActivity extends AppCompatActivity {
                 serverLastPingTextValue.setText(calculatePing(serverLastPing));
 
                 TextView serverUptimeTextValue = findViewById(R.id.textViewServerUptimeValue);
-                serverUptimeTextValue.setText(calculateUptime(serverUptime));
+                serverUptimeTextValue.setText(calculateUptimeFromMillis(serverUptime));
 
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+    }
+
+    private ValueEventListener buildUsageStatsEventListener() {
+        return new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                @SuppressWarnings("unchecked") final Map<String, Object> usageStats = (Map<String, Object>) dataSnapshot.getValue();
+
+                if (usageStats == null) {
+                    return;
+                }
+
+                currentSessionLength = usageStats.get("currentSessionLength") == null ? 0L : (long) usageStats.get("currentSessionLength");
+
+                TextView usageStatsCurrentSessionTextView = findViewById(R.id.usageStatsCurrentSessionValue);
+                usageStatsCurrentSessionTextView.setText(calculateUptimeFromMinutes(currentSessionLength));
             }
 
             @Override
@@ -625,26 +653,59 @@ public class MainActivity extends AppCompatActivity {
         return getCurrentTimeAndDateDoubleDotsDelimFrom(serverLastPing);
     }
 
-    private String calculateUptime(Long serverUptime) {
-        long days = TimeUnit.MILLISECONDS.toDays(serverUptime);
-        long hours = TimeUnit.MILLISECONDS.toHours(serverUptime) % 24L;
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(serverUptime) % 60L;
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(serverUptime) % 60L;
+    private String calculateUptimeFromMinutes(long totalMinutes) {
+        Duration duration = Duration.ofMinutes(totalMinutes);
+        long hours = duration.toHours();
+        long days = duration.toDays();
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(days);
+        long leftMinutes = totalMinutes > 60 ? (totalMinutes - (hours * 60)) : totalMinutes;
+        long leftHours = hours > 23 ? (hours - (days * 24)) : hours;
+
+        StringBuilder stringBuilder = new StringBuilder();
 
         if (days == 1) {
-            builder.append(getResources().getString(R.string.text_day));
-        } else if (days > 1) {
-            builder.append(getResources().getString(R.string.text_days));
+            stringBuilder.append(days);
+            stringBuilder.append(getResources().getString(R.string.text_day));
         }
 
-        builder.append(String.format(Locale.getDefault(), "%01d:", hours))
-                .append(String.format(Locale.getDefault(), "%02d:", minutes))
-                .append(String.format(Locale.getDefault(), "%02d", seconds));
+        if (days > 1) {
+            stringBuilder.append(days);
+            stringBuilder.append(getResources().getString(R.string.text_days));
+        }
 
-        return builder.toString();
+        stringBuilder.append(String.format(Locale.getDefault(), "%02d:", leftHours))
+                .append(String.format(Locale.getDefault(), "%02d", leftMinutes))
+                .append(":00");
+
+        return stringBuilder.toString();
+    }
+
+    private String calculateUptimeFromMillis(Long millis) {
+        Duration duration = Duration.ofMillis(millis);
+        long minutes = duration.toMinutes();
+        long hours = duration.toHours();
+        long days = duration.toDays();
+
+        long leftMinutes = minutes > 60 ? (minutes - (hours * 60)) : minutes;
+        long leftHours = hours > 24 ? (hours - (days * 24)) : hours;
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (days == 1) {
+            stringBuilder.append(days);
+            stringBuilder.append(getResources().getString(R.string.text_day));
+        }
+
+        if (days > 1) {
+            stringBuilder.append(days);
+            stringBuilder.append(getResources().getString(R.string.text_days));
+        }
+
+        stringBuilder.append(String.format(Locale.getDefault(), "%02d:", leftHours))
+                .append(String.format(Locale.getDefault(), "%02d", leftMinutes))
+                .append(":00");
+
+        return stringBuilder.toString();
     }
 
     private void updateModeStateButtons(HashMap<String, Object> statusesData) {

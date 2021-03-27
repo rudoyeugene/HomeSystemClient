@@ -59,6 +59,7 @@
     <string name="text_health_check_switch">Мониторинг здоровья</string>
     <string name="text_horly_report_button">Отчеты</string>
     <string name="text_info_sound">Звук уведомления</string>
+    <string name="text_last_session_duration">Последняя сессия:</string>
     <string name="text_log_button">Журнал</string>
     <string name="text_menu_system_log_clear_log">Очистить журнал</string>
     <string name="text_motion_area">Зона движения (%)</string>

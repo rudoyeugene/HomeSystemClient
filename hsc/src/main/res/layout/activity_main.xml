@@ -111,6 +111,20 @@
             app:layout_constraintTop_toBottomOf="@+id/textViewServerLastPing" />
 
         <TextView
+            android:id="@+id/usageStatsCurrentSession"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="left|center"
+            android:text="@string/text_last_session_duration"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewServerUptime" />
+
+        <TextView
             android:id="@+id/textViewServerUptimeValue"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -122,6 +136,21 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
             app:layout_constraintTop_toTopOf="@+id/textViewServerUptime" />
+
+        <TextView
+            android:id="@+id/usageStatsCurrentSessionValue"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="left|center"
+            android:text="@string/text_retrieving_data"
+            app:layout_constraintBottom_toBottomOf="@+id/usageStatsCurrentSession"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toTopOf="@+id/usageStatsCurrentSession"
+            app:layout_constraintVertical_bias="1.0" />
 
         <ImageButton
             android:id="@+id/buttonResendHourly"
@@ -136,8 +165,9 @@
             android:textAllCaps="false"
             app:layout_constraintDimensionRatio="w,1:1"
             app:layout_constraintEnd_toEndOf="@+id/textViewForButtonResendHourly"
+            app:layout_constraintHorizontal_bias="0.512"
             app:layout_constraintStart_toStartOf="@+id/textViewForButtonResendHourly"
-            app:layout_constraintTop_toBottomOf="@+id/textViewServerUptime"
+            app:layout_constraintTop_toBottomOf="@+id/usageStatsCurrentSession"
             app:srcCompat="@mipmap/button_hourly" />
 
         <TextView
@@ -191,6 +221,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:background="?attr/selectableItemBackground"
+            android:contentDescription="TODO"
             android:drawableTop="@mipmap/button_log"
             android:hapticFeedbackEnabled="true"
             app:layout_constraintBottom_toBottomOf="@+id/buttonUsageChart"
@@ -198,7 +229,6 @@
             app:layout_constraintEnd_toEndOf="@+id/textViewForButtonLog"
             app:layout_constraintStart_toStartOf="@+id/textViewForButtonLog"
             app:layout_constraintTop_toTopOf="@+id/buttonUsageChart"
-            android:contentDescription="TODO"
             app:srcCompat="@mipmap/button_log" />
 
         <TextView

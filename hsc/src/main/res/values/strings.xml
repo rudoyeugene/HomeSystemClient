@@ -60,6 +60,7 @@
     <string name="text_health_check_switch">Enable health check</string>
     <string name="text_horly_report_button">Hourly\nreport</string>
     <string name="text_info_sound">Info sound</string>
+    <string name="text_last_session_duration">Last session:</string>
     <string name="text_log_button">Log</string>
     <string name="text_menu_system_log_clear_log">Clear log</string>
     <string name="text_motion_area">Motion area (%)</string>

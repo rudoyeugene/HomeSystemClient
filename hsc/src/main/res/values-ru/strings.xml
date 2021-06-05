@@ -16,7 +16,7 @@
     <string name="label_about">О приложении</string>
     <string name="label_app_name">Home System Client</string>
     <string name="label_download_server">Скачать Сервер</string>
-    <string name="label_settings">Настройки</string>
+    <string name="label_settings">Настройки для\u0020</string>
     <string name="label_share_server">Поделиться сервером</string>
     <string name="label_system_log">Журнал событий</string>
     <string name="label_usage_chart">График использования</string>

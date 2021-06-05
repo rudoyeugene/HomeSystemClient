@@ -78,7 +78,7 @@
         <activity
             android:name=".activities.CameraSettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="Camera settings"
+            android:label="@string/label_settings"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
 

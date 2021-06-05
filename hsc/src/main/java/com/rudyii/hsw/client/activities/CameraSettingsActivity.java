@@ -35,7 +35,7 @@ public class CameraSettingsActivity extends AppCompatActivity {
         intent = getIntent();
 
         cameraName = intent.getStringExtra("cameraName");
-        this.setTitle(cameraName);
+        this.setTitle(getTitle() + cameraName);
 
         switchHealthCheckEnabled = findViewById(R.id.healthCheckEnabled);
         this.isHealthCheckEnabled = Boolean.parseBoolean(intent.getStringExtra(HEALTH_CHECK_ENABLED));

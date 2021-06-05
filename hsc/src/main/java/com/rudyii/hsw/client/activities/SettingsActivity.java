@@ -98,7 +98,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Log.i(TAG, "Settings Activity created");
-
+        setTitle(getTitle() + getActiveServerAlias());
         setContentView(R.layout.activity_settings);
         buildSoundSelectionButtons();
 

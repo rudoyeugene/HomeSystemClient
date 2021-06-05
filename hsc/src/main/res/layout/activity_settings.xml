@@ -158,7 +158,7 @@
             app:layout_constraintStart_toEndOf="@+id/switchCollectStatsEnabled"
             app:layout_constraintTop_toTopOf="@+id/switchCollectStatsEnabled" />
 
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchCollectStatsEnabled"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -184,7 +184,7 @@
             app:layout_constraintStart_toEndOf="@+id/switchMonitoringEnabled"
             app:layout_constraintTop_toTopOf="@+id/switchMonitoringEnabled" />
 
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchMonitoringEnabled"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -210,7 +210,7 @@
             app:layout_constraintStart_toEndOf="@+id/switchHourlyReportEnabled"
             app:layout_constraintTop_toTopOf="@+id/switchHourlyReportEnabled" />
 
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchHourlyReportEnabled"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -236,7 +236,7 @@
             app:layout_constraintStart_toEndOf="@+id/switchHourlyReportForced"
             app:layout_constraintTop_toTopOf="@+id/switchHourlyReportForced" />
 
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchHourlyReportForced"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -262,7 +262,7 @@
             app:layout_constraintStart_toEndOf="@+id/switchVerboseOutputEnabled"
             app:layout_constraintTop_toTopOf="@+id/switchVerboseOutputEnabled" />
 
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchVerboseOutputEnabled"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -288,7 +288,7 @@
             app:layout_constraintStart_toEndOf="@+id/switchShowMotionAreaEnabled"
             app:layout_constraintTop_toTopOf="@+id/switchShowMotionAreaEnabled" />
 
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchShowMotionAreaEnabled"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

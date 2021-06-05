@@ -19,12 +19,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -83,7 +83,7 @@ public class SettingsActivity extends AppCompatActivity {
     private final int MOTION_NOTIFICATION_SOUND_CODE = 333;
     @SuppressWarnings("FieldCanBeLocal")
     private Button addServerButton, removeServerButton, infoSoundButton, motionSoundButton, cameraSettings;
-    private Switch switchCollectStatsEnabled, switchMonitoringEnabled, switchHourlyReportEnabled, switchHourlyReportForced, switchVerboseOutputEnabled, switchShowMotionAreaEnabled;
+    private SwitchCompat switchCollectStatsEnabled, switchMonitoringEnabled, switchHourlyReportEnabled, switchHourlyReportForced, switchVerboseOutputEnabled, switchShowMotionAreaEnabled;
     private EditText editTextForDelayedArmInterval, editTextForTextViewKeepDays, editTextForTextViewRecordInterval;
     private DatabaseReference optionsReference;
     private ValueEventListener optionsValueEventListener;
@@ -495,6 +495,8 @@ public class SettingsActivity extends AppCompatActivity {
 
                 editTextForTextViewRecordInterval.setText("" + (long) options.get("recordInterval"));
                 editTextForTextViewRecordInterval.setEnabled(true);
+
+                buttonsChangedByUser = true;
             }
 
             @Override

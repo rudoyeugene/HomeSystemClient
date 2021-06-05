@@ -5,7 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.createNotificationChannels;
 import static com.rudyii.hsw.client.helpers.ShortcutsBuilder.buildDynamicShortcuts;
@@ -39,8 +39,8 @@ public class HomeSystemClientApplication extends Application {
 
         Log.i(TAG, "HomeSystemClientApplication created");
 
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(instanceIdResult -> {
-            String newToken = instanceIdResult.getToken();
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            String newToken = task.getResult();
             updateToken(newToken);
             registerUserDataOnServers(getToken());
         });

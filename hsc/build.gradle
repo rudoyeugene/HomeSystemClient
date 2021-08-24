@@ -24,13 +24,15 @@ android {
         applicationId "com.rudyii.hsw.client"
         minSdkVersion 26
         targetSdkVersion 31
-        versionCode 76
+        versionCode 77
         versionName '1.3.0'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
     }
     buildTypes {
         release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "COMPATIBLE_SERVER_VERSION", COMPATIBLE_SERVER_VERSION
             buildConfigField "String", "SERVER_DOWNLOAD_URL", SERVER_DOWNLOAD_URL
         }

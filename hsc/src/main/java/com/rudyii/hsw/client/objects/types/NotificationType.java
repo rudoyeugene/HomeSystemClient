@@ -1,5 +1,8 @@
 package com.rudyii.hsw.client.objects.types;
 
+import androidx.annotation.Keep;
+
+@Keep
 public enum NotificationType {
     MOTION_DETECTED("motionDetected"),
     VIDEO_RECORDED("videoRecorded"),

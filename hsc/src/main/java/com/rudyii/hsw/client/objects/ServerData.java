@@ -1,11 +1,14 @@
 package com.rudyii.hsw.client.objects;
 
+import androidx.annotation.Keep;
+
 import com.rudyii.hsw.client.objects.types.NotificationType;
 
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+@Keep
 @Data
 @Builder
 @EqualsAndHashCode

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="button_pair_server_pair_server">Добавить сервер</string>
-    <string name="button_pair_server_unpair_server">Удалить сервер</string>
+    <string name="button_pair_server_pair_server">Добавить Сервер</string>
+    <string name="button_pair_server_unpair_server">Удалить Сервер</string>
 
     <string name="dialog_are_you_sure_cant_undo_alert_message">Вы уверены? Это действие нельзя отменить.</string>
     <string name="dialog_cleanup_log_title">Очистка системного журнала</string>
@@ -10,7 +10,7 @@
     <string name="dialog_download_qr_scanner_title">Сканер QR Кодов не найден</string>
     <string name="dialog_no">Нет</string>
     <string name="dialog_server_unpair_alert_message">Вы уверены? Данное действие нельзя отменить, позже вы сможете соединить с другим сервером</string>
-    <string name="dialog_server_unpair_alert_title">Отсоединить текущий сервер</string>
+    <string name="dialog_server_unpair_alert_title">Отсоединить текущий Сервер</string>
     <string name="dialog_yes">Да</string>
 
     <string name="label_about">О приложении</string>
@@ -52,7 +52,7 @@
     <string name="text_bar_data_usage_for" formatted="true">за %02d %s</string>
     <string name="text_camera_app_text">Открыть приложение для камер</string>
     <string name="text_camera_settings">Настроить</string>
-    <string name="text_current_server">Текущий сервер:</string>
+    <string name="text_current_server">Текущий Сервер:</string>
     <string name="text_day">\u0020день\u0020</string>
     <string name="text_days">\u0020дней\u0020</string>
     <string name="text_delayed_arm">Включить с задержкой</string>
@@ -116,7 +116,7 @@
     <string name="toggle_button_text_system_mode_state_automatic">Авто</string>
     <string name="toggle_button_text_system_state_armed">Включен</string>
     <string name="toggle_button_text_system_state_disarmed">Выключен</string>
-    <string name="no_paired_servers_found">Пожалуйста добавьте Сервер</string>
-    <string name="switched_active_server_to">Активным сервером выбран\u0020</string>
-    <string name="please_select_active_server">Пожалуйста выберите активный сервер</string>
+    <string name="no_paired_servers_found">Добавьте Сервер</string>
+    <string name="switched_active_server_to">Активирован Сервер:\u0020</string>
+    <string name="please_select_active_server">Выберите активный Сервер</string>
 </resources>

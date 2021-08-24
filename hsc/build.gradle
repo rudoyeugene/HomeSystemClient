@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
+def COMPATIBLE_SERVER_VERSION = "\"1.5.0\""
+def SERVER_DOWNLOAD_URL = "\"https://storage.cloud.google.com/server-releases/home-system-server_1.5.0.tar.gz?authuser=0\""
 dependencies {
     annotationProcessor "org.androidannotations:androidannotations:4.8.0"
     implementation "org.androidannotations:androidannotations-api:4.8.0"
@@ -22,22 +24,20 @@ android {
         applicationId "com.rudyii.hsw.client"
         minSdkVersion 26
         targetSdkVersion 31
-        versionCode 75
+        versionCode 76
         versionName '1.3.0'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
     }
     buildTypes {
         release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "COMPATIBLE_SERVER_VERSION", "\"1.5.0\""
-            buildConfigField "String", "SERVER_DOWNLOAD_URL", "\"https://storage.cloud.google.com/server-releases/home-system-server_1.4.3.tar.gz?authuser=0\""
+            buildConfigField "String", "COMPATIBLE_SERVER_VERSION", COMPATIBLE_SERVER_VERSION
+            buildConfigField "String", "SERVER_DOWNLOAD_URL", SERVER_DOWNLOAD_URL
         }
         debug {
             debuggable true
-            buildConfigField "String", "COMPATIBLE_SERVER_VERSION", "\"1.5.0\""
-            buildConfigField "String", "SERVER_DOWNLOAD_URL", "\"https://storage.cloud.google.com/server-releases/home-system-server_1.4.3.tar.gz?authuser=0\""
+            buildConfigField "String", "COMPATIBLE_SERVER_VERSION", COMPATIBLE_SERVER_VERSION
+            buildConfigField "String", "SERVER_DOWNLOAD_URL", SERVER_DOWNLOAD_URL
         }
     }
     packagingOptions {
@@ -58,6 +58,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     productFlavors {
+    }
+    lintOptions {
+        checkReleaseBuilds false
     }
 }
 
@@ -95,7 +98,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
     implementation 'com.journeyapps:zxing-android-embedded:4.2.0'
 
-    //DO NOT UPDATE all the below
+    implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
 
     //test

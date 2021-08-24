@@ -49,7 +49,7 @@
         Это Приложение может содержать некоторые ошибки, чем раньше Вы сообщите о них Автору тем быстрее Автор их исправит.</string>
     <string name="text_armed_mode">Режим</string>
     <string name="text_armed_state">Состояние</string>
-    <string name="text_bar_data_usage_for">за %02d %s</string>
+    <string name="text_bar_data_usage_for" formatted="true">за %02d %s</string>
     <string name="text_camera_app_text">Открыть приложение для камер</string>
     <string name="text_camera_settings">Настроить</string>
     <string name="text_current_server">Текущий сервер:</string>

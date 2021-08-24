@@ -39,7 +39,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -56,6 +55,7 @@ public class Utils {
     public static final Locale currentLocale = getAppContext().getResources().getConfiguration().locale;
     private static final Gson gson = new Gson();
     private static final String INSTALLATION_ID = "INSTALLATION_ID";
+    private static HandlerThread handlerThread;
 
     public static String getCurrentTimeAndDateDoubleDotsDelimFrom(Long timeStamp) {
         if (timeStamp == null) {
@@ -234,18 +234,6 @@ public class Utils {
         setOrUpdateActiveServer(serverData);
     }
 
-    @SuppressWarnings("unchecked")
-    private static Map<String, String> getMapFromSettings(String id) {
-        String mapJson = getStringValueFromSettings(id);
-        Gson gson = new Gson();
-        return gson.fromJson(mapJson, HashMap.class) == null ? new HashMap<>() : new HashMap<>(gson.fromJson(mapJson, HashMap.class));
-    }
-
-    public static void saveMapToSettings(Map<String, String> map, String id) {
-        Gson gson = new Gson();
-        saveStringValueToSettings(id, gson.toJson(map));
-    }
-
     public static String[] retrievePermissions() {
         try {
             return getAppContext()
@@ -258,9 +246,11 @@ public class Utils {
     }
 
     public static Looper getLooper() {
-        HandlerThread thread = new HandlerThread("Thread: " + new Random().nextInt(1000));
-        thread.start();
-        return thread.getLooper();
+        if (handlerThread == null || !handlerThread.isAlive()) {
+            handlerThread = new HandlerThread("Thread: " + new Random().nextInt(1000));
+            handlerThread.start();
+        }
+        return handlerThread.getLooper();
     }
 
     public static Bitmap readImageFromUrl(String imageUrl) {

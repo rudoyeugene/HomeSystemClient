@@ -10,7 +10,7 @@ import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
 import static com.rudyii.hsw.client.helpers.Utils.getActiveServer;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDotsDelimFrom;
 import static com.rudyii.hsw.client.helpers.Utils.getLooper;
-import static com.rudyii.hsw.client.helpers.Utils.getSimplifiedPrimaryAccountName;
+import static com.rudyii.hsw.client.helpers.Utils.getPrimaryAccountEmail;
 import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServer;
 import static com.rudyii.hsw.client.helpers.Utils.retrievePermissions;
 import static com.rudyii.hsw.client.helpers.Utils.stringIsEmptyOrNull;
@@ -516,7 +516,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void calculateSystemStateBasedOn(SwitchCompat systemMode, SwitchCompat systemState) {
         Map<String, String> stateRequest = new HashMap<>();
-        stateRequest.put("by", getSimplifiedPrimaryAccountName());
+        stateRequest.put("by", getPrimaryAccountEmail());
 
         if (buttonsChangedInternally) {
             return;

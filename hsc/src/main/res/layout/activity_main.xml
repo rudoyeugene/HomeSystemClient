@@ -17,7 +17,7 @@
         <TextView
             android:id="@+id/textViewCurrentServer"
             android:layout_width="0dp"
-            android:layout_height="35dp"
+            android:layout_height="40dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
@@ -29,14 +29,15 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/text_current_server" />
 
-        <Spinner
-            android:id="@+id/spinnerServerList"
+        <Button
+            android:id="@+id/buttonServerList"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
             android:gravity="left|center"
             android:hapticFeedbackEnabled="true"
+            android:text="..."
             app:layout_constraintBottom_toBottomOf="@+id/textViewCurrentServer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline2"

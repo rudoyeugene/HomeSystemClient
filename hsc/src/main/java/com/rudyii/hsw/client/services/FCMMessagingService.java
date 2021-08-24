@@ -1,5 +1,11 @@
 package com.rudyii.hsw.client.services;
 
+import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
+import static com.rudyii.hsw.client.HomeSystemClientApplication.updateToken;
+import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
+import static com.rudyii.hsw.client.helpers.Utils.currentLocale;
+import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServers;
+
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -21,12 +27,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
-
-import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
-import static com.rudyii.hsw.client.HomeSystemClientApplication.updateToken;
-import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
-import static com.rudyii.hsw.client.helpers.Utils.currentLocale;
-import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServers;
 
 /**
  * Created by Jack on 26.12.2017.

@@ -1,5 +1,8 @@
 package com.rudyii.hsw.client.helpers;
 
+import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
+import static com.rudyii.hsw.client.activities.SystemLogActivity.HSC_SYSTEM_LOG_ITEM_CLICKED;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
@@ -16,9 +19,6 @@ import com.rudyii.hsw.client.R;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
-import static com.rudyii.hsw.client.activities.SystemLogActivity.HSC_SYSTEM_LOG_ITEM_CLICKED;
 
 /**
  * Created by Jack on 14.01.2018.
@@ -46,7 +46,7 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         LogItem logItem = mData.get(position);
-        holder.imageView.setImageDrawable(new BitmapDrawable(logItem.getImage()));
+        holder.imageView.setImageDrawable(new BitmapDrawable(getAppContext().getResources(), logItem.getImage()));
         holder.logDescriptionHeader.setText(logItem.getTitle());
         holder.logDescriptionDetails.setText(logItem.getDescription());
     }

@@ -1,10 +1,13 @@
 package com.rudyii.hsw.client.notifiers;
 
+import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_HIGH;
+import static com.rudyii.hsw.client.helpers.Utils.readImageFromUrl;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
+import static java.util.Objects.requireNonNull;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.media.AudioManager;
-import android.net.Uri;
 
 import androidx.core.app.NotificationCompat;
 
@@ -12,11 +15,6 @@ import com.rudyii.hsw.client.R;
 
 import java.util.Map;
 import java.util.Objects;
-
-import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_HIGH;
-import static com.rudyii.hsw.client.helpers.Utils.readImageFromUrl;
-import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Created by Jack on 16.12.2017.
@@ -33,8 +31,7 @@ public class MotionDetectedNotifier {
                 .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(readImageFromUrl(motionData.get("imageUrl").toString())))
                 .setAutoCancel(true)
                 .setWhen(Long.parseLong(motionData.get("eventId").toString()))
-                .setVibrate(new long[]{0, 200, 200, 200, 200, 200})
-                .setSound(Uri.parse(getStringValueFromSettings("MOTION_SOUND")), AudioManager.STREAM_NOTIFICATION);
+                .setVibrate(new long[]{0, 200, 200, 200, 200, 200});
 
         if (!Objects.equals(getStringValueFromSettings("CAMERA_APP"), "")) {
             PendingIntent launchCameraApp = PendingIntent.getActivity(context, 0,

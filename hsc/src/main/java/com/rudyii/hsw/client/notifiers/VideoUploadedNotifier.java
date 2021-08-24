@@ -1,10 +1,12 @@
 package com.rudyii.hsw.client.notifiers;
 
+import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_NORMAL;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
+import static java.util.Objects.requireNonNull;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.media.AudioManager;
-import android.net.Uri;
 
 import androidx.core.app.NotificationCompat;
 
@@ -12,11 +14,6 @@ import com.rudyii.hsw.client.R;
 
 import java.util.HashMap;
 import java.util.Objects;
-
-import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_NORMAL;
-import static com.rudyii.hsw.client.helpers.Utils.INFO_SOUND;
-import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
-import static java.util.Objects.requireNonNull;
 
 public class VideoUploadedNotifier {
     public VideoUploadedNotifier(Context context, HashMap<String, Object> videoData) {
@@ -31,8 +28,7 @@ public class VideoUploadedNotifier {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText((videoData.get("eventDateTime").toString())))
                 .setAutoCancel(true)
                 .setWhen(Long.parseLong(videoData.get("eventId").toString()))
-                .setVibrate(new long[]{0, 200, 200, 200, 200, 200})
-                .setSound(Uri.parse(getStringValueFromSettings(INFO_SOUND)), AudioManager.STREAM_NOTIFICATION);
+                .setVibrate(new long[]{0, 200, 200, 200, 200, 200});
 
         if (!Objects.equals(getStringValueFromSettings("CAMERA_APP"), "")) {
             PendingIntent launchCameraApp = PendingIntent.getActivity(context, 0,

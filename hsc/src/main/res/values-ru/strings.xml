@@ -116,4 +116,7 @@
     <string name="toggle_button_text_system_mode_state_automatic">Авто</string>
     <string name="toggle_button_text_system_state_armed">Включен</string>
     <string name="toggle_button_text_system_state_disarmed">Выключен</string>
+    <string name="no_paired_servers_found">Пожалуйста добавьте Сервер</string>
+    <string name="switched_active_server_to">Активным сервером выбран\u0020</string>
+    <string name="please_select_active_server">Пожалуйста выберите активный сервер</string>
 </resources>

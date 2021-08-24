@@ -46,66 +46,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/spinnerCameras" />
 
-        <TextView
-            android:id="@+id/textViewForButtonInfoSound"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:gravity="left|center"
-            android:text="@string/text_info_sound"
-            app:layout_constraintEnd_toStartOf="@+id/guideline4"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonPairServer" />
-
-        <Button
-            android:id="@+id/buttonInfoSound"
-            style="@android:style/TextAppearance.Material.Widget.TextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:hapticFeedbackEnabled="true"
-            android:text="@string/text_info_sound"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            app:layout_constraintEnd_toStartOf="@+id/guideline4"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewForButtonInfoSound" />
-
-        <TextView
-            android:id="@+id/textViewForButtonMotionSound"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:gravity="left|center"
-            android:text="@string/text_motion_sound"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/buttonUnpairServer" />
-
-        <Button
-            android:id="@+id/buttonMotionSound"
-            style="@android:style/TextAppearance.Material.Widget.TextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:hapticFeedbackEnabled="true"
-            android:text="@string/text_motion_sound"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/textViewForButtonMotionSound" />
-
         <Button
             android:id="@+id/buttonPairServer"
             style="@android:style/TextAppearance.Material.Widget.TextView"
@@ -408,27 +348,25 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:gravity="left|center"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonInfoSound" />
+            app:layout_constraintTop_toBottomOf="@+id/buttonPairServer" />
 
         <Button
             android:id="@+id/buttonCameraSettings"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:text="@string/text_camera_settings"
             android:textAllCaps="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/buttonMotionSound" />
+            app:layout_constraintTop_toBottomOf="@+id/buttonUnpairServer" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline4"

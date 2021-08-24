@@ -1,5 +1,9 @@
 package com.rudyii.hsw.client.activities;
 
+import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
+import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
+import static java.util.Objects.requireNonNull;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -11,10 +15,6 @@ import com.rudyii.hsw.client.R;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
-import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Created by Jack on 29.12.2017.

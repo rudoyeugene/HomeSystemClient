@@ -1,5 +1,15 @@
 package com.rudyii.hsw.client.activities;
 
+import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
+import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
+import static com.rudyii.hsw.client.helpers.Utils.currentLocale;
+import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDotsDelimFrom;
+import static com.rudyii.hsw.client.helpers.Utils.getLooper;
+import static com.rudyii.hsw.client.helpers.Utils.readImageFromUrl;
+import static com.rudyii.hsw.client.helpers.Utils.saveDataFromUrl;
+import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
+import static java.util.Collections.sort;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -36,18 +46,11 @@ import com.rudyii.hsw.client.helpers.ToastDrawer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
-import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
-import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDotsDelimFrom;
-import static com.rudyii.hsw.client.helpers.Utils.getLooper;
-import static com.rudyii.hsw.client.helpers.Utils.readImageFromUrl;
-import static com.rudyii.hsw.client.helpers.Utils.saveDataFromUrl;
-import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
-import static java.util.Collections.sort;
 
 /**
  * Created by Jack on 14.01.2018.
@@ -330,7 +333,7 @@ public class SystemLogActivity extends AppCompatActivity {
 
                     case "stopped":
                         image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_server_stopped);
-                        description = getResources().getString(R.string.notif_text_server_stopped);
+                        description = getResources().getString(R.string.notif_text_server_stopped) + new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", currentLocale).format(new Date(Long.parseLong(logRecordData.get("eventId").toString())));
                         break;
 
                     default:

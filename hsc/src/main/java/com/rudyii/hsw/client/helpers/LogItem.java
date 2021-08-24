@@ -1,5 +1,7 @@
 package com.rudyii.hsw.client.helpers;
 
+import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,8 +12,6 @@ import androidx.annotation.NonNull;
 import com.rudyii.hsw.client.R;
 
 import java.util.Objects;
-
-import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 
 /**
  * Created by Jack on 14.01.2018.

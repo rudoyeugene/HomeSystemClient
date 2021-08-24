@@ -1,5 +1,30 @@
 package com.rudyii.hsw.client.activities;
 
+import static com.rudyii.hsw.client.BuildConfig.COMPATIBLE_SERVER_VERSION;
+import static com.rudyii.hsw.client.BuildConfig.SERVER_DOWNLOAD_URL;
+import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
+import static com.rudyii.hsw.client.HomeSystemClientApplication.getToken;
+import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_MUTED;
+import static com.rudyii.hsw.client.helpers.Utils.DELAYED_ARM_DELAY_SECS;
+import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
+import static com.rudyii.hsw.client.helpers.Utils.getActiveServer;
+import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDotsDelimFrom;
+import static com.rudyii.hsw.client.helpers.Utils.getLooper;
+import static com.rudyii.hsw.client.helpers.Utils.getSimplifiedPrimaryAccountName;
+import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServer;
+import static com.rudyii.hsw.client.helpers.Utils.retrievePermissions;
+import static com.rudyii.hsw.client.helpers.Utils.stringIsEmptyOrNull;
+import static com.rudyii.hsw.client.helpers.Utils.systemIsOnDarkMode;
+import static com.rudyii.hsw.client.helpers.Utils.updateServer;
+import static com.rudyii.hsw.client.objects.types.NotificationType.ALL;
+import static com.rudyii.hsw.client.objects.types.NotificationType.MOTION_DETECTED;
+import static com.rudyii.hsw.client.objects.types.NotificationType.VIDEO_RECORDED;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.addOrUpdateServer;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.setOrUpdateActiveServer;
+import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
+import static java.util.Objects.requireNonNull;
+
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,15 +36,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -34,6 +55,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.helpers.ToastDrawer;
+import com.rudyii.hsw.client.objects.ServerData;
+import com.rudyii.hsw.client.objects.types.NotificationType;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -43,48 +66,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
-import static com.rudyii.hsw.client.BuildConfig.COMPATIBLE_SERVER_VERSION;
-import static com.rudyii.hsw.client.BuildConfig.SERVER_DOWNLOAD_URL;
-import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
-import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
-import static com.rudyii.hsw.client.HomeSystemClientApplication.getToken;
-import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_MUTED;
-import static com.rudyii.hsw.client.helpers.ShortcutsBuilder.buildDynamicShortcuts;
-import static com.rudyii.hsw.client.helpers.Utils.DELAYED_ARM_DELAY_SECS;
-import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_ALL;
-import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_MOTION_DETECTED;
-import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_MUTE;
-import static com.rudyii.hsw.client.helpers.Utils.NOTIFICATION_TYPE_VIDEO_RECORDED;
-import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
-import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
-import static com.rudyii.hsw.client.helpers.Utils.getActiveServerKey;
-import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDotsDelimFrom;
-import static com.rudyii.hsw.client.helpers.Utils.getHourlyReportMutedStateForServer;
-import static com.rudyii.hsw.client.helpers.Utils.getLooper;
-import static com.rudyii.hsw.client.helpers.Utils.getNotificationMutedForServer;
-import static com.rudyii.hsw.client.helpers.Utils.getNotificationTypeForServer;
-import static com.rudyii.hsw.client.helpers.Utils.getServersList;
-import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServer;
-import static com.rudyii.hsw.client.helpers.Utils.retrievePermissions;
-import static com.rudyii.hsw.client.helpers.Utils.saveHourlyReportMutedStateForServer;
-import static com.rudyii.hsw.client.helpers.Utils.saveNotificationMutedForServer;
-import static com.rudyii.hsw.client.helpers.Utils.saveNotificationTypeForServer;
-import static com.rudyii.hsw.client.helpers.Utils.stringIsEmptyOrNull;
-import static com.rudyii.hsw.client.helpers.Utils.switchActiveServerTo;
-import static com.rudyii.hsw.client.helpers.Utils.systemIsOnDarkMode;
-import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
-import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
-import static java.util.Objects.requireNonNull;
-
 public class MainActivity extends AppCompatActivity {
     private static final String HSC_STATUSES_UPDATED = "HSC_STATUSES_UPDATED";
     private final Random random = new Random();
     private final MainActivityBroadcastReceiver mainActivityBroadcastReceiver = new MainActivityBroadcastReceiver();
     private SwitchCompat systemMode, systemState;
-    @SuppressWarnings("FieldCanBeLocal")
-    private ImageButton buttonResendHourlyReport, buttonUsageStats, buttonSystemLog, buttonNotificationType;
+    private ImageButton buttonResendHourlyReport;
+    private ImageButton buttonNotificationType;
     private TextView armedModeText, armedStateText;
-    private Button armLater;
+    private Button serversList;
     private boolean buttonsChangedInternally, buttonNotificationTypeMuted, buttonResendHourlyReportMuted, delayedArmInProgress;
     private Handler serverLastPingHandler;
     private Runnable serverLastPingRunnable;
@@ -102,6 +92,9 @@ public class MainActivity extends AppCompatActivity {
 
         TextView serverLastPingTextValue = findViewById(R.id.textViewServerVersion);
         defaultTextColor = serverLastPingTextValue.getTextColors();
+
+        serversList = findViewById(R.id.buttonServerList);
+        updateServerListButtonActiveServerName();
 
         buttonResendHourlyReport = findViewById(R.id.buttonResendHourly);
         if (systemIsInDarkMode) {
@@ -121,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        buttonUsageStats = findViewById(R.id.buttonUsageChart);
+        ImageButton buttonUsageStats = findViewById(R.id.buttonUsageChart);
         if (systemIsInDarkMode) {
             buttonUsageStats.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_chart_inverted));
         }
@@ -142,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        buttonSystemLog = findViewById(R.id.buttonSystemLog);
+        ImageButton buttonSystemLog = findViewById(R.id.buttonSystemLog);
         if (systemIsInDarkMode) {
             buttonSystemLog.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_log_inverted));
         }
@@ -188,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
         systemState.setTextOff(getString(R.string.toggle_button_text_system_state_disarmed));
         systemState.setOnCheckedChangeListener((buttonView, isChecked) -> calculateSystemStateBasedOn(systemMode, systemState));
 
-        armLater = findViewById(R.id.buttonDelayedArm);
+        Button armLater = findViewById(R.id.buttonDelayedArm);
         armLater.setOnClickListener(v -> {
             if (systemMode.isChecked()) {
                 new ToastDrawer().showLongToast(getString(R.string.text_toast_automatic_mode_selected));
@@ -241,21 +234,30 @@ public class MainActivity extends AppCompatActivity {
         requestPermissions();
     }
 
+    private void updateServerListButtonActiveServerName() {
+        ServerData activeServer = getActiveServer();
+        if (activeServer != null) {
+            serversList.setText(activeServer.getServerAlias());
+            serversList.setTransformationMethod(null);
+        }
+    }
+
     private void muteUnmuteButtonNotificationType() {
-        String activeServer = getActiveServerAlias();
-        buttonNotificationTypeMuted = Boolean.parseBoolean(getNotificationMutedForServer(activeServer));
+        ServerData activeServer = getActiveServer();
+        activeServer.setNotificationsMuted(!activeServer.isNotificationsMuted());
 
-        buttonNotificationTypeMuted = !buttonNotificationTypeMuted;
+        buttonNotificationTypeMuted = activeServer.isNotificationsMuted();
 
-        saveNotificationMutedForServer(activeServer, "" + buttonNotificationTypeMuted);
         resolveNotificationType();
-
-        registerUserDataOnServer(getActiveServerKey(), activeServer, getToken());
+        addOrUpdateServer(activeServer);
+        setOrUpdateActiveServer(activeServer);
+        registerUserDataOnServer(activeServer, getToken());
+        resolveNotificationType();
     }
 
     private void muteUnmuteHourlyReporting() {
-        String activeServer = getActiveServerAlias();
-        buttonResendHourlyReportMuted = Boolean.parseBoolean(getHourlyReportMutedStateForServer(activeServer));
+        ServerData activeServer = getActiveServer();
+        buttonResendHourlyReportMuted = activeServer.isHourlyReportMuted();
         Drawable icon;
 
         if (buttonResendHourlyReportMuted) {
@@ -275,8 +277,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         buttonResendHourlyReport.setImageDrawable(icon);
-        saveHourlyReportMutedStateForServer(activeServer, "" + buttonResendHourlyReportMuted);
-        registerUserDataOnServer(getActiveServerKey(), activeServer, getToken());
+        activeServer.setHourlyReportMuted(buttonResendHourlyReportMuted);
+        addOrUpdateServer(activeServer);
+        setOrUpdateActiveServer(activeServer);
+        registerUserDataOnServer(getActiveServer(), getToken());
     }
 
     @Override
@@ -290,6 +294,10 @@ public class MainActivity extends AppCompatActivity {
         subscribeFirebaseListeners();
 
         buildServersList();
+
+        updateServerListButtonActiveServerName();
+        resolveHourlyReportIcon();
+        resolveNotificationType();
 
         buildHandlers();
     }
@@ -364,36 +372,39 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        String activeServer = getActiveServerAlias();
-        String notificationType = getNotificationTypeForServer(activeServer);
+        ServerData activeServer = getActiveServer();
+        NotificationType notificationType = activeServer.getNotificationType();
         Drawable icon;
 
         switch (notificationType) {
-            case NOTIFICATION_TYPE_MOTION_DETECTED:
+            case MOTION_DETECTED:
                 if (systemIsInDarkMode) {
                     icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_video_recorded_inverted);
                 } else {
                     icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_video_recorded);
                 }
-                saveNotificationTypeForServer(activeServer, NOTIFICATION_TYPE_VIDEO_RECORDED);
+                activeServer.setNotificationType(VIDEO_RECORDED);
+                updateServer(activeServer);
                 break;
 
-            case NOTIFICATION_TYPE_VIDEO_RECORDED:
+            case VIDEO_RECORDED:
                 if (systemIsInDarkMode) {
                     icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_motion_and_video_recorded_inverted);
                 } else {
                     icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_motion_and_video_recorded);
                 }
-                saveNotificationTypeForServer(activeServer, NOTIFICATION_TYPE_ALL);
+                activeServer.setNotificationType(ALL);
+                updateServer(activeServer);
                 break;
 
-            case NOTIFICATION_TYPE_ALL:
+            case ALL:
                 if (systemIsInDarkMode) {
                     icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_motion_inverted);
                 } else {
                     icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_motion);
                 }
-                saveNotificationTypeForServer(activeServer, NOTIFICATION_TYPE_MOTION_DETECTED);
+                activeServer.setNotificationType(MOTION_DETECTED);
+                updateServer(activeServer);
                 break;
             default:
                 icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.image_warning);
@@ -401,23 +412,23 @@ public class MainActivity extends AppCompatActivity {
         }
 
         buttonNotificationType.setImageDrawable(icon);
-        registerUserDataOnServer(getActiveServerKey(), activeServer, getToken());
+        addOrUpdateServer(activeServer);
+        setOrUpdateActiveServer(activeServer);
+        registerUserDataOnServer(activeServer, getToken());
     }
 
     private void resolveHourlyReportIcon() {
-        String activeServer = getActiveServerAlias();
-        buttonResendHourlyReportMuted = Boolean.parseBoolean(getHourlyReportMutedStateForServer(activeServer));
+        ServerData activeServer = getActiveServer();
+        buttonResendHourlyReportMuted = activeServer != null && activeServer.isHourlyReportMuted();
         Drawable icon;
 
         if (buttonResendHourlyReportMuted) {
-            buttonResendHourlyReportMuted = true;
             if (systemIsInDarkMode) {
                 icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted_inverted);
             } else {
                 icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted);
             }
         } else {
-            buttonResendHourlyReportMuted = false;
             if (systemIsInDarkMode) {
                 icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_hourly_inverted);
             } else {
@@ -429,13 +440,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void resolveNotificationType() {
-        String activeServer = getActiveServerAlias();
-        String notificationType = getNotificationTypeForServer(activeServer);
-        buttonNotificationTypeMuted = Boolean.parseBoolean(getNotificationMutedForServer(activeServer));
+        ServerData activeServer = getActiveServer();
+        NotificationType notificationType = activeServer == null ? ALL : activeServer.getNotificationType();
+        buttonNotificationTypeMuted = activeServer != null && activeServer.isNotificationsMuted();
         Drawable icon;
 
         switch (notificationType) {
-            case NOTIFICATION_TYPE_MOTION_DETECTED:
+            case MOTION_DETECTED:
                 if (systemIsInDarkMode) {
                     icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_motion_inverted);
                 } else {
@@ -443,7 +454,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
 
-            case NOTIFICATION_TYPE_VIDEO_RECORDED:
+            case VIDEO_RECORDED:
                 if (systemIsInDarkMode) {
                     icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_video_recorded_inverted);
                 } else {
@@ -451,7 +462,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
 
-            case NOTIFICATION_TYPE_ALL:
+            case ALL:
                 if (systemIsInDarkMode) {
                     icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_on_motion_and_video_recorded_inverted);
                 } else {
@@ -459,7 +470,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
 
-            case NOTIFICATION_TYPE_MUTE:
+            case MUTE:
                 if (systemIsInDarkMode) {
                     icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted_inverted);
                 } else {
@@ -485,19 +496,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void drawToastWithNotificationTypeInfo() {
-        String activeServer = getActiveServerAlias();
-        String notificationType = getNotificationTypeForServer(activeServer);
+        ServerData activeServer = getActiveServer();
+        NotificationType notificationType = activeServer.getNotificationType();
 
         switch (notificationType) {
-            case NOTIFICATION_TYPE_MOTION_DETECTED:
+            case MOTION_DETECTED:
                 new ToastDrawer().showLongToast(getResources().getString(R.string.text_toast_notification_type_motion_detected));
                 break;
 
-            case NOTIFICATION_TYPE_VIDEO_RECORDED:
+            case VIDEO_RECORDED:
                 new ToastDrawer().showLongToast(getResources().getString(R.string.text_toast_notification_type_video_recorded));
                 break;
 
-            case NOTIFICATION_TYPE_ALL:
+            case ALL:
                 new ToastDrawer().showLongToast(getResources().getString(R.string.text_toast_notification_type_both));
                 break;
         }
@@ -505,6 +516,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void calculateSystemStateBasedOn(SwitchCompat systemMode, SwitchCompat systemState) {
         Map<String, String> stateRequest = new HashMap<>();
+        stateRequest.put("by", getSimplifiedPrimaryAccountName());
 
         if (buttonsChangedInternally) {
             return;
@@ -741,44 +753,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void buildServersList() {
-        Spinner serversList = findViewById(R.id.spinnerServerList);
-        ArrayAdapter<String> serversArray = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, getServersList());
-        serversArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        serversList.setAdapter(serversArray);
-
-        final int[] currentItem = new int[1];
-        try {
-            currentItem[0] = serversArray.getPosition(getActiveServerAlias());
-        } catch (IndexOutOfBoundsException e) {
-            Log.w(TAG, "No paired servers");
-        }
-
-        serversList.setSelection(currentItem[0]);
-        serversList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View convertView, int selected, long current) {
-                String selectedServerName = (String) parent.getItemAtPosition(selected);
-
-                if (currentItem[0] != selected) {
-                    currentItem[0] = selected;
-                    switchActiveServerTo(selectedServerName);
-                    ((TextView) convertView).setText(selectedServerName);
-                    ((TextView) convertView).setTextColor(getAppContext().getColor(R.color.textColor));
-
-                    refreshFirebaseListeners();
-                    resolveHourlyReportIcon();
-                    resolveNotificationType();
-                    registerUserDataOnServer(getActiveServerKey(), selectedServerName, getToken());
-
-                    buildDynamicShortcuts();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
+        serversList.setOnClickListener(view -> {
+            startActivity(new Intent(getApplicationContext(), SelectServerActivity.class));
         });
     }
 

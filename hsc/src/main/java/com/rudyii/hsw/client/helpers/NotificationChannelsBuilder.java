@@ -1,5 +1,8 @@
 package com.rudyii.hsw.client.helpers;
 
+import static android.os.Build.VERSION_CODES.O;
+import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -8,9 +11,6 @@ import android.os.Build;
 import android.provider.Settings;
 
 import androidx.annotation.RequiresApi;
-
-import static android.os.Build.VERSION_CODES.O;
-import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 
 public class NotificationChannelsBuilder {
     public static final String NOTIFICATION_CHANNEL_HIGH = "HSC_PopUp";

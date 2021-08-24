@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 
 public class DBInitializer extends SQLiteOpenHelper {
+    public static final String SETTINGS_TABLE = "SETTINGS";
+    public static final String SERVERS_TABLE = "SERVERS";
 
     public DBInitializer(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -16,7 +18,8 @@ public class DBInitializer extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE SETTINGS (_ID TEXT UNIQUE, VALUE TEXT)");
+        db.execSQL("CREATE TABLE " + SETTINGS_TABLE + " (_ID TEXT UNIQUE, VALUE TEXT)");
+        db.execSQL("CREATE TABLE " + SERVERS_TABLE + " (_ID TEXT UNIQUE, VALUE TEXT)");
     }
 
     @Override

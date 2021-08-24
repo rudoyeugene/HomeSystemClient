@@ -15,15 +15,15 @@ android {
             storePassword 'scienide'
         }
     }
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion '30.0.2'
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.rudyii.hsw.client"
         minSdkVersion 26
-        targetSdkVersion 30
-        versionCode 70
-        versionName '1.1.70'
+        targetSdkVersion 31
+        versionCode 75
+        versionName '1.3.0'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
     }
@@ -31,12 +31,12 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "COMPATIBLE_SERVER_VERSION", "\"1.4.3\""
+            buildConfigField "String", "COMPATIBLE_SERVER_VERSION", "\"1.5.0\""
             buildConfigField "String", "SERVER_DOWNLOAD_URL", "\"https://storage.cloud.google.com/server-releases/home-system-server_1.4.3.tar.gz?authuser=0\""
         }
         debug {
             debuggable true
-            buildConfigField "String", "COMPATIBLE_SERVER_VERSION", "\"1.4.3\""
+            buildConfigField "String", "COMPATIBLE_SERVER_VERSION", "\"1.5.0\""
             buildConfigField "String", "SERVER_DOWNLOAD_URL", "\"https://storage.cloud.google.com/server-releases/home-system-server_1.4.3.tar.gz?authuser=0\""
         }
     }
@@ -62,6 +62,9 @@ android {
 }
 
 dependencies {
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+
     api platform('com.google.cloud:libraries-bom:4.4.1')
     api 'com.google.cloud:google-cloud-storage'
     api 'com.google.guava:guava'
@@ -71,35 +74,35 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
 
     implementation 'com.android.volley:volley:1.2.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'androidx.appcompat:appcompat:1.3.0'
-    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'com.google.code.gson:gson:2.8.7'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:support-annotations:28.0.0'
 
     //GMS part
-    implementation 'com.google.android.gms:play-services-auth:19.0.0'
-    implementation 'com.google.firebase:firebase-core:19.0.0'
+    implementation 'com.google.android.gms:play-services-auth:19.2.0'
+    implementation 'com.google.firebase:firebase-core:19.0.1'
     implementation 'com.google.firebase:firebase-messaging:22.0.0'
-    implementation 'com.google.firebase:firebase-database:20.0.0'
+    implementation 'com.google.firebase:firebase-database:20.0.1'
     implementation 'com.google.firebase:firebase-storage:20.0.0'
     implementation 'com.google.firebase:firebase-auth:21.0.1'
-    implementation 'com.google.firebase:firebase-analytics:19.0.0'
+    implementation 'com.google.firebase:firebase-analytics:19.0.1'
 
     //3rd party deps
     implementation 'com.google.zxing:core:3.4.1'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
-    implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
+    implementation 'com.journeyapps:zxing-android-embedded:4.2.0'
 
     //DO NOT UPDATE all the below
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
 
     //test
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation 'androidx.annotation:annotation:1.2.0'
-    androidTestImplementation 'androidx.test:rules:1.3.0'
+    androidTestImplementation 'androidx.test:rules:1.4.0'
 }
 
 apply plugin: 'com.android.application'

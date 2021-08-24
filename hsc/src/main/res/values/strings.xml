@@ -117,4 +117,7 @@
     <string name="toggle_button_text_system_mode_state_automatic">Auto</string>
     <string name="toggle_button_text_system_state_armed">Armed</string>
     <string name="toggle_button_text_system_state_disarmed">Disarmed</string>
+    <string name="no_paired_servers_found">Please pair new Server</string>
+    <string name="switched_active_server_to">Active server switched to\u0020</string>
+    <string name="please_select_active_server">Please select active server</string>
 </resources>

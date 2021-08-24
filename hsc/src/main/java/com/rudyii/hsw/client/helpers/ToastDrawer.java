@@ -1,10 +1,10 @@
 package com.rudyii.hsw.client.helpers;
 
-import android.os.Handler;
-import android.widget.Toast;
-
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.helpers.Utils.getLooper;
+
+import android.os.Handler;
+import android.widget.Toast;
 
 /**
  * Created by Jack on 15.10.2017.

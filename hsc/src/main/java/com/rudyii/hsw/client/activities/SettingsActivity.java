@@ -1,11 +1,34 @@
 package com.rudyii.hsw.client.activities;
 
+import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
+import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
+import static com.rudyii.hsw.client.activities.CameraSettingsActivity.CONTINUOUS_MONITORING;
+import static com.rudyii.hsw.client.activities.CameraSettingsActivity.HEALTH_CHECK_ENABLED;
+import static com.rudyii.hsw.client.activities.CameraSettingsActivity.INTERVAL;
+import static com.rudyii.hsw.client.activities.CameraSettingsActivity.MOTION_AREA;
+import static com.rudyii.hsw.client.activities.CameraSettingsActivity.NOISE_LEVEL;
+import static com.rudyii.hsw.client.activities.CameraSettingsActivity.REBOOT_TIMEOUT;
+import static com.rudyii.hsw.client.activities.CameraSettingsActivity.USE_MOTION_OBJECT;
+import static com.rudyii.hsw.client.helpers.Utils.DELAYED_ARM_DELAY_SECS;
+import static com.rudyii.hsw.client.helpers.Utils.getActiveServer;
+import static com.rudyii.hsw.client.helpers.Utils.getDeviceId;
+import static com.rudyii.hsw.client.helpers.Utils.getLooper;
+import static com.rudyii.hsw.client.helpers.Utils.removeServerByKey;
+import static com.rudyii.hsw.client.helpers.Utils.stringIsEmptyOrNull;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.addOrUpdateServer;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.deleteIdFromSettings;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.getAllServers;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueToSettings;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.setOrUpdateActiveServer;
+import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
+import static java.util.Objects.requireNonNull;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -36,53 +59,19 @@ import com.google.zxing.integration.android.IntentResult;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.helpers.ToastDrawer;
 import com.rudyii.hsw.client.helpers.Utils;
+import com.rudyii.hsw.client.objects.PairingData;
+import com.rudyii.hsw.client.objects.ServerData;
+import com.rudyii.hsw.client.objects.types.NotificationType;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static android.media.RingtoneManager.ACTION_RINGTONE_PICKER;
-import static android.media.RingtoneManager.EXTRA_RINGTONE_EXISTING_URI;
-import static android.media.RingtoneManager.EXTRA_RINGTONE_PICKED_URI;
-import static android.media.RingtoneManager.EXTRA_RINGTONE_TITLE;
-import static android.media.RingtoneManager.EXTRA_RINGTONE_TYPE;
-import static android.media.RingtoneManager.TYPE_NOTIFICATION;
-import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
-import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
-import static com.rudyii.hsw.client.HomeSystemClientApplication.getToken;
-import static com.rudyii.hsw.client.activities.CameraSettingsActivity.CONTINUOUS_MONITORING;
-import static com.rudyii.hsw.client.activities.CameraSettingsActivity.HEALTH_CHECK_ENABLED;
-import static com.rudyii.hsw.client.activities.CameraSettingsActivity.INTERVAL;
-import static com.rudyii.hsw.client.activities.CameraSettingsActivity.MOTION_AREA;
-import static com.rudyii.hsw.client.activities.CameraSettingsActivity.NOISE_LEVEL;
-import static com.rudyii.hsw.client.activities.CameraSettingsActivity.REBOOT_TIMEOUT;
-import static com.rudyii.hsw.client.activities.CameraSettingsActivity.USE_MOTION_OBJECT;
-import static com.rudyii.hsw.client.helpers.Utils.DELAYED_ARM_DELAY_SECS;
-import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
-import static com.rudyii.hsw.client.helpers.Utils.getDeviceId;
-import static com.rudyii.hsw.client.helpers.Utils.getLooper;
-import static com.rudyii.hsw.client.helpers.Utils.getSoundNameBy;
-import static com.rudyii.hsw.client.helpers.Utils.isPaired;
-import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServer;
-import static com.rudyii.hsw.client.helpers.Utils.removeServerFromServersList;
-import static com.rudyii.hsw.client.helpers.Utils.serverKeyIsValid;
-import static com.rudyii.hsw.client.helpers.Utils.stringIsEmptyOrNull;
-import static com.rudyii.hsw.client.providers.DatabaseProvider.deleteIdFromSettings;
-import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
-import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueToSettings;
-import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
-import static java.util.Arrays.asList;
-import static java.util.Objects.requireNonNull;
-
 public class SettingsActivity extends AppCompatActivity {
-    public static final int CAMERA_SETTINGS_CODE = 444;
-    public static final String RINGTONE_PICKED_URI = "android.intent.extra.ringtone.PICKED_URI";
-    private final int INFORMATION_NOTIFICATION_SOUND_CODE = 222;
-    private final int MOTION_NOTIFICATION_SOUND_CODE = 333;
+    public static final int CAMERA_SETTINGS_CODE = 1111;
     @SuppressWarnings("FieldCanBeLocal")
-    private Button addServerButton, removeServerButton, infoSoundButton, motionSoundButton, cameraSettings;
+    private Button addServerButton, removeServerButton, cameraSettings;
     private SwitchCompat switchCollectStatsEnabled, switchMonitoringEnabled, switchHourlyReportEnabled, switchHourlyReportForced, switchVerboseOutputEnabled, switchShowMotionAreaEnabled;
     private EditText editTextForDelayedArmInterval, editTextForTextViewKeepDays, editTextForTextViewRecordInterval;
     private DatabaseReference optionsReference;
@@ -98,9 +87,9 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Log.i(TAG, "Settings Activity created");
-        setTitle(getTitle() + getActiveServerAlias());
+        String activeServerAlias = getActiveServer() == null ? " ... " : getActiveServer().getServerAlias();
+        setTitle(getTitle() + activeServerAlias);
         setContentView(R.layout.activity_settings);
-        buildSoundSelectionButtons();
 
         buildAppsListSpinner();
 
@@ -181,7 +170,7 @@ public class SettingsActivity extends AppCompatActivity {
         removeServerButton = findViewById(R.id.buttonUnpairServer);
         removeServerButton.setText(getResources().getString(R.string.button_pair_server_unpair_server));
         removeServerButton.setOnClickListener(v -> {
-            AlertDialog.Builder unpairServerAlert = new AlertDialog.Builder(SettingsActivity.this);
+            AlertDialog.Builder unpairServerAlert = new AlertDialog.Builder(this);
             unpairServerAlert.setTitle(getResources().getString(R.string.dialog_server_unpair_alert_title));
             unpairServerAlert.setMessage(getResources().getString(R.string.dialog_server_unpair_alert_message));
 
@@ -191,11 +180,17 @@ public class SettingsActivity extends AppCompatActivity {
                     getRootReference().child("/connectedClients/" + accountName).removeValue();
                 }
 
-                removeServerFromServersList(getActiveServerAlias());
+                removeServerByKey(getActiveServer().getServerKey());
                 deleteIdFromSettings(Utils.ACTIVE_SERVER);
+                Map<String, ServerData> allServers = getAllServers();
 
-                new ToastDrawer().showToast(isPaired() ? getActiveServerAlias() + ": " + getResources().getString(R.string.toast_server_unpair_failure) : getResources().getString(R.string.toast_server_unpair_success));
-                addServerButton.setText(R.string.button_pair_server_pair_server);
+                if (allServers.isEmpty()) {
+                    new ToastDrawer().showToast(getResources().getString(R.string.no_paired_servers_found));
+                } else {
+                    ServerData serverData = allServers.values().stream().findFirst().get();
+                    setOrUpdateActiveServer(serverData);
+                    new ToastDrawer().showToast(getResources().getString(R.string.switched_active_server_to) + getActiveServer().getServerAlias());
+                }
             });
 
             unpairServerAlert.setNegativeButton(getResources().getString(R.string.dialog_no), (dialogInterface, i) -> {
@@ -213,34 +208,6 @@ public class SettingsActivity extends AppCompatActivity {
         addServerButton.setOnClickListener(v -> {
             IntentIntegrator integrator = new IntentIntegrator(this);
             integrator.initiateScan();
-        });
-    }
-
-    private void buildSoundSelectionButtons() {
-        infoSoundButton = findViewById(R.id.buttonInfoSound);
-        infoSoundButton.setTextColor(getAppContext().getColor(R.color.textColor));
-        infoSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND)));
-
-        infoSoundButton.setOnClickListener(v -> {
-            Intent infoSoundIntent = new Intent(ACTION_RINGTONE_PICKER);
-            infoSoundIntent.putExtra(EXTRA_RINGTONE_TYPE, TYPE_NOTIFICATION);
-            infoSoundIntent.putExtra(EXTRA_RINGTONE_PICKED_URI, (Uri) null);
-            infoSoundIntent.putExtra(EXTRA_RINGTONE_TITLE, "Select Tone");
-            infoSoundIntent.putExtra(EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
-            startActivityForResult(infoSoundIntent, INFORMATION_NOTIFICATION_SOUND_CODE);
-        });
-
-        motionSoundButton = findViewById(R.id.buttonMotionSound);
-        motionSoundButton.setTextColor(getAppContext().getColor(R.color.textColor));
-        motionSoundButton.setText(getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND)));
-
-        motionSoundButton.setOnClickListener(v -> {
-            Intent infoSoundIntent = new Intent(ACTION_RINGTONE_PICKER);
-            infoSoundIntent.putExtra(EXTRA_RINGTONE_TYPE, TYPE_NOTIFICATION);
-            infoSoundIntent.putExtra(EXTRA_RINGTONE_PICKED_URI, (Uri) null);
-            infoSoundIntent.putExtra(EXTRA_RINGTONE_TITLE, "Select Tone");
-            infoSoundIntent.putExtra(EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
-            startActivityForResult(infoSoundIntent, MOTION_NOTIFICATION_SOUND_CODE);
         });
     }
 
@@ -531,67 +498,22 @@ public class SettingsActivity extends AppCompatActivity {
         IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         if (scanResult != null) {
             String result = scanResult.getContents();
-            ArrayList<String> serverData = new ArrayList<>(asList(result.split(":")));
-
-            String serverAlias = serverData.get(0);
-            String serverKey = serverData.get(1);
-
-            String serverList = getStringValueFromSettings(Utils.SERVER_LIST);
             Gson gson = new Gson();
-            HashMap<String, String> serverListMap;
+            PairingData pairingData = gson.fromJson(result, PairingData.class);
 
-            if (stringIsEmptyOrNull(serverList)) {
-                serverListMap = new HashMap<>();
-                serverListMap.put(serverAlias, serverKey);
-                saveStringValueToSettings(Utils.SERVER_LIST, gson.toJson(serverListMap));
-            } else {
-                serverListMap = gson.fromJson(serverList, HashMap.class);
-                serverListMap.put(serverAlias, serverKey);
-                saveStringValueToSettings(Utils.SERVER_LIST, gson.toJson(serverListMap));
-            }
+            ServerData serverData = ServerData.builder()
+                    .serverKey(pairingData.getServerKey())
+                    .serverAlias(pairingData.getServerAlias())
+                    .serverIp(pairingData.getServerIp())
+                    .serverPort(pairingData.getServerPort())
+                    .notificationType(NotificationType.ALL)
+                    .build();
+            addOrUpdateServer(serverData);
+            setOrUpdateActiveServer(serverData);
+            new ToastDrawer().showToast(getResources().getString(R.string.toast_server_paired_success));
 
-            if (serverKeyIsValid(serverKey)) {
-                saveStringValueToSettings(Utils.ACTIVE_SERVER, serverAlias);
-                registerUserDataOnServer(serverKey, serverAlias, getToken());
-
-                new ToastDrawer().showToast(isPaired() ? getResources().getString(R.string.toast_server_paired_success) : getResources().getString(R.string.toast_server_paired_failure));
-            } else {
-                new ToastDrawer().showToast(getResources().getString(R.string.toast_server_paired_failure_detailed));
-            }
         } else {
-            String soundName;
-            Uri soundUri;
             switch (requestCode) {
-                case INFORMATION_NOTIFICATION_SOUND_CODE:
-                    soundUri = (Uri) requireNonNull(intent.getExtras()).get(RINGTONE_PICKED_URI);
-
-                    if (soundUri == null) {
-                        deleteIdFromSettings(Utils.INFO_SOUND);
-                        soundName = getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND));
-                        new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_removed));
-                    } else {
-                        saveStringValueToSettings(Utils.INFO_SOUND, soundUri.toString());
-                        soundName = getSoundNameBy(getStringValueFromSettings(Utils.INFO_SOUND));
-                        new ToastDrawer().showToast(getResources().getString(R.string.toast_info_sound_changed_to) + soundName);
-                    }
-                    infoSoundButton.setText(soundName);
-                    break;
-
-                case MOTION_NOTIFICATION_SOUND_CODE:
-                    soundUri = (Uri) requireNonNull(intent.getExtras()).get(RINGTONE_PICKED_URI);
-
-                    if (soundUri == null) {
-                        deleteIdFromSettings(Utils.MOTION_SOUND);
-                        soundName = getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND));
-                        new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_removed));
-                    } else {
-                        saveStringValueToSettings(Utils.MOTION_SOUND, soundUri.toString());
-                        soundName = getSoundNameBy(getStringValueFromSettings(Utils.MOTION_SOUND));
-                        new ToastDrawer().showToast(getResources().getString(R.string.toast_motion_sound_changed_to) + soundName);
-                    }
-                    motionSoundButton.setText(soundName);
-                    break;
-
                 case CAMERA_SETTINGS_CODE:
                     cameraSettingsChanged = true;
 

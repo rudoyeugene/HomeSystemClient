@@ -1,5 +1,14 @@
 package com.rudyii.hsw.client.helpers;
 
+import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
+import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.addOrUpdateServer;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.getAllServers;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueToSettings;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.setOrUpdateActiveServer;
+import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getCustomReference;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.pm.PackageInfo;
@@ -7,9 +16,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
@@ -19,6 +25,8 @@ import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
 import com.rudyii.hsw.client.R;
+import com.rudyii.hsw.client.objects.ServerData;
+import com.rudyii.hsw.client.providers.DatabaseProvider;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -28,7 +36,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -37,32 +44,17 @@ import java.util.Random;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
-import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
-import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
-import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueToSettings;
-import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getCustomReference;
-
 /**
  * Created by Jack on 18.12.2017.
  */
 
 @SuppressWarnings("WeakerAccess")
 public class Utils {
-    public static final String SERVER_LIST = "SERVER_LIST";
     public static final String DELAYED_ARM_DELAY_SECS = "DELAYED_ARM_DELAY_SECS";
-    public static final String NOTIFICATION_TYPES = "NOTIFICATION_TYPES";
-    public static final String NOTIFICATIONS_MUTED = "NOTIFICATIONS_MUTED";
     public static final String ACTIVE_SERVER = "ACTIVE_SERVER";
-    public static final String INFO_SOUND = "INFO_SOUND";
-    public static final String MOTION_SOUND = "MOTION_SOUND";
     public static final String CAMERA_APP = "CAMERA_APP";
-    public static final String NOTIFICATION_TYPE_MOTION_DETECTED = "motionDetected";
-    public static final String NOTIFICATION_TYPE_VIDEO_RECORDED = "videoRecorded";
-    public static final String NOTIFICATION_TYPE_ALL = "all";
-    public static final String NOTIFICATION_TYPE_MUTE = "mute";
     public static final Locale currentLocale = getAppContext().getResources().getConfiguration().locale;
-    private static final String HOURLY_REPORT_STATE = "HOURLY_REPORT_STATE";
+    private static final Gson gson = new Gson();
     private static final String INSTALLATION_ID = "INSTALLATION_ID";
 
     public static String getCurrentTimeAndDateDoubleDotsDelimFrom(Long timeStamp) {
@@ -75,29 +67,6 @@ public class Utils {
         dateFormat.setTimeZone(TimeZone.getDefault());
 
         return dateFormat.format(date);
-    }
-
-    public static String getSoundNameBy(String soundUri) {
-        Ringtone ringtone = RingtoneManager.getRingtone(getAppContext(), Uri.parse(soundUri));
-        return ringtone.getTitle(getAppContext());
-    }
-
-    public static boolean isPaired() {
-        String activeServerAlias = getActiveServerAlias();
-        String activeServerKey = getServerKeyFromAlias(activeServerAlias);
-        return serverKeyIsValid(activeServerKey);
-    }
-
-    public static boolean serverKeyIsValid(String serverKey) {
-        try {
-            return null != UUID.fromString(serverKey);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public static String getServerKeyFromAlias(String serverAlias) {
-        return getMapWithServers().get(serverAlias);
     }
 
     public static HashMap<String, Object> buildDataForMainActivityFrom(String mode, String state) {
@@ -178,28 +147,18 @@ public class Utils {
     }
 
     public static void registerUserDataOnServers(String token) {
-        if (!getMapWithServers().isEmpty()) {
-            for (Map.Entry<String, String> entry : getMapWithServers().entrySet()) {
-                String serverName = entry.getKey();
-                String serverKey = entry.getValue();
-                registerUserDataOnServer(serverKey, serverName, token);
-            }
-        }
+        getAllServers().values().forEach(serverData -> registerUserDataOnServer(serverData, token));
     }
 
-    public static void registerUserDataOnServer(String serverKey, String serverName, String token) {
+    public static void registerUserDataOnServer(ServerData serverData, String token) {
         String simplifiedPrimaryAccountName = getSimplifiedPrimaryAccountName();
         String deviceId = getDeviceId();
 
         HashMap<String, Object> clientData = new HashMap<>();
 
-        String notificationType = getNotificationTypeForServer(serverName);
-        String hourlyReportMuted = getHourlyReportMutedStateForServer(serverName);
-        String notificationsMuted = getNotificationMutedForServer(serverName);
-
-        clientData.put("notificationType", notificationType);
-        clientData.put("notificationsMuted", Boolean.parseBoolean(notificationsMuted));
-        clientData.put("hourlyReportMuted", Boolean.parseBoolean(hourlyReportMuted));
+        clientData.put("notificationType", serverData.getNotificationType().getFirebaseName());
+        clientData.put("notificationsMuted", serverData.isNotificationsMuted());
+        clientData.put("hourlyReportMuted", serverData.isHourlyReportMuted());
         clientData.put("lastRegistration", System.currentTimeMillis());
         clientData.put("token", token);
         clientData.put("device", android.os.Build.MODEL);
@@ -217,30 +176,20 @@ public class Utils {
 
         if (stringIsNotEmptyOrNull(simplifiedPrimaryAccountName)) {
             if (stringIsNotEmptyOrNull(deviceId)) {
-                getCustomReference(serverKey).child("/connectedClients/" + deviceId).removeValue();
+                getCustomReference(serverData.getServerKey()).child("/connectedClients/" + deviceId).removeValue();
             }
-            getCustomReference(serverKey).child("/connectedClients/" + simplifiedPrimaryAccountName).setValue(clientData);
+            getCustomReference(serverData.getServerKey()).child("/connectedClients/" + simplifiedPrimaryAccountName).setValue(clientData);
         } else if (stringIsNotEmptyOrNull(deviceId)) {
             if (stringIsNotEmptyOrNull(simplifiedPrimaryAccountName)) {
-                getCustomReference(serverKey).child("/connectedClients/" + simplifiedPrimaryAccountName).removeValue();
+                getCustomReference(serverData.getServerKey()).child("/connectedClients/" + simplifiedPrimaryAccountName).removeValue();
             }
-            getCustomReference(serverKey).child("/connectedClients/" + deviceId).setValue(clientData);
+            getCustomReference(serverData.getServerKey()).child("/connectedClients/" + deviceId).setValue(clientData);
         } else {
             new ToastDrawer().showToast(getAppContext().getResources().getString(R.string.toast_failed_to_register_on_server));
         }
     }
 
-    public static String getHourlyReportMutedStateForServer(String serverName) {
-        return stringIsEmptyOrNull(getHourlyReportMutedStates().get(serverName)) ? "false" : getHourlyReportMutedStates().get(serverName);
-    }
-
-    public static void saveHourlyReportMutedStateForServer(String serverName, String state) {
-        HashMap<String, String> states = getHourlyReportMutedStates();
-        states.put(serverName, state);
-        saveMapToSettings(states, HOURLY_REPORT_STATE);
-    }
-
-    private static String getSimplifiedPrimaryAccountName() {
+    public static String getSimplifiedPrimaryAccountName() {
         Account[] accounts = getAccounts();
         String simplifiedAccountName = "";
 
@@ -253,7 +202,7 @@ public class Utils {
         return simplifiedAccountName;
     }
 
-    private static String getPrimaryAccountEmail() {
+    public static String getPrimaryAccountEmail() {
         Account[] accounts = getAccounts();
         String primaryAccountEmail = "";
 
@@ -272,70 +221,17 @@ public class Utils {
         return !stringIsEmptyOrNull(string);
     }
 
-    public static void switchActiveServerTo(String serverAlias) {
-        saveStringValueToSettings(ACTIVE_SERVER, serverAlias);
+    public static void removeServerByKey(String serverKey) {
+        DatabaseProvider.removeServer(serverKey);
     }
 
-    public static void removeServerFromServersList(String serverAlias) {
-        HashMap<String, String> serverListMap = getMapWithServers();
-
-        serverListMap.remove(serverAlias);
-        saveMapToSettings(serverListMap, SERVER_LIST);
+    public static ServerData getActiveServer() {
+        return buildFromRawJson(getStringValueFromSettings(ACTIVE_SERVER), ServerData.class);
     }
 
-    public static String getActiveServerAlias() {
-        return getStringValueFromSettings(ACTIVE_SERVER);
-    }
-
-    public static String getActiveServerKey() {
-        HashMap<String, String> availableServers = getMapWithServers();
-        String activeServerAlias = getActiveServerAlias();
-        return availableServers.get(activeServerAlias) == null ? "dummyServer" : availableServers.get(activeServerAlias);
-    }
-
-    public static ArrayList<String> getServersList() {
-        ArrayList<String> serversList = new ArrayList<>();
-
-        for (Map.Entry<String, String> entry : getMapWithServers().entrySet()) {
-            serversList.add(entry.getKey());
-        }
-        return serversList;
-    }
-
-    private static HashMap<String, String> getMapWithServers() {
-        return (HashMap<String, String>) getMapFromSettings(SERVER_LIST);
-    }
-
-    public static String getNotificationTypeForServer(String serverName) {
-        return stringIsEmptyOrNull(getNotificationTypes().get(serverName)) ? NOTIFICATION_TYPE_MOTION_DETECTED : getNotificationTypes().get(serverName);
-    }
-
-    private static HashMap<String, String> getNotificationTypes() {
-        return (HashMap<String, String>) getMapFromSettings(NOTIFICATION_TYPES);
-    }
-
-    private static HashMap<String, String> getHourlyReportMutedStates() {
-        return (HashMap<String, String>) getMapFromSettings(HOURLY_REPORT_STATE);
-    }
-
-    private static HashMap<String, String> getNotificationMuted() {
-        return (HashMap<String, String>) getMapFromSettings(NOTIFICATIONS_MUTED);
-    }
-
-    public static String getNotificationMutedForServer(String serverName) {
-        return stringIsEmptyOrNull(getNotificationMuted().get(serverName)) ? "false" : getNotificationMuted().get(serverName);
-    }
-
-    public static void saveNotificationMutedForServer(String serverName, String muted) {
-        HashMap<String, String> serversNotificationTypes = (HashMap<String, String>) getMapFromSettings(NOTIFICATIONS_MUTED);
-        serversNotificationTypes.put(serverName, muted);
-        saveMapToSettings(serversNotificationTypes, NOTIFICATIONS_MUTED);
-    }
-
-    public static void saveNotificationTypeForServer(String serverName, String notificationType) {
-        HashMap<String, String> serversNotificationTypes = (HashMap<String, String>) getMapFromSettings(NOTIFICATION_TYPES);
-        serversNotificationTypes.put(serverName, notificationType);
-        saveMapToSettings(serversNotificationTypes, NOTIFICATION_TYPES);
+    public static void updateServer(ServerData serverData) {
+        addOrUpdateServer(serverData);
+        setOrUpdateActiveServer(serverData);
     }
 
     @SuppressWarnings("unchecked")
@@ -393,6 +289,14 @@ public class Utils {
         } catch (IOException e) {
             Log.e(TAG, "Failed to load file", e);
         }
+    }
+
+    public static String writeJson(Object value) {
+        return gson.toJson(value);
+    }
+
+    public static <T> T buildFromRawJson(String json, Class<T> clazz) {
+        return gson.fromJson(json, clazz);
     }
 
     @NonNull

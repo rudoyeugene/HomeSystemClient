@@ -1,11 +1,12 @@
 package com.rudyii.hsw.client.notifiers;
 
+import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_NORMAL;
+import static java.util.Objects.requireNonNull;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.net.Uri;
 
 import androidx.core.app.NotificationCompat;
 
@@ -13,10 +14,6 @@ import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.activities.MainActivity;
 
 import java.util.HashMap;
-
-import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_NORMAL;
-import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Created by Jack on 19.12.2017.
@@ -37,8 +34,7 @@ public class ServerStartupNotifier {
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setWhen(Long.parseLong(startupData.get("eventId").toString()))
-                .setVibrate(new long[]{0, 500})
-                .setSound(Uri.parse(getStringValueFromSettings("INFO_SOUND")), AudioManager.STREAM_NOTIFICATION);
+                .setVibrate(new long[]{0, 500});
 
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         requireNonNull(mNotificationManager).notify((int) System.currentTimeMillis(), mBuilder.build());

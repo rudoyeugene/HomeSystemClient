@@ -1,5 +1,9 @@
 package com.rudyii.hsw.client.activities;
 
+import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
+import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
+import static java.lang.String.format;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -31,10 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
-import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
-import static java.lang.String.format;
 
 public class UsageChartActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener,
         OnChartGestureListener, OnChartValueSelectedListener {

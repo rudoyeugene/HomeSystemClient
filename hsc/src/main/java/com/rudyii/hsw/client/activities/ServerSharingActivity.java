@@ -1,5 +1,10 @@
 package com.rudyii.hsw.client.activities;
 
+import static android.graphics.Color.BLACK;
+import static android.graphics.Color.WHITE;
+import static com.rudyii.hsw.client.helpers.Utils.getActiveServer;
+import static com.rudyii.hsw.client.helpers.Utils.writeJson;
+
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,11 +20,6 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 import com.rudyii.hsw.client.R;
 
-import static android.graphics.Color.BLACK;
-import static android.graphics.Color.WHITE;
-import static com.rudyii.hsw.client.helpers.Utils.getActiveServerAlias;
-import static com.rudyii.hsw.client.helpers.Utils.getActiveServerKey;
-
 public class ServerSharingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +34,7 @@ public class ServerSharingActivity extends AppCompatActivity {
     private Bitmap generateQrCodeForActiveServer() {
         BitMatrix result;
         try {
-            result = new MultiFormatWriter().encode(getActiveServerAlias() + ":" + getActiveServerKey(),
+            result = new MultiFormatWriter().encode(writeJson(getActiveServer()),
                     BarcodeFormat.QR_CODE, getQrCodeSize(), getQrCodeSize(), null);
         } catch (Exception e) {
             return BitmapFactory.decodeResource(getResources(), R.mipmap.image_warning);

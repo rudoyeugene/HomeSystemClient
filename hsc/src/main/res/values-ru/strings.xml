@@ -16,24 +16,23 @@
     <string name="label_about">О приложении</string>
     <string name="label_app_name">Home System Client</string>
     <string name="label_download_server">Скачать Сервер</string>
-    <string name="label_settings">Настройки для\u0020</string>
+    <string name="label_settings">Настройки</string>
     <string name="label_share_server">Поделиться сервером</string>
     <string name="label_system_log">Журнал событий</string>
     <string name="label_usage_chart">График использования</string>
 
-    <string name="notif_text_area_size">\u0020, размер зоны:\u0020</string>
-    <string name="notif_text_camera_is_rebooting">\u0020 камера перезагружается</string>
-    <string name="notif_text_current_ip">, текущий IP адрес:\u0020</string>
-    <string name="notif_text_current_isp">Текущий провайдер:\u0020</string>
-    <string name="notif_text_delayed_arm">Система будет включена через\u0020</string>
-    <string name="notif_text_isp_changed">Провайдер изменен:\u0020</string>
-    <string name="notif_text_motion_detected_on_camera">Движение:\u0020</string>
-    <string name="notif_text_server_started">Запущен с ID процесса:\u0020</string>
-    <string name="notif_text_server_started_with_pid">ID процесса:\u0020</string>
-    <string name="notif_text_server_stopped">Остановлен в:\u0020</string>
+    <string name="no_paired_servers_found">Добавьте Сервер</string>
+
+    <string name="notif_text_camera_is_rebooting">камера перезагружается</string>
+    <string name="notif_text_current_ip">текущий IP адрес</string>
+    <string name="notif_text_current_isp">Текущий провайдер</string>
+    <string name="notif_text_delayed_arm">Система будет включена через</string>
+    <string name="notif_text_isp_changed">Провайдер изменен</string>
     <string name="notif_text_simple_event">Уведомление от:\u0020</string>
-    <string name="notif_text_system_state_is">Система в:\u0020</string>
     <string name="notif_text_video_uploaded">Загружено новое видео</string>
+
+    <string name="please_select_active_server">Выберите активный Сервер</string>
+    <string name="please_select_camera">Выберите Камеру</string>
 
     <string name="shortcut_arm">Включить</string>
     <string name="shortcut_arm_activity_text">Запрошено переключение в РУЧНОЙ:ВКЛЮЧЕН режим, Вы будете уведомлены</string>
@@ -41,6 +40,8 @@
     <string name="shortcut_auto_activity_text">Запрошено переключение в АВТОМАТИЧЕСКИЙ:АВТО режим, Вы будете уведомлены</string>
     <string name="shortcut_disarm">Выключить</string>
     <string name="shortcut_disarm_activity_text">Запрошено переключение в РУЧНОЙ:ВЫКЛЮЧЕН режим, Вы будете уведомлены</string>
+
+    <string name="switched_active_server_to">Активирован Сервер:\u0020</string>
 
     <string name="text_about">Home System Client версия %s\n\n
         Данное Приложение распространяется как-есть, Автор не несет никакой ответственности в случае если по вине данного Приложения случилось происшествие.\n
@@ -51,7 +52,7 @@
     <string name="text_armed_state">Состояние</string>
     <string name="text_bar_data_usage_for" formatted="true">за %02d %s</string>
     <string name="text_camera_app_text">Открыть приложение для камер</string>
-    <string name="text_camera_settings">Настроить</string>
+    <string name="text_camera_settings">Настроить камеры</string>
     <string name="text_current_server">Текущий Сервер:</string>
     <string name="text_day">\u0020день\u0020</string>
     <string name="text_days">\u0020дней\u0020</string>
@@ -70,6 +71,7 @@
     <string name="text_notification_type_button">Уведомления</string>
     <string name="text_open_log_text">Открыть системный журнал</string>
     <string name="text_reboot_delay">Задержка после перезагрузки (сек)</string>
+    <string name="text_record_length">Время записи (сек)</string>
     <string name="text_resend_hourly_request_muted">Ежечасный отчет отключен, включите чтобы изменить</string>
     <string name="text_resend_hourly_request_text">Запрос на ежечасный отчет отправлен</string>
     <string name="text_resend_hourly_text">Получить ежечасный отчет</string>
@@ -100,11 +102,6 @@
     <string name="text_toast_notification_type_video_recorded">Вы будете уведомлены в момент загрузки видео</string>
     <string name="text_use_motion_object_switch">Отобразить маску движения</string>
 
-    <string name="toast_failed_to_register_on_server">Не удалось зарегестрироваться на сервере, попробуйте позже</string>
-    <string name="toast_info_sound_changed_to">Звук уведомлений изменен на:\u0020</string>
-    <string name="toast_info_sound_removed">Звук уведомлений удален</string>
-    <string name="toast_motion_sound_changed_to">Звук движений изменен на:\u0020</string>
-    <string name="toast_motion_sound_removed">Звук движений удален</string>
     <string name="toast_server_paired_failure">Соединение не удалось</string>
     <string name="toast_server_paired_failure_detailed">Соединение не удалось, ключ сервера не распознан, попробуйте снова</string>
     <string name="toast_server_paired_success">Соединение удалось</string>
@@ -112,11 +109,10 @@
     <string name="toast_server_unpair_success">Отсоединение удалось</string>
     <string name="toast_text_data_unavailable">Данные недоступны</string>
 
+    <string name="toggle_button_text_system_mode_automatic">Авто</string>
     <string name="toggle_button_text_system_mode_manual">Ручной</string>
-    <string name="toggle_button_text_system_mode_state_automatic">Авто</string>
+    <string name="toggle_button_text_system_mode_or_state_uknown">Неизвестно</string>
     <string name="toggle_button_text_system_state_armed">Включен</string>
     <string name="toggle_button_text_system_state_disarmed">Выключен</string>
-    <string name="no_paired_servers_found">Добавьте Сервер</string>
-    <string name="switched_active_server_to">Активирован Сервер:\u0020</string>
-    <string name="please_select_active_server">Выберите активный Сервер</string>
+    <string name="toggle_button_text_system_state_resolving">Выясняем</string>
 </resources>

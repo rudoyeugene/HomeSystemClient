@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.ListAdapter;
 
 import com.rudyii.hsw.client.R;
-import com.rudyii.hsw.client.objects.ServerData;
+import com.rudyii.hsw.client.objects.internal.ServerData;
 
 import java.util.List;
 

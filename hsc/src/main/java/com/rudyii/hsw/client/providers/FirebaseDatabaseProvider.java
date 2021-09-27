@@ -5,7 +5,7 @@ import static com.rudyii.hsw.client.helpers.Utils.stringIsEmptyOrNull;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.rudyii.hsw.client.objects.ServerData;
+import com.rudyii.hsw.client.objects.internal.ServerData;
 
 /**
  * Created by Jack on 08.12.2017.
@@ -14,7 +14,7 @@ import com.rudyii.hsw.client.objects.ServerData;
 public class FirebaseDatabaseProvider {
     private static final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
-    public static DatabaseReference getRootReference() {
+    public static DatabaseReference getActiveServerRootReference() {
         ServerData activeServer = getActiveServer();
         String serverKey = "new_client_initiated";
 
@@ -29,7 +29,11 @@ public class FirebaseDatabaseProvider {
         }
     }
 
-    public static DatabaseReference getCustomReference(String ref) {
+    public static DatabaseReference getCustomRootReference(String serverKey) {
+        return firebaseDatabase.getReference(serverKey);
+    }
+
+    public static DatabaseReference getActiveServerRootReference(String ref) {
         return firebaseDatabase.getReference(ref);
     }
 }

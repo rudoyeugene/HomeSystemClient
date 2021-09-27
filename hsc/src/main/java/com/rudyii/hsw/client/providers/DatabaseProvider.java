@@ -12,7 +12,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.rudyii.hsw.client.helpers.DBInitializer;
-import com.rudyii.hsw.client.objects.ServerData;
+import com.rudyii.hsw.client.objects.internal.ServerData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +42,15 @@ public class DatabaseProvider {
     }
 
     public static void saveStringValueToSettings(String id, String value) {
+        ContentValues values = new ContentValues();
+
+        values.put("_ID", id);
+        values.put("VALUE", value);
+
+        getWritableDatabase().insertWithOnConflict(SETTINGS_TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    public static void saveIntegerValueToSettings(String id, int value) {
         ContentValues values = new ContentValues();
 
         values.put("_ID", id);
@@ -138,6 +147,18 @@ public class DatabaseProvider {
         Cursor cursor = getReadableDatabase().rawQuery("SELECT VALUE FROM " + SETTINGS_TABLE + " WHERE _ID = ?", new String[]{id});
         if (cursor.moveToFirst()) {
             result = cursor.getLong(0);
+        }
+        cursor.close();
+
+        return result;
+    }
+
+    public static int getIntValueFromSettings(String id) {
+        int result = 0;
+
+        Cursor cursor = getReadableDatabase().rawQuery("SELECT VALUE FROM " + SETTINGS_TABLE + " WHERE _ID = ?", new String[]{id});
+        if (cursor.moveToFirst()) {
+            result = cursor.getInt(0);
         }
         cursor.close();
 

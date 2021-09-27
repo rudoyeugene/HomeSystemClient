@@ -72,10 +72,6 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
             imageView = itemView.findViewById(R.id.logImage);
 
             itemView.setOnClickListener(v -> {
-                System.out.println(getLayoutPosition());
-                System.out.println("clicked");
-                System.out.println("firing intent");
-
                 Intent intent = new Intent();
                 intent.setAction(HSC_SYSTEM_LOG_ITEM_CLICKED);
                 intent.putExtra("itemId", getLayoutPosition());

@@ -16,36 +16,6 @@
         android:orientation="vertical"
         android:theme="@style/Theme.AppCompat.Light">
 
-        <TextView
-            android:id="@+id/textViewForSpinnerAppsList"
-            android:layout_width="0dp"
-            android:layout_height="35dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:gravity="left|center"
-            android:text="@string/text_textViewSelectCameraApp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/buttonCameraSettings" />
-
-        <Spinner
-            android:id="@+id/spinnerAppsList"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:gravity="left|center"
-            android:hapticFeedbackEnabled="true"
-            android:maxWidth="150dp"
-            app:layout_constraintEnd_toStartOf="@+id/guideline4"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinnerCameras" />
-
         <Button
             android:id="@+id/buttonPairServer"
             style="@android:style/TextAppearance.Material.Widget.TextView"
@@ -103,13 +73,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="24dp"
             android:checked="false"
             android:enabled="false"
             android:hapticFeedbackEnabled="true"
             android:textAllCaps="false"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinnerAppsList" />
+            app:layout_constraintTop_toBottomOf="@+id/buttonCameraSettings" />
 
         <TextView
             android:id="@+id/textViewForSwitchMonitoringEnabled"
@@ -309,64 +278,19 @@
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toTopOf="@+id/textViewForTextViewKeepDays" />
 
-        <TextView
-            android:id="@+id/textViewForTextViewRecordInterval"
-            android:layout_width="0dp"
-            android:layout_height="45dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:gravity="left|center"
-            android:text="@string/text_textViewForTextViewRecordInterval"
-            app:layout_constraintEnd_toStartOf="@+id/guideline4"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewForTextViewKeepDays" />
-
-        <EditText
-            android:id="@+id/editTextForTextViewRecordInterval"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:ems="10"
-            android:enabled="false"
-            android:gravity="left|center"
-            android:inputType="number"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:text="10"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/textViewForTextViewRecordInterval"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toTopOf="@+id/textViewForTextViewRecordInterval" />
-
-        <Spinner
-            android:id="@+id/spinnerCameras"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:gravity="left|center"
-            app:layout_constraintEnd_toStartOf="@+id/guideline4"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonPairServer" />
-
         <Button
             android:id="@+id/buttonCameraSettings"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="48dp"
             android:layout_marginEnd="8dp"
             android:text="@string/text_camera_settings"
             android:textAllCaps="false"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/buttonUnpairServer" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/buttonPairServer" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline4"

@@ -1,124 +1,164 @@
 package com.rudyii.hsw.client.activities;
 
+import static com.rudyii.hs.common.names.FirebaseNameSpaces.SETTINGS_CAMERA;
+import static com.rudyii.hs.common.names.FirebaseNameSpaces.SETTINGS_ROOT;
+import static com.rudyii.hsw.client.helpers.Utils.buildFromRawJson;
+import static com.rudyii.hsw.client.objects.internal.CameraSettingsInternal.CAMERA_SETTINSG_EXTRA_DATA_NAME;
+import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getActiveServerRootReference;
+
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
+import com.rudyii.hs.common.objects.settings.CameraSettings;
 import com.rudyii.hsw.client.R;
+import com.rudyii.hsw.client.objects.internal.CameraSettingsInternal;
 
 public class CameraSettingsActivity extends AppCompatActivity {
-    public static String HEALTH_CHECK_ENABLED = "healthCheckEnabled";
-    public static String USE_MOTION_OBJECT = "useMotionObject";
-    public static String INTERVAL = "interval";
-    public static String MOTION_AREA = "motionArea";
-    public static String NOISE_LEVEL = "noiseLevel";
-    public static String REBOOT_TIMEOUT = "rebootTimeout";
-    public static String CONTINUOUS_MONITORING = "continuousMonitoring";
-    private Intent intent;
-    private SwitchCompat switchHealthCheckEnabled, switchUseMotionObject, switchContinuousMonitoring;
-    private boolean isHealthCheckEnabled, isUseMotionObject, isContinuousEnabled;
-    private EditText editTextForMotionInterval, editTextForMotionArea, editTextForNoiseLevel, editTextForRebootTimeout;
+    private CameraSettings cameraSettingsCopy;
+    private int cameraSettingsChangeId;
     private String cameraName;
-    private Long motionInterval, motionArea, noiseLevel, rebootTimeout;
+    private SwitchCompat switchHealthCheckEnabled, switchUseMotionObject, switchContinuousMonitoring;
+    private EditText editTextForMotionInterval, editTextForMotionArea, editTextForNoiseLevel, editTextForRebootTimeout, editTextForRecordLength;
 
     @SuppressLint("SetTextI18n")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_camera_settings);
 
-        intent = getIntent();
-
-        cameraName = intent.getStringExtra("cameraName");
+        CameraSettingsInternal cameraSettingsInternal = buildFromRawJson(getIntent().getStringExtra(CAMERA_SETTINSG_EXTRA_DATA_NAME), CameraSettingsInternal.class);
+        this.cameraName = cameraSettingsInternal.getCameraName();
         this.setTitle(getTitle() + cameraName);
+        this.cameraSettingsCopy = cameraSettingsInternal.getCameraSettings();
+        this.cameraSettingsChangeId = cameraSettingsCopy.hashCode();
 
         switchHealthCheckEnabled = findViewById(R.id.healthCheckEnabled);
-        this.isHealthCheckEnabled = Boolean.parseBoolean(intent.getStringExtra(HEALTH_CHECK_ENABLED));
-        switchHealthCheckEnabled.setChecked(isHealthCheckEnabled);
+        switchHealthCheckEnabled.setChecked(cameraSettingsCopy.isHealthCheckEnabled());
         switchHealthCheckEnabled.setEnabled(true);
+        switchHealthCheckEnabled.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            cameraSettingsCopy.setHealthCheckEnabled(isChecked);
+        });
 
         switchUseMotionObject = findViewById(R.id.useMotionObject);
-        this.isUseMotionObject = Boolean.parseBoolean(intent.getStringExtra(USE_MOTION_OBJECT));
-        switchUseMotionObject.setChecked(isUseMotionObject);
+        switchUseMotionObject.setChecked(cameraSettingsCopy.isShowMotionObject());
         switchUseMotionObject.setEnabled(true);
+        switchUseMotionObject.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            cameraSettingsCopy.setShowMotionObject(isChecked);
+        });
 
         switchContinuousMonitoring = findViewById(R.id.continuousSwitch);
-        this.isContinuousEnabled = Boolean.parseBoolean(intent.getStringExtra(CONTINUOUS_MONITORING));
-        switchContinuousMonitoring.setChecked(isContinuousEnabled);
+        switchContinuousMonitoring.setChecked(cameraSettingsCopy.isContinuousMonitoring());
         switchContinuousMonitoring.setEnabled(true);
+        switchContinuousMonitoring.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            cameraSettingsCopy.setContinuousMonitoring(isChecked);
+        });
 
         editTextForMotionInterval = findViewById(R.id.editTextForMotionInterval);
-        this.motionInterval = Long.valueOf(intent.getStringExtra(INTERVAL));
-        editTextForMotionInterval.setText(motionInterval.toString());
+        editTextForMotionInterval.setInputType(InputType.TYPE_CLASS_NUMBER);
+        editTextForMotionInterval.setText(cameraSettingsCopy.getInterval() + "");
         editTextForMotionInterval.setEnabled(true);
 
         editTextForMotionArea = findViewById(R.id.editTextForMotionArea);
-        this.motionArea = Long.valueOf(intent.getStringExtra(MOTION_AREA));
-        editTextForMotionArea.setText(motionArea.toString());
+        editTextForMotionArea.setInputType(InputType.TYPE_CLASS_NUMBER);
+        editTextForMotionArea.setText(cameraSettingsCopy.getMotionArea() + "");
         editTextForMotionArea.setEnabled(true);
+        editTextForMotionArea.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                cameraSettingsCopy.setMotionArea(Integer.parseInt(String.valueOf("".contentEquals(charSequence) ? "0" : charSequence)));
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         editTextForNoiseLevel = findViewById(R.id.editTextForNoiseLevel);
-        this.noiseLevel = Long.valueOf(intent.getStringExtra(NOISE_LEVEL));
-        editTextForNoiseLevel.setText(noiseLevel.toString());
+        editTextForNoiseLevel.setInputType(InputType.TYPE_CLASS_NUMBER);
+        editTextForNoiseLevel.setText(cameraSettingsCopy.getNoiseLevel() + "");
         editTextForNoiseLevel.setEnabled(true);
+        editTextForNoiseLevel.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                cameraSettingsCopy.setNoiseLevel(Integer.parseInt(String.valueOf("".contentEquals(charSequence) ? "0" : charSequence)));
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         editTextForRebootTimeout = findViewById(R.id.editTextForRebootDelay);
-        this.rebootTimeout = Long.valueOf(intent.getStringExtra(REBOOT_TIMEOUT));
-        editTextForRebootTimeout.setText(rebootTimeout.toString());
+        editTextForRebootTimeout.setInputType(InputType.TYPE_CLASS_NUMBER);
+        editTextForRebootTimeout.setText(cameraSettingsCopy.getRebootTimeoutSec() + "");
         editTextForRebootTimeout.setEnabled(true);
+        editTextForRebootTimeout.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                cameraSettingsCopy.setRebootTimeoutSec(Integer.parseInt(String.valueOf("".contentEquals(charSequence) ? "0" : charSequence)));
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        editTextForRecordLength = findViewById(R.id.editTextForRecordLength);
+        editTextForRecordLength.setInputType(InputType.TYPE_CLASS_NUMBER);
+        editTextForRecordLength.setText(cameraSettingsCopy.getRecordLength() + "");
+        editTextForRecordLength.setEnabled(true);
+        editTextForRecordLength.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                cameraSettingsCopy.setRecordLength(Integer.parseInt(String.valueOf("".contentEquals(charSequence) ? "0" : charSequence)));
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
     @Override
     public void finish() {
-        verifyChanges();
+        pushChanges();
         super.finish();
     }
 
-    private void verifyChanges() {
-        this.isHealthCheckEnabled = switchHealthCheckEnabled.isChecked();
-        this.isUseMotionObject = switchUseMotionObject.isChecked();
-        this.isContinuousEnabled = switchContinuousMonitoring.isChecked();
-        this.motionInterval = Long.valueOf(editTextForMotionInterval.getText().toString());
-        this.motionArea = Long.valueOf(editTextForMotionArea.getText().toString());
-        this.noiseLevel = Long.valueOf(editTextForNoiseLevel.getText().toString());
-        this.rebootTimeout = Long.valueOf(editTextForRebootTimeout.getText().toString());
-
-        if (isHealthCheckEnabled != Boolean.parseBoolean(intent.getStringExtra(HEALTH_CHECK_ENABLED))) {
-            setIntent();
-        } else if (isUseMotionObject != Boolean.parseBoolean(intent.getStringExtra(USE_MOTION_OBJECT))) {
-            setIntent();
-        } else if (isContinuousEnabled != Boolean.parseBoolean(intent.getStringExtra(CONTINUOUS_MONITORING))) {
-            setIntent();
-        } else if (!motionInterval.equals(Long.valueOf(intent.getStringExtra(INTERVAL)))) {
-            setIntent();
-        } else if (!motionArea.equals(Long.valueOf(intent.getStringExtra(MOTION_AREA)))) {
-            setIntent();
-        } else if (!noiseLevel.equals(Long.valueOf(intent.getStringExtra(NOISE_LEVEL)))) {
-            setIntent();
-        } else if (!rebootTimeout.equals(Long.valueOf(intent.getStringExtra(REBOOT_TIMEOUT)))) {
-            setIntent();
-        } else if (!rebootTimeout.equals(Long.valueOf(intent.getStringExtra(REBOOT_TIMEOUT)))) {
-            setIntent();
+    private void pushChanges() {
+        if (cameraSettingsChangeId != cameraSettingsCopy.hashCode()) {
+            getActiveServerRootReference().child(SETTINGS_ROOT).child(SETTINGS_CAMERA).child(cameraName).setValue(cameraSettingsCopy);
         }
-    }
-
-    private void setIntent() {
-        Intent output = new Intent();
-
-        output.putExtra("cameraName", cameraName);
-        output.putExtra(HEALTH_CHECK_ENABLED, isHealthCheckEnabled);
-        output.putExtra(USE_MOTION_OBJECT, isUseMotionObject);
-        output.putExtra(CONTINUOUS_MONITORING, isContinuousEnabled);
-        output.putExtra(INTERVAL, motionInterval);
-        output.putExtra(MOTION_AREA, motionArea);
-        output.putExtra(NOISE_LEVEL, noiseLevel);
-        output.putExtra(REBOOT_TIMEOUT, rebootTimeout);
-
-        setResult(RESULT_OK, output);
     }
 }

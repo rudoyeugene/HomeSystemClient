@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.rudyii.hsw.client">
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -24,7 +25,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/label_app_name"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:replace="android:label">
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -125,6 +127,12 @@
 
         <activity
             android:name=".activities.SelectServerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
+
+        <activity
+            android:name=".activities.SelectCameraActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />

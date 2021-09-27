@@ -15,7 +15,7 @@ import android.net.Uri;
 import androidx.annotation.RequiresApi;
 
 import com.rudyii.hsw.client.R;
-import com.rudyii.hsw.client.objects.ServerData;
+import com.rudyii.hsw.client.objects.internal.ServerData;
 
 import java.util.ArrayList;
 import java.util.List;

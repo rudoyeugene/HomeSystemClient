@@ -1,35 +1,50 @@
 package com.rudyii.hsw.client.activities;
 
+import static com.rudyii.hs.common.names.FirebaseNameSpaces.INFO_PING;
+import static com.rudyii.hs.common.names.FirebaseNameSpaces.INFO_ROOT;
+import static com.rudyii.hs.common.names.FirebaseNameSpaces.INFO_SERVER;
+import static com.rudyii.hs.common.names.FirebaseNameSpaces.LOG_ROOT;
+import static com.rudyii.hs.common.names.FirebaseNameSpaces.REQUEST_HOURLY_REPORT;
+import static com.rudyii.hs.common.names.FirebaseNameSpaces.REQUEST_ROOT;
+import static com.rudyii.hs.common.names.FirebaseNameSpaces.REQUEST_SYSTEM_MODE_AND_STATE;
+import static com.rudyii.hs.common.names.FirebaseNameSpaces.STATUS_ROOT;
+import static com.rudyii.hs.common.names.FirebaseNameSpaces.STATUS_SERVER;
+import static com.rudyii.hs.common.names.FirebaseNameSpaces.USAGE_STATS_ROOT;
+import static com.rudyii.hs.common.type.NotificationType.ALL;
+import static com.rudyii.hs.common.type.NotificationType.MOTION_DETECTED;
+import static com.rudyii.hs.common.type.NotificationType.VIDEO_RECORDED;
+import static com.rudyii.hs.common.type.SystemModeType.AUTOMATIC;
+import static com.rudyii.hs.common.type.SystemModeType.MANUAL;
+import static com.rudyii.hs.common.type.SystemStateType.ARMED;
+import static com.rudyii.hs.common.type.SystemStateType.DISARMED;
+import static com.rudyii.hs.common.type.SystemStateType.RESOLVING;
 import static com.rudyii.hsw.client.BuildConfig.COMPATIBLE_SERVER_VERSION;
 import static com.rudyii.hsw.client.BuildConfig.SERVER_DOWNLOAD_URL;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getToken;
 import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_MUTED;
 import static com.rudyii.hsw.client.helpers.Utils.DELAYED_ARM_DELAY_SECS;
-import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
+import static com.rudyii.hsw.client.helpers.Utils.calculateUptimeFromMinutes;
+import static com.rudyii.hsw.client.helpers.Utils.currentLocale;
 import static com.rudyii.hsw.client.helpers.Utils.getActiveServer;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDotsDelimFrom;
 import static com.rudyii.hsw.client.helpers.Utils.getLooper;
 import static com.rudyii.hsw.client.helpers.Utils.getPrimaryAccountEmail;
+import static com.rudyii.hsw.client.helpers.Utils.getSystemModeLocalized;
+import static com.rudyii.hsw.client.helpers.Utils.getSystemStateLocalized;
 import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServer;
 import static com.rudyii.hsw.client.helpers.Utils.retrievePermissions;
-import static com.rudyii.hsw.client.helpers.Utils.stringIsEmptyOrNull;
 import static com.rudyii.hsw.client.helpers.Utils.systemIsOnDarkMode;
 import static com.rudyii.hsw.client.helpers.Utils.updateServer;
-import static com.rudyii.hsw.client.objects.types.NotificationType.ALL;
-import static com.rudyii.hsw.client.objects.types.NotificationType.MOTION_DETECTED;
-import static com.rudyii.hsw.client.objects.types.NotificationType.VIDEO_RECORDED;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.addOrUpdateServer;
-import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.getIntValueFromSettings;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.setOrUpdateActiveServer;
-import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
+import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getActiveServerRootReference;
 import static java.util.Objects.requireNonNull;
 
 import android.app.NotificationManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -53,35 +68,33 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.rudyii.hs.common.objects.ServerStatusChangeRequest;
+import com.rudyii.hs.common.objects.info.ServerInfo;
+import com.rudyii.hs.common.objects.info.ServerStatus;
+import com.rudyii.hs.common.objects.info.Uptime;
+import com.rudyii.hs.common.type.NotificationType;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.helpers.ToastDrawer;
-import com.rudyii.hsw.client.objects.ServerData;
-import com.rudyii.hsw.client.objects.types.NotificationType;
+import com.rudyii.hsw.client.objects.internal.ServerData;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String HSC_STATUSES_UPDATED = "HSC_STATUSES_UPDATED";
     private final Random random = new Random();
-    private final MainActivityBroadcastReceiver mainActivityBroadcastReceiver = new MainActivityBroadcastReceiver();
     private SwitchCompat systemMode, systemState;
     private ImageButton buttonResendHourlyReport;
     private ImageButton buttonNotificationType;
-    private TextView armedModeText, armedStateText;
+    private TextView systemModeText, systemStateText;
     private Button serversList;
-    private boolean buttonsChangedInternally, buttonNotificationTypeMuted, buttonResendHourlyReportMuted, delayedArmInProgress;
+    private boolean buttonNotificationTypeMuted, buttonResendHourlyEnabled, delayedArmInProgress;
     private Handler serverLastPingHandler;
     private Runnable serverLastPingRunnable;
     private ColorStateList defaultTextColor;
-    private DatabaseReference infoRef, statusesRef, usageStatsRef;
-    private ValueEventListener infoValueEventListener, statusesValueEventListener, usageStatsEventListener;
-    private long serverLastPing, currentSessionLength;
+    private DatabaseReference infoRef, statusesRef, pingRef;
+    private ValueEventListener infoValueEventListener, statusesValueEventListener, pingValueEventListener;
+    private long serverLastPing;
     private boolean systemIsInDarkMode;
 
     @Override
@@ -89,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         systemIsInDarkMode = systemIsOnDarkMode();
         setContentView(R.layout.activity_main);
+        requestPermissions();
 
         TextView serverLastPingTextValue = findViewById(R.id.textViewServerVersion);
         defaultTextColor = serverLastPingTextValue.getTextColors();
@@ -102,10 +116,10 @@ public class MainActivity extends AppCompatActivity {
         }
         resolveHourlyReportIcon();
         buttonResendHourlyReport.setOnClickListener(v -> {
-            if (buttonResendHourlyReportMuted) {
+            if (buttonResendHourlyEnabled) {
                 new ToastDrawer().showToast(getResources().getString(R.string.text_resend_hourly_request_muted));
             } else {
-                getRootReference().child("requests/resendHourly").setValue(random.nextInt(999));
+                getActiveServerRootReference().child(REQUEST_ROOT).child(REQUEST_HOURLY_REPORT).setValue(random.nextInt());
                 new ToastDrawer().showToast(getResources().getString(R.string.text_resend_hourly_request_text));
             }
         });
@@ -124,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
             cleanupLog.setTitle(getResources().getString(R.string.dialog_cleanup_usage_stats_title));
             cleanupLog.setMessage(getResources().getString(R.string.dialog_are_you_sure_cant_undo_alert_message));
 
-            cleanupLog.setPositiveButton(getResources().getString(R.string.dialog_yes), (dialogInterface, i) -> getRootReference().child("/usageStats").removeValue());
+            cleanupLog.setPositiveButton(getResources().getString(R.string.dialog_yes), (dialogInterface, i) -> getActiveServerRootReference().child(USAGE_STATS_ROOT).removeValue());
 
             cleanupLog.setNegativeButton(getResources().getString(R.string.dialog_no), (dialogInterface, i) -> {
 
@@ -145,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
             cleanupLog.setTitle(getResources().getString(R.string.dialog_cleanup_log_title));
             cleanupLog.setMessage(getResources().getString(R.string.dialog_are_you_sure_cant_undo_alert_message));
 
-            cleanupLog.setPositiveButton(getResources().getString(R.string.dialog_yes), (dialogInterface, i) -> getRootReference().child("/log").removeValue());
+            cleanupLog.setPositiveButton(getResources().getString(R.string.dialog_yes), (dialogInterface, i) -> getActiveServerRootReference().child(LOG_ROOT).removeValue());
 
             cleanupLog.setNegativeButton(getResources().getString(R.string.dialog_no), (dialogInterface, i) -> {
 
@@ -172,14 +186,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         systemMode = findViewById(R.id.switchSystemMode);
-        systemMode.setTextOn(getString(R.string.toggle_button_text_system_mode_state_automatic));
+        systemMode.setTextOn(getString(R.string.toggle_button_text_system_mode_automatic));
         systemMode.setTextOff(getString(R.string.toggle_button_text_system_mode_manual));
-        systemMode.setOnCheckedChangeListener((buttonView, isChecked) -> calculateSystemStateBasedOn(systemMode, systemState));
+        systemMode.setOnCheckedChangeListener((buttonView, isChecked) -> calculateAndUpdateSystemStateBasedOn(isChecked, systemState.isChecked()));
 
         systemState = findViewById(R.id.switchSystemState);
         systemState.setTextOn(getString(R.string.toggle_button_text_system_state_armed));
         systemState.setTextOff(getString(R.string.toggle_button_text_system_state_disarmed));
-        systemState.setOnCheckedChangeListener((buttonView, isChecked) -> calculateSystemStateBasedOn(systemMode, systemState));
+        systemState.setOnCheckedChangeListener((buttonView, isChecked) -> calculateAndUpdateSystemStateBasedOn(systemMode.isChecked(), isChecked));
 
         Button armLater = findViewById(R.id.buttonDelayedArm);
         armLater.setOnClickListener(v -> {
@@ -192,14 +206,13 @@ public class MainActivity extends AppCompatActivity {
 
                 AsyncTask.execute(() -> {
                     Context context = getAppContext();
-                    String delayedArmSecondsRaw = getStringValueFromSettings(DELAYED_ARM_DELAY_SECS);
-                    int delayedArmSeconds = stringIsEmptyOrNull(delayedArmSecondsRaw) ? 60 : Integer.parseInt(delayedArmSecondsRaw);
+                    int delayedArmSeconds = getIntValueFromSettings(DELAYED_ARM_DELAY_SECS);
                     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_MUTED)
                             .setSmallIcon(R.drawable.ic_stat_notification)
-                            .setContentTitle(
-                                    getString(R.string.notif_text_delayed_arm) +
-                                            delayedArmSeconds +
-                                            getString(R.string.text_seconds))
+                            .setContentTitle(String.format(currentLocale, "%s %d %s",
+                                    getString(R.string.notif_text_delayed_arm),
+                                    delayedArmSeconds,
+                                    getString(R.string.text_seconds)))
                             .setProgress(delayedArmSeconds, 0, false);
 
                     NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -223,15 +236,39 @@ public class MainActivity extends AppCompatActivity {
                     Handler handler = new Handler(getLooper());
                     handler.post(() -> {
                         systemState.setChecked(true);
-                        calculateSystemStateBasedOn(systemMode, systemState);
+                        calculateAndUpdateSystemStateBasedOn(systemMode.isChecked(), systemState.isChecked());
                         mNotificationManager.cancel(4918151);
                         delayedArmInProgress = false;
                     });
                 });
             }
         });
+    }
 
-        requestPermissions();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        System.out.println("do start");
+        subscribeFirebaseListeners();
+
+        buildServersButton();
+
+        updateServerListButtonActiveServerName();
+        resolveHourlyReportIcon();
+        resolveNotificationType();
+
+        buildHandlers();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        System.out.println("do stop");
+
+        serverLastPingHandler.removeCallbacks(serverLastPingRunnable);
+
+        unsubscribeFirebaseListeners();
     }
 
     private void updateServerListButtonActiveServerName() {
@@ -257,18 +294,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void muteUnmuteHourlyReporting() {
         ServerData activeServer = getActiveServer();
-        buttonResendHourlyReportMuted = activeServer.isHourlyReportMuted();
+        buttonResendHourlyEnabled = activeServer.isHourlyReportEnabled();
         Drawable icon;
 
-        if (buttonResendHourlyReportMuted) {
-            buttonResendHourlyReportMuted = false;
+        if (buttonResendHourlyEnabled) {
+            buttonResendHourlyEnabled = false;
             if (systemIsInDarkMode) {
                 icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_hourly_inverted);
             } else {
                 icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_hourly);
             }
         } else {
-            buttonResendHourlyReportMuted = true;
+            buttonResendHourlyEnabled = true;
             if (systemIsInDarkMode) {
                 icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted_inverted);
             } else {
@@ -277,59 +314,30 @@ public class MainActivity extends AppCompatActivity {
         }
 
         buttonResendHourlyReport.setImageDrawable(icon);
-        activeServer.setHourlyReportMuted(buttonResendHourlyReportMuted);
+        activeServer.setHourlyReportEnabled(buttonResendHourlyEnabled);
         addOrUpdateServer(activeServer);
         setOrUpdateActiveServer(activeServer);
         registerUserDataOnServer(getActiveServer(), getToken());
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        IntentFilter statusesUpdatedIntentFilter = new IntentFilter();
-        statusesUpdatedIntentFilter.addAction(HSC_STATUSES_UPDATED);
-        registerReceiver(mainActivityBroadcastReceiver, statusesUpdatedIntentFilter);
-
-        subscribeFirebaseListeners();
-
-        buildServersList();
-
-        updateServerListButtonActiveServerName();
-        resolveHourlyReportIcon();
-        resolveNotificationType();
-
-        buildHandlers();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        serverLastPingHandler.removeCallbacks(serverLastPingRunnable);
-        unregisterReceiver(mainActivityBroadcastReceiver);
-
-        unsubscribeFirebaseListeners();
-    }
-
     private void subscribeFirebaseListeners() {
-        infoRef = getRootReference().child("/info");
+        infoRef = getActiveServerRootReference().child(INFO_ROOT).child(INFO_SERVER);
         infoValueEventListener = buildInfoValueEventListener();
         infoRef.addValueEventListener(infoValueEventListener);
 
-        statusesRef = getRootReference().child("/statuses");
+        pingRef = getActiveServerRootReference().child(INFO_ROOT).child(INFO_PING);
+        pingValueEventListener = buildPingValueEventListener();
+        pingRef.addValueEventListener(pingValueEventListener);
+
+        statusesRef = getActiveServerRootReference().child(STATUS_ROOT).child(STATUS_SERVER);
         statusesValueEventListener = buildStatusesValueEventListener();
         statusesRef.addValueEventListener(statusesValueEventListener);
-
-        usageStatsRef = getRootReference().child("/usageStats");
-        usageStatsEventListener = buildUsageStatsEventListener();
-        usageStatsRef.addValueEventListener(usageStatsEventListener);
     }
 
     private void unsubscribeFirebaseListeners() {
         infoRef.removeEventListener(infoValueEventListener);
+        pingRef.removeEventListener(pingValueEventListener);
         statusesRef.removeEventListener(statusesValueEventListener);
-        usageStatsRef.removeEventListener(usageStatsEventListener);
     }
 
     @Override
@@ -419,20 +427,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void resolveHourlyReportIcon() {
         ServerData activeServer = getActiveServer();
-        buttonResendHourlyReportMuted = activeServer != null && activeServer.isHourlyReportMuted();
+        buttonResendHourlyEnabled = activeServer != null && activeServer.isHourlyReportEnabled();
         Drawable icon;
 
-        if (buttonResendHourlyReportMuted) {
-            if (systemIsInDarkMode) {
-                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted_inverted);
-            } else {
-                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted);
-            }
-        } else {
+        if (buttonResendHourlyEnabled) {
             if (systemIsInDarkMode) {
                 icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_hourly_inverted);
             } else {
                 icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_hourly);
+            }
+        } else {
+            if (systemIsInDarkMode) {
+                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted_inverted);
+            } else {
+                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted);
             }
         }
 
@@ -470,7 +478,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
 
-            case MUTE:
+            case NONE:
                 if (systemIsInDarkMode) {
                     icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted_inverted);
                 } else {
@@ -514,76 +522,53 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void calculateSystemStateBasedOn(SwitchCompat systemMode, SwitchCompat systemState) {
-        Map<String, String> stateRequest = new HashMap<>();
-        stateRequest.put("by", getPrimaryAccountEmail());
+    private void calculateAndUpdateSystemStateBasedOn(boolean isAutomatic, boolean isArmed) {
+        ServerStatusChangeRequest serverStatusChangeRequest;
 
-        if (buttonsChangedInternally) {
-            return;
-        }
-
-        if (systemMode.isChecked()) {
-            systemState.setChecked(false);
+        if (isAutomatic) {
             systemState.setEnabled(false);
+            serverStatusChangeRequest = ServerStatusChangeRequest.builder()
+                    .by(getPrimaryAccountEmail())
+                    .systemMode(AUTOMATIC)
+                    .systemState(RESOLVING)
+                    .build();
 
-            stateRequest.put("armedMode", "AUTOMATIC");
-            stateRequest.put("armedState", "AUTO");
+        } else if (isArmed) {
+            systemState.setEnabled(true);
+            serverStatusChangeRequest = ServerStatusChangeRequest.builder()
+                    .by(getPrimaryAccountEmail())
+                    .systemMode(MANUAL)
+                    .systemState(ARMED)
+                    .build();
 
-            getRootReference().child("requests/state").setValue(stateRequest);
-
-        } else if (!systemMode.isChecked() && systemState.isChecked()) {
-            systemMode.setChecked(false);
+        } else {
             systemState.setEnabled(true);
 
-            stateRequest.put("armedMode", "MANUAL");
-            stateRequest.put("armedState", "ARMED");
-
-            getRootReference().child("requests/state").setValue(stateRequest);
-
-        } else if (!systemMode.isChecked() && !systemState.isChecked()) {
-            systemMode.setChecked(false);
-            systemState.setEnabled(true);
-
-            stateRequest.put("armedMode", "MANUAL");
-            stateRequest.put("armedState", "DISARMED");
-
-            getRootReference().child("requests/state").setValue(stateRequest);
+            serverStatusChangeRequest = ServerStatusChangeRequest.builder()
+                    .by(getPrimaryAccountEmail())
+                    .systemMode(MANUAL)
+                    .systemState(DISARMED)
+                    .build();
         }
-    }
 
-    private void refreshFirebaseListeners() {
-        unsubscribeFirebaseListeners();
-        subscribeFirebaseListeners();
+        getActiveServerRootReference().child(REQUEST_ROOT).child(REQUEST_SYSTEM_MODE_AND_STATE).setValue(serverStatusChangeRequest);
     }
 
     private ValueEventListener buildInfoValueEventListener() {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                @SuppressWarnings("unchecked") final Map<String, Object> info = (Map<String, Object>) dataSnapshot.getValue();
+                if (dataSnapshot.exists()) {
+                    ServerInfo serverInfo = dataSnapshot.getValue(ServerInfo.class);
 
-                if (info == null) {
-                    return;
+                    TextView serverVersionTextValue = findViewById(R.id.textViewServerVersionValue);
+                    if (COMPATIBLE_SERVER_VERSION.hashCode() > serverInfo.getServerVersion().hashCode()) {
+                        serverVersionTextValue.setTextColor(getApplicationContext().getColor(R.color.red));
+                    } else {
+                        serverVersionTextValue.setTextColor(defaultTextColor);
+                    }
+                    serverVersionTextValue.setText(serverInfo.getServerVersion());
                 }
-
-                String serverVersion = info.get("serverVersion").toString();
-                serverLastPing = (long) info.get("ping");
-                Long serverUptime = (long) info.get("uptime");
-
-                TextView serverVersionTextValue = findViewById(R.id.textViewServerVersionValue);
-                if (COMPATIBLE_SERVER_VERSION.hashCode() > serverVersion.hashCode()) {
-                    serverVersionTextValue.setTextColor(getApplicationContext().getColor(R.color.red));
-                } else {
-                    serverVersionTextValue.setTextColor(defaultTextColor);
-                }
-                serverVersionTextValue.setText(serverVersion);
-
-                TextView serverLastPingTextValue = findViewById(R.id.textViewServerLastPingValue);
-                serverLastPingTextValue.setText(calculatePing(serverLastPing));
-
-                TextView serverUptimeTextValue = findViewById(R.id.textViewServerUptimeValue);
-                serverUptimeTextValue.setText(calculateUptimeFromMillis(serverUptime));
-
             }
 
             @Override
@@ -593,20 +578,23 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
-    private ValueEventListener buildUsageStatsEventListener() {
+    private ValueEventListener buildPingValueEventListener() {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                @SuppressWarnings("unchecked") final Map<String, Object> usageStats = (Map<String, Object>) dataSnapshot.getValue();
+                if (dataSnapshot.exists()) {
+                    Uptime uptime = dataSnapshot.getValue(Uptime.class);
+                    serverLastPing = uptime.getPing();
 
-                if (usageStats == null) {
-                    return;
+                    TextView serverLastPingTextValue = findViewById(R.id.textViewServerLastPingValue);
+                    serverLastPingTextValue.setText(calculatePing(uptime.getPing()));
+
+                    TextView serverUptimeTextValue = findViewById(R.id.textViewServerUptimeValue);
+                    serverUptimeTextValue.setText(calculateUptimeFromMinutes(uptime.getUptime()));
+
+                    TextView usageStatsCurrentSessionTextView = findViewById(R.id.usageStatsCurrentSessionValue);
+                    usageStatsCurrentSessionTextView.setText(calculateUptimeFromMinutes(uptime.getCurrentSession()));
                 }
-
-                currentSessionLength = usageStats.get("currentSessionLength") == null ? 0L : (long) usageStats.get("currentSessionLength");
-
-                TextView usageStatsCurrentSessionTextView = findViewById(R.id.usageStatsCurrentSessionValue);
-                usageStatsCurrentSessionTextView.setText(calculateUptimeFromMinutes(currentSessionLength));
             }
 
             @Override
@@ -620,37 +608,28 @@ public class MainActivity extends AppCompatActivity {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                @SuppressWarnings("unchecked") final Map<String, Object> state = (Map<String, Object>) dataSnapshot.getValue();
+                if (dataSnapshot.exists()) {
+                    ServerStatus serverStatus = dataSnapshot.getValue(ServerStatus.class);
 
-                if (state == null) {
-                    return;
-                }
+                    systemModeText = findViewById(R.id.textViewForSwitchSystemMode);
+                    systemModeText.setText(getSystemModeLocalized(serverStatus.getSystemMode()));
+                    if (AUTOMATIC.equals(serverStatus.getSystemMode())) {
+                        systemModeText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.red));
+                        systemState.setEnabled(false);
+                    } else {
+                        systemModeText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green));
+                        systemState.setEnabled(true);
+                    }
 
-                String armedMode = state.get("armedMode").toString();
-                String armedState = state.get("armedState").toString();
-                HashMap<String, Object> buttonsState = buildDataForMainActivityFrom(armedMode, armedState);
-
-                buttonsChangedInternally = true;
-                updateModeStateButtons(buttonsState);
-                buttonsChangedInternally = false;
-
-
-                armedModeText = findViewById(R.id.textViewForSwitchSystemMode);
-                armedModeText.setText(buttonsState.get("systemModeText").toString());
-                if ("auto".equalsIgnoreCase(armedMode)) {
-                    armedModeText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.red));
-                } else {
-                    armedModeText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green));
-                }
-
-                armedStateText = findViewById(R.id.textViewForSwitchSystemState);
-                armedStateText.setText(buttonsState.get("systemStateText").toString());
-                if ("armed".equalsIgnoreCase(armedState)) {
-                    armedStateText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.red));
-                } else if ("disarmed".equalsIgnoreCase(armedState)) {
-                    armedStateText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green));
-                } else {
-                    armedStateText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.blue));
+                    systemStateText = findViewById(R.id.textViewForSwitchSystemState);
+                    systemStateText.setText(getSystemStateLocalized(serverStatus.getSystemState()));
+                    if (ARMED.equals(serverStatus.getSystemState())) {
+                        systemStateText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.red));
+                    } else if (DISARMED.equals(serverStatus.getSystemState())) {
+                        systemStateText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green));
+                    } else {
+                        systemStateText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.blue));
+                    }
                 }
             }
 
@@ -663,69 +642,6 @@ public class MainActivity extends AppCompatActivity {
 
     private String calculatePing(long serverLastPing) {
         return getCurrentTimeAndDateDoubleDotsDelimFrom(serverLastPing);
-    }
-
-    private String calculateUptimeFromMinutes(long totalMinutes) {
-        Duration duration = Duration.ofMinutes(totalMinutes);
-        long hours = duration.toHours();
-        long days = duration.toDays();
-
-        long leftMinutes = totalMinutes > 60 ? (totalMinutes - (hours * 60)) : totalMinutes;
-        long leftHours = hours > 23 ? (hours - (days * 24)) : hours;
-
-        StringBuilder stringBuilder = new StringBuilder();
-
-        if (days == 1) {
-            stringBuilder.append(days);
-            stringBuilder.append(getResources().getString(R.string.text_day));
-        }
-
-        if (days > 1) {
-            stringBuilder.append(days);
-            stringBuilder.append(getResources().getString(R.string.text_days));
-        }
-
-        stringBuilder.append(String.format(Locale.getDefault(), "%02d:", leftHours))
-                .append(String.format(Locale.getDefault(), "%02d", leftMinutes))
-                .append(":00");
-
-        return stringBuilder.toString();
-    }
-
-    private String calculateUptimeFromMillis(Long millis) {
-        Duration duration = Duration.ofMillis(millis);
-        long minutes = duration.toMinutes();
-        long hours = duration.toHours();
-        long days = duration.toDays();
-
-        long leftMinutes = minutes > 60 ? (minutes - (hours * 60)) : minutes;
-        long leftHours = hours > 24 ? (hours - (days * 24)) : hours;
-
-        StringBuilder stringBuilder = new StringBuilder();
-
-        if (days == 1) {
-            stringBuilder.append(days);
-            stringBuilder.append(getResources().getString(R.string.text_day));
-        }
-
-        if (days > 1) {
-            stringBuilder.append(days);
-            stringBuilder.append(getResources().getString(R.string.text_days));
-        }
-
-        stringBuilder.append(String.format(Locale.getDefault(), "%02d:", leftHours))
-                .append(String.format(Locale.getDefault(), "%02d", leftMinutes))
-                .append(":00");
-
-        return stringBuilder.toString();
-    }
-
-    private void updateModeStateButtons(HashMap<String, Object> statusesData) {
-        systemMode.setChecked((boolean) statusesData.get("systemModeChecked"));
-        systemMode.setEnabled(true);
-
-        systemState.setChecked((boolean) statusesData.get("systemStateChecked"));
-        systemState.setEnabled((boolean) statusesData.get("systemStateEnabled"));
     }
 
     private void buildHandlers() {
@@ -752,7 +668,7 @@ public class MainActivity extends AppCompatActivity {
         serverLastPingHandler.postDelayed(serverLastPingRunnable, 1000);
     }
 
-    private void buildServersList() {
+    private void buildServersButton() {
         serversList.setOnClickListener(view -> {
             startActivity(new Intent(getApplicationContext(), SelectServerActivity.class));
         });
@@ -766,29 +682,6 @@ public class MainActivity extends AppCompatActivity {
             String[] permissionsArray = new String[permissionsToBeRequested.size()];
             permissionsToBeRequested.toArray(permissionsArray);
             requestPermissions(permissionsArray, random.nextInt(999));
-        }
-    }
-
-    public class MainActivityBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            buttonsChangedInternally = true;
-
-            @SuppressWarnings("unchecked") HashMap<String, Object> statusesData = (HashMap<String, Object>) intent.getSerializableExtra(HSC_STATUSES_UPDATED);
-
-            if (statusesData == null) {
-                return;
-            }
-
-            requireNonNull(armedModeText).setText((String) statusesData.get("systemModeText"));
-            requireNonNull(armedModeText).setTextColor((int) statusesData.get("systemModeTextColor"));
-
-            requireNonNull(armedStateText).setText((String) statusesData.get("systemStateText"));
-            requireNonNull(armedStateText).setTextColor((int) statusesData.get("systemStateTextColor"));
-
-            updateModeStateButtons(statusesData);
-
-            buttonsChangedInternally = false;
         }
     }
 }

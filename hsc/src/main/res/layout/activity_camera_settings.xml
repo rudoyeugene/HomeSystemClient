@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textViewForSwitchHealthCheckEnabled3"
+        android:id="@+id/textViewForSwitchContinuousMonitoring"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
@@ -196,12 +196,31 @@
         android:text="60"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/textViewForTextViewRecordInterval2"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewForTextViewRebootDelay"
         app:layout_constraintStart_toStartOf="@+id/guideline5"
-        app:layout_constraintTop_toTopOf="@+id/textViewForTextViewRecordInterval2" />
+        app:layout_constraintTop_toTopOf="@+id/textViewForTextViewRebootDelay" />
+
+    <EditText
+        android:id="@+id/editTextForRecordLength"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:ems="10"
+        android:enabled="false"
+        android:gravity="left|center"
+        android:inputType="number"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:text="5"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewForTextViewRecordLength"
+        app:layout_constraintStart_toStartOf="@+id/guideline5"
+        app:layout_constraintTop_toTopOf="@+id/textViewForTextViewRecordLength"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
-        android:id="@+id/textViewForTextViewRecordInterval2"
+        android:id="@+id/textViewForTextViewRebootDelay"
         android:layout_width="0dp"
         android:layout_height="45dp"
         android:layout_marginStart="8dp"
@@ -215,17 +234,18 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewForTextViewRecordInterval" />
 
     <TextView
-        android:id="@+id/textViewForTextViewRecordInterval3"
+        android:id="@+id/textViewForTextViewRecordLength"
         android:layout_width="0dp"
         android:layout_height="45dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:gravity="left|center"
-        android:text="@string/text_reboot_delay"
+        android:text="@string/text_record_length"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/continuousSwitch"
-        app:layout_constraintTop_toBottomOf="@+id/textViewForTextViewRecordInterval" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewForTextViewRebootDelay" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline5"

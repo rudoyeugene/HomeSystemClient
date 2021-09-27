@@ -1,13 +1,13 @@
 package com.rudyii.hsw.client.helpers;
 
+import static com.rudyii.hs.common.names.FirebaseNameSpaces.CLIENTS_ROOT;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.addOrUpdateServer;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getAllServers;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
-import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueToSettings;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.setOrUpdateActiveServer;
-import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getCustomReference;
+import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getCustomRootReference;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -21,11 +21,14 @@ import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
+import com.rudyii.hs.common.objects.ConnectedClient;
+import com.rudyii.hs.common.type.NotificationType;
+import com.rudyii.hs.common.type.SystemModeType;
+import com.rudyii.hs.common.type.SystemStateType;
 import com.rudyii.hsw.client.R;
-import com.rudyii.hsw.client.objects.ServerData;
+import com.rudyii.hsw.client.objects.internal.ServerData;
 import com.rudyii.hsw.client.providers.DatabaseProvider;
 
 import java.io.BufferedInputStream;
@@ -36,12 +39,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 import java.util.TimeZone;
-import java.util.UUID;
 
 /**
  * Created by Jack on 18.12.2017.
@@ -52,7 +55,7 @@ public class Utils {
     public static final String DELAYED_ARM_DELAY_SECS = "DELAYED_ARM_DELAY_SECS";
     public static final String ACTIVE_SERVER = "ACTIVE_SERVER";
     public static final String CAMERA_APP = "CAMERA_APP";
-    public static final Locale currentLocale = getAppContext().getResources().getConfiguration().locale;
+    public static final Locale currentLocale = getAppContext().getResources().getConfiguration().getLocales().get(0);
     private static final Gson gson = new Gson();
     private static final String INSTALLATION_ID = "INSTALLATION_ID";
     private static HandlerThread handlerThread;
@@ -69,81 +72,28 @@ public class Utils {
         return dateFormat.format(date);
     }
 
-    public static HashMap<String, Object> buildDataForMainActivityFrom(String mode, String state) {
-        HashMap<String, Object> result = new HashMap<>();
-        switch (mode.toLowerCase()) {
-            case "automatic":
-                result.put("systemModeText", getAppContext().getResources().getString(R.string.toggle_button_text_system_mode_state_automatic).toUpperCase());
-                break;
-            case "manual":
-                result.put("systemModeText", getAppContext().getResources().getString(R.string.toggle_button_text_system_mode_manual).toUpperCase());
-                break;
+    public static String getSystemModeLocalized(SystemModeType systemModeType) {
+        switch (systemModeType) {
+            case AUTOMATIC:
+                return getAppContext().getString(R.string.toggle_button_text_system_mode_automatic);
+            case MANUAL:
+                return getAppContext().getString(R.string.toggle_button_text_system_mode_manual);
             default:
-                result.put("systemModeText", "UNKNOWN_MODE");
+                return getAppContext().getString(R.string.toggle_button_text_system_mode_or_state_uknown);
         }
-
-        switch (state.toLowerCase()) {
-            case "armed":
-                result.put("systemStateText", getAppContext().getResources().getString(R.string.toggle_button_text_system_state_armed).toUpperCase());
-                break;
-            case "disarmed":
-                result.put("systemStateText", getAppContext().getResources().getString(R.string.toggle_button_text_system_state_disarmed).toUpperCase());
-                break;
-            case "auto":
-                result.put("systemStateText", getAppContext().getResources().getString(R.string.toggle_button_text_system_mode_state_automatic).toUpperCase());
-                break;
-            default:
-                result.put("systemStateText", "UNKNOWN_STATE");
-        }
-
-        if ("auto".equalsIgnoreCase(mode)) {
-            result.put("systemModeTextColor", ContextCompat.getColor(getAppContext(), R.color.red));
-        } else {
-            result.put("systemModeTextColor", ContextCompat.getColor(getAppContext(), R.color.green));
-        }
-
-        if ("armed".equalsIgnoreCase(state)) {
-            result.put("systemStateTextColor", ContextCompat.getColor(getAppContext(), R.color.red));
-        } else if (state.equalsIgnoreCase("disarmed")) {
-            result.put("systemStateTextColor", ContextCompat.getColor(getAppContext(), R.color.green));
-        } else {
-            result.put("systemStateTextColor", ContextCompat.getColor(getAppContext(), R.color.blue));
-        }
-
-        if ("automatic".equalsIgnoreCase(mode) && "armed".equalsIgnoreCase(state)) {
-            result.put("systemModeChecked", true);
-            result.put("systemStateChecked", true);
-            result.put("systemStateEnabled", false);
-        } else if ("automatic".equalsIgnoreCase(mode) && ("disarmed".equalsIgnoreCase(state) || state.equalsIgnoreCase("auto"))) {
-            result.put("systemModeChecked", true);
-            result.put("systemStateChecked", false);
-            result.put("systemStateEnabled", false);
-        } else if (!"automatic".equalsIgnoreCase(mode) && "armed".equalsIgnoreCase(state)) {
-            result.put("systemModeChecked", false);
-            result.put("systemStateChecked", true);
-            result.put("systemStateEnabled", true);
-        } else if (!"automatic".equalsIgnoreCase(mode) && "disarmed".equalsIgnoreCase(state)) {
-            result.put("systemModeChecked", false);
-            result.put("systemStateChecked", false);
-            result.put("systemStateEnabled", true);
-        } else {
-            result.put("systemModeChecked", true);
-            result.put("systemStateChecked", true);
-            result.put("systemStateEnabled", true);
-        }
-
-        return result;
     }
 
-    public static String getDeviceId() {
-        String installationId = getStringValueFromSettings(INSTALLATION_ID);
-
-        if (stringIsEmptyOrNull(installationId)) {
-            installationId = UUID.randomUUID().toString();
-            saveStringValueToSettings(INSTALLATION_ID, installationId);
+    public static String getSystemStateLocalized(SystemStateType systemStateType) {
+        switch (systemStateType) {
+            case ARMED:
+                return getAppContext().getString(R.string.toggle_button_text_system_state_armed);
+            case DISARMED:
+                return getAppContext().getString(R.string.toggle_button_text_system_state_disarmed);
+            case RESOLVING:
+                return getAppContext().getString(R.string.toggle_button_text_system_state_resolving);
+            default:
+                return getAppContext().getString(R.string.toggle_button_text_system_mode_or_state_uknown);
         }
-
-        return installationId;
     }
 
     public static void registerUserDataOnServers(String token) {
@@ -152,17 +102,6 @@ public class Utils {
 
     public static void registerUserDataOnServer(ServerData serverData, String token) {
         String simplifiedPrimaryAccountName = getSimplifiedPrimaryAccountName();
-        String deviceId = getDeviceId();
-
-        HashMap<String, Object> clientData = new HashMap<>();
-
-        clientData.put("notificationType", serverData.getNotificationType().getFirebaseName());
-        clientData.put("notificationsMuted", serverData.isNotificationsMuted());
-        clientData.put("hourlyReportMuted", serverData.isHourlyReportMuted());
-        clientData.put("lastRegistration", System.currentTimeMillis());
-        clientData.put("token", token);
-        clientData.put("device", android.os.Build.MODEL);
-        clientData.put("email", getPrimaryAccountEmail());
 
         PackageInfo pInfo;
         String version = "0.0.0";
@@ -172,21 +111,18 @@ public class Utils {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        clientData.put("appVersion", version);
 
-        if (stringIsNotEmptyOrNull(simplifiedPrimaryAccountName)) {
-            if (stringIsNotEmptyOrNull(deviceId)) {
-                getCustomReference(serverData.getServerKey()).child("/connectedClients/" + deviceId).removeValue();
-            }
-            getCustomReference(serverData.getServerKey()).child("/connectedClients/" + simplifiedPrimaryAccountName).setValue(clientData);
-        } else if (stringIsNotEmptyOrNull(deviceId)) {
-            if (stringIsNotEmptyOrNull(simplifiedPrimaryAccountName)) {
-                getCustomReference(serverData.getServerKey()).child("/connectedClients/" + simplifiedPrimaryAccountName).removeValue();
-            }
-            getCustomReference(serverData.getServerKey()).child("/connectedClients/" + deviceId).setValue(clientData);
-        } else {
-            new ToastDrawer().showToast(getAppContext().getResources().getString(R.string.toast_failed_to_register_on_server));
-        }
+        ConnectedClient connectedClient = ConnectedClient.builder()
+                .appVersion(version)
+                .device(android.os.Build.MODEL)
+                .email(getPrimaryAccountEmail())
+                .token(token)
+                .hourlyReportEnabled(serverData.isHourlyReportEnabled())
+                .lastRegistration(System.currentTimeMillis())
+                .notificationType(NotificationType.valueOf(serverData.getNotificationType().name()))
+                .build();
+
+        getCustomRootReference(serverData.getServerKey()).child(CLIENTS_ROOT).child(simplifiedPrimaryAccountName).setValue(connectedClient);
     }
 
     public static String getSimplifiedPrimaryAccountName() {
@@ -289,6 +225,14 @@ public class Utils {
         return gson.fromJson(json, clazz);
     }
 
+    public static <T> T buildFromStringMap(Map<String, String> props, Class<T> clazz) {
+        return gson.fromJson(writeJson(props), clazz);
+    }
+
+    public static <T> T buildFromPropertiesMap(Map<String, String> props, Class<T> clazz) {
+        return gson.fromJson(gson.toJson(props), clazz);
+    }
+
     @NonNull
     private static Account[] getAccounts() {
         return AccountManager.get(getAppContext()).getAccountsByType("com.google");
@@ -300,4 +244,31 @@ public class Utils {
                         Configuration.UI_MODE_NIGHT_MASK;
         return nightModeFlags == Configuration.UI_MODE_NIGHT_YES;
     }
+
+    public static String calculateUptimeFromMinutes(long totalMinutes) {
+        Duration duration = Duration.ofMinutes(totalMinutes);
+        long hours = duration.toHours();
+        long days = duration.toDays();
+
+        long leftMinutes = totalMinutes > 60 ? (totalMinutes - (hours * 60)) : totalMinutes;
+        long leftHours = hours > 23 ? (hours - (days * 24)) : hours;
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (days == 1) {
+            stringBuilder.append(days);
+            stringBuilder.append(getAppContext().getResources().getString(R.string.text_day));
+        }
+
+        if (days > 1) {
+            stringBuilder.append(days);
+            stringBuilder.append(getAppContext().getResources().getString(R.string.text_days));
+        }
+
+        stringBuilder.append(String.format(Locale.getDefault(), "%02d:", leftHours))
+                .append(String.format(Locale.getDefault(), "%02d", leftMinutes));
+
+        return stringBuilder.toString();
+    }
+
 }

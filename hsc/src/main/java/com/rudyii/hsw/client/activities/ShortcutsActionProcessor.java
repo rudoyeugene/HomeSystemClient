@@ -1,7 +1,7 @@
 package com.rudyii.hsw.client.activities;
 
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
-import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
+import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getActiveServerRootReference;
 import static java.util.Objects.requireNonNull;
 
 import android.os.Bundle;
@@ -63,7 +63,7 @@ public class ShortcutsActionProcessor extends AppCompatActivity {
                 break;
         }
 
-        getRootReference().child("requests/state").setValue(stateRequest);
+        getActiveServerRootReference().child("requests/state").setValue(stateRequest);
         setFinishOnTouchOutside(true);
     }
 }

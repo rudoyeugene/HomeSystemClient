@@ -13,14 +13,15 @@ import android.net.NetworkInfo;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.rudyii.hs.common.objects.IamBack;
 import com.rudyii.hsw.client.helpers.ToastDrawer;
-import com.rudyii.hsw.client.objects.IamBack;
-import com.rudyii.hsw.client.objects.ServerData;
+import com.rudyii.hsw.client.objects.internal.ServerData;
 
 import org.json.JSONObject;
 
@@ -46,27 +47,29 @@ public class NetworkChangedReceiver extends BroadcastReceiver {
         RequestQueue requestQueue = Volley.newRequestQueue(getAppContext());
         Map<String, ServerData> allServers = getAllServers();
         allServers.forEach((serverKey, serverData) -> {
-            try {
-                if (InetAddress.getByName(serverData.getServerIp()).isReachable(1000)) {
-                    String url = "http://" + serverData.getServerIp() + ":" + serverData.getServerPort() + "/control/iam_back";
-                    IamBack iamBack = IamBack.builder()
-                            .serverKey(serverKey)
-                            .email(getPrimaryAccountEmail())
-                            .build();
-                    JsonObjectRequest jsonObjectRequest =
-                            null;
-                    jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(writeJson(iamBack)), response -> {
-                        System.out.println(response.toString());
-                    }, error -> {
-                        System.out.println(error.toString());
-                    });
-                    new ToastDrawer().showToast(serverData.getServerAlias() + " :)");
+            AsyncTask.execute(() -> {
+                try {
+                    if (InetAddress.getByName(serverData.getServerIp()).isReachable(1000)) {
+                        String url = "http://" + serverData.getServerIp() + ":" + serverData.getServerPort() + "/control/iam_back";
+                        IamBack iamBack = IamBack.builder()
+                                .serverKey(serverKey)
+                                .email(getPrimaryAccountEmail())
+                                .build();
+                        JsonObjectRequest jsonObjectRequest =
+                                null;
+                        jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(writeJson(iamBack)), response -> {
+                            System.out.println(response.toString());
+                        }, error -> {
+                            System.out.println(error.toString());
+                        });
+                        new ToastDrawer().showToast(serverData.getServerAlias() + " :)");
 
-                    requestQueue.add(jsonObjectRequest);
+                        requestQueue.add(jsonObjectRequest);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            });
         });
     }
 }

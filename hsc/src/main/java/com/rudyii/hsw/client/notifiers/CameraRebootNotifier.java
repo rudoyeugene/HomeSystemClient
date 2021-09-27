@@ -1,6 +1,7 @@
 package com.rudyii.hsw.client.notifiers;
 
 import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_HIGH;
+import static com.rudyii.hsw.client.helpers.Utils.currentLocale;
 import static java.util.Objects.requireNonNull;
 
 import android.app.NotificationManager;
@@ -10,29 +11,28 @@ import android.content.Intent;
 
 import androidx.core.app.NotificationCompat;
 
+import com.rudyii.hs.common.objects.message.CameraRebootMessage;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.activities.MainActivity;
-
-import java.util.HashMap;
 
 /**
  * Created by Jack on 18.12.2017.
  */
 
 public class CameraRebootNotifier {
-    public CameraRebootNotifier(Context context, HashMap<String, Object> offlineDeviceData) {
-        String offlineDevice = (String) offlineDeviceData.get("cameraName");
-        String serverName = (String) offlineDeviceData.get("serverName");
-
+    public CameraRebootNotifier(Context context, CameraRebootMessage cameraRebootMessage) {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_HIGH)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle(serverName + ": " + offlineDevice + context.getResources().getString(R.string.notif_text_camera_is_rebooting))
+                .setContentTitle(String.format(currentLocale, "%s: %s %s",
+                        cameraRebootMessage.getServerAlias(),
+                        cameraRebootMessage.getCameraName(),
+                        context.getResources().getString(R.string.notif_text_camera_is_rebooting)))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
-                .setWhen(Long.parseLong(offlineDeviceData.get("eventId").toString()))
+                .setWhen(cameraRebootMessage.getPublishedAt())
                 .setVibrate(new long[]{0, 500});
 
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

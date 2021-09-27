@@ -1,8 +1,8 @@
-package com.rudyii.hsw.client.objects;
+package com.rudyii.hsw.client.objects.internal;
 
 import androidx.annotation.Keep;
 
-import com.rudyii.hsw.client.objects.types.NotificationType;
+import com.rudyii.hs.common.type.NotificationType;
 
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +18,6 @@ public class ServerData {
     private String serverIp;
     private Integer serverPort;
     private NotificationType notificationType;
-    private boolean hourlyReportMuted;
+    private boolean hourlyReportEnabled;
     private boolean notificationsMuted;
 }

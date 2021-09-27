@@ -1,4 +1,4 @@
--keep class com.rudyii.hsw.client.objects.* {*; }
+-keep class com.rudyii.** {*; }
 -keepattributes EnclosingMethod
 -keepattributes InnerClasses
 -ignorewarnings

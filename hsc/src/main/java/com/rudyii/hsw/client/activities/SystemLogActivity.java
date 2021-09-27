@@ -1,13 +1,14 @@
 package com.rudyii.hsw.client.activities;
 
+import static com.rudyii.hs.common.names.FirebaseNameSpaces.LOG_ROOT;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
-import static com.rudyii.hsw.client.helpers.Utils.buildDataForMainActivityFrom;
+import static com.rudyii.hsw.client.helpers.Utils.buildFromPropertiesMap;
 import static com.rudyii.hsw.client.helpers.Utils.currentLocale;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDotsDelimFrom;
 import static com.rudyii.hsw.client.helpers.Utils.getLooper;
 import static com.rudyii.hsw.client.helpers.Utils.readImageFromUrl;
 import static com.rudyii.hsw.client.helpers.Utils.saveDataFromUrl;
-import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getRootReference;
+import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getActiveServerRootReference;
 import static java.util.Collections.sort;
 
 import android.content.BroadcastReceiver;
@@ -37,6 +38,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.rudyii.hs.common.objects.logs.CameraRebootLog;
+import com.rudyii.hs.common.objects.logs.IspLog;
+import com.rudyii.hs.common.objects.logs.LogBase;
+import com.rudyii.hs.common.objects.logs.MotionLog;
+import com.rudyii.hs.common.objects.logs.SimpleWatcherLog;
+import com.rudyii.hs.common.objects.logs.StartStopLog;
+import com.rudyii.hs.common.objects.logs.StateChangedLog;
+import com.rudyii.hs.common.objects.logs.UploadLog;
 import com.rudyii.hsw.client.BuildConfig;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.helpers.LogItem;
@@ -46,10 +55,7 @@ import com.rudyii.hsw.client.helpers.ToastDrawer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -78,7 +84,7 @@ public class SystemLogActivity extends AppCompatActivity {
         setContentView(R.layout.activity_system_log);
         setTitle(getResources().getString(R.string.label_system_log));
 
-        logRef = getRootReference().child("/log");
+        logRef = getActiveServerRootReference().child(LOG_ROOT);
         logValueEventListener = getValueEventListener();
 
         logRef.addValueEventListener(logValueEventListener);
@@ -172,32 +178,26 @@ public class SystemLogActivity extends AppCompatActivity {
         return new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                @SuppressWarnings("unchecked") final HashMap<String, Map<String, Object>> logMap = (HashMap<String, Map<String, Object>>) dataSnapshot.getValue();
+                if (dataSnapshot.exists()) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                    systemLog.clear();
+                    dataSnapshot.getChildren().forEach(logBase -> systemLog.add(buildAndFillLogItem(logBase.getValue())));
 
-                if (logMap == null) {
+                    sort(systemLog, (logItem1, logItem2) -> {
+                        if (logItem1.getTimestamp().equals(logItem2.getTimestamp())) {
+                            return 0;
+                        } else if (logItem1.getTimestamp() > logItem2.getTimestamp()) {
+                            return -1;
+                        } else {
+                            return 1;
+                        }
+                    });
+
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    mAdapter.notifyDataSetChanged();
+                } else {
                     new ToastDrawer().showToast(getString(R.string.text_system_log_is_empty));
-                    return;
                 }
-
-                mSwipeRefreshLayout.setRefreshing(true);
-                systemLog.clear();
-
-                for (Map.Entry<String, Map<String, Object>> entry : logMap.entrySet()) {
-                    systemLog.add(buildAndFillLogItem(Long.valueOf(entry.getKey()), entry.getValue()));
-                }
-
-                sort(systemLog, (logItem1, logItem2) -> {
-                    if (logItem1.getTimestamp().equals(logItem2.getTimestamp())) {
-                        return 0;
-                    } else if (logItem1.getTimestamp() > logItem2.getTimestamp()) {
-                        return -1;
-                    } else {
-                        return 1;
-                    }
-                });
-
-                mSwipeRefreshLayout.setRefreshing(false);
-                mAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -207,29 +207,26 @@ public class SystemLogActivity extends AppCompatActivity {
         };
     }
 
-    private LogItem buildAndFillLogItem(Long logRecordId, Map<String, Object> logRecordData) {
-        String reason = (String) logRecordData.get("reason");
+    private LogItem buildAndFillLogItem(Object value) {
+        LogBase logBase = buildFromPropertiesMap((Map<String, String>) value, LogBase.class);
+        long logRecordId = logBase.getEventId();
         String title = getCurrentTimeAndDateDoubleDotsDelimFrom(logRecordId);
-        String cameraName = (String) logRecordData.get("cameraName");
         LogItem logItem = null;
         Bitmap image = null;
         String description = null;
 
-        switch (reason) {
-            case "systemStateChanged":
-                String armedMode = (String) logRecordData.get("armedMode");
-                String armedState = (String) logRecordData.get("armedState");
+        switch (logBase.getLogType()) {
+            case STATE_CHANGED:
+                StateChangedLog stateChangedLog = buildFromPropertiesMap((Map<String, String>) value, StateChangedLog.class);
 
-                HashMap<String, Object> statusesData = buildDataForMainActivityFrom(armedMode, armedState);
-
-                switch (armedState) {
-                    case "ARMED":
+                switch (stateChangedLog.getSystemState()) {
+                    case ARMED:
                         image = BitmapFactory.decodeResource(getResources(), R.mipmap.shortcut_arm);
                         break;
-                    case "DISARMED":
+                    case DISARMED:
                         image = BitmapFactory.decodeResource(getResources(), R.mipmap.shortcut_disarm);
                         break;
-                    case "AUTO":
+                    case RESOLVING:
                         image = BitmapFactory.decodeResource(getResources(), R.mipmap.shortcut_auto);
                         break;
                     default:
@@ -237,64 +234,61 @@ public class SystemLogActivity extends AppCompatActivity {
                         break;
                 }
 
-                description = getResources().getString(R.string.notif_text_system_state_is)
-                        + statusesData.get("systemModeText")
-                        + ":" + statusesData.get("systemStateText");
+                description = String.format(currentLocale, "%s:%s", stateChangedLog.getSystemMode(), stateChangedLog.getSystemState());
                 break;
 
-            case "motionDetected":
-                final String[] imageUrl = {(String) logRecordData.get("imageUrl")};
-                Long motionArea = (Long) logRecordData.get("motionArea");
-
+            case MOTION_DETECTED:
+                MotionLog motionLog = buildFromPropertiesMap((Map<String, String>) value, MotionLog.class);
                 image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_snapshot);
-                description = cameraName + ": " + motionArea + "%";
+                description = String.format(currentLocale, "%s: %d%%", motionLog.getCameraName(), motionLog.getMotionArea());
 
                 logItem = new LogItem(getApplicationContext()) {
                     @Override
                     public void fireAction() {
                         Handler handler = new Handler(getLooper());
                         handler.post(() -> {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(imageUrl[0]));
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(motionLog.getImageUrl()));
                             File outputDir = getApplicationContext().getCacheDir();
                             try {
-                                File outputFile = File.createTempFile(logRecordId.toString(), ".jpg", outputDir);
+                                File outputFile = File.createTempFile(String.valueOf(motionLog.getEventId()), ".jpg", outputDir);
                                 if (outputFile.length() == 0) {
-                                    Bitmap bitmap = readImageFromUrl(imageUrl[0]);
+                                    Bitmap bitmap = readImageFromUrl(motionLog.getImageUrl());
                                     FileOutputStream fos = new FileOutputStream(outputFile);
                                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
                                     fos.close();
                                 }
                                 intent = new Intent(Intent.ACTION_VIEW, FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID + ".provider", outputFile));
                             } catch (IOException e) {
+                                new ToastDrawer().showToast("Failed to load image");
                                 e.printStackTrace();
                             } finally {
                                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
                                 startActivity(intent);
                             }
                         });
+
                     }
                 };
 
                 logItem.fill(image, title, description, logRecordId);
                 break;
 
-            case "videoRecorded":
+            case RECORD_UPLOADED:
+                UploadLog uploadLog = buildFromPropertiesMap((Map<String, String>) value, UploadLog.class);
                 image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_video);
-                description = cameraName + ": " + logRecordData.get("fileName").toString();
-                final String[] videoUrl = {(String) logRecordData.get("videoUrl")};
+                description = String.format(currentLocale, "%s: %s", uploadLog.getCameraName(), uploadLog.getFileName());
 
                 logItem = new LogItem(getApplicationContext()) {
                     @Override
                     public void fireAction() {
                         Handler handler = new Handler(getLooper());
                         handler.post(() -> {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl[0]));
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uploadLog.getVideoUrl()));
                             File outputDir = getApplicationContext().getCacheDir();
                             try {
-                                File outputFile = File.createTempFile(logRecordId.toString(), ".mp4", outputDir);
+                                File outputFile = File.createTempFile(String.valueOf(uploadLog.getEventId()), ".mp4", outputDir);
                                 if (outputFile.length() == 0) {
-                                    saveDataFromUrl(videoUrl[0], outputFile);
+                                    saveDataFromUrl(uploadLog.getVideoUrl(), outputFile);
                                 }
                                 intent = new Intent(Intent.ACTION_VIEW, FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID + ".provider", outputFile));
                             } catch (Exception e) {
@@ -311,44 +305,39 @@ public class SystemLogActivity extends AppCompatActivity {
                 logItem.fill(image, title, description, logRecordId);
                 break;
 
-            case "ispChanged":
+            case ISP_CHANGED:
+                IspLog ispLog = buildFromPropertiesMap((Map<String, String>) value, IspLog.class);
                 image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_isp);
-                description = logRecordData.get("isp") + ":" + logRecordData.get("ip");
+                description = String.format(currentLocale, "%s > %s", ispLog.getIspName(), ispLog.getIspIp());
                 break;
 
-            case "cameraReboot":
+            case CAMERA_REBOOTED:
+                CameraRebootLog cameraRebootLog = buildFromPropertiesMap((Map<String, String>) value, CameraRebootLog.class);
                 image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_webcam);
-                description = logRecordData.get("cameraName") + getResources().getString(R.string.notif_text_camera_is_rebooting);
+                description = String.format(currentLocale, "%s %s", cameraRebootLog.getCameraName(), getResources().getString(R.string.notif_text_camera_is_rebooting));
                 break;
 
-            case "serverStateChanged":
-                String action = (String) logRecordData.get("action");
+            case SERVER_START_STOP:
+                StartStopLog startStopLog = buildFromPropertiesMap((Map<String, String>) value, StartStopLog.class);
 
-                switch (action) {
-                    case "started":
-                        Long serverPid = (Long) logRecordData.get("pid");
+                switch (startStopLog.getServerState()) {
+                    case STARTED:
                         image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_server_started);
-                        description = getResources().getString(R.string.notif_text_server_started) + serverPid;
+                        description = String.format(currentLocale, "%s, PID: %d", startStopLog.getServerState(), startStopLog.getPid());
                         break;
 
-                    case "stopped":
+                    case STOPPED:
                         image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_server_stopped);
-                        description = getResources().getString(R.string.notif_text_server_stopped) + new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", currentLocale).format(new Date(Long.parseLong(logRecordData.get("eventId").toString())));
-                        break;
-
-                    default:
-                        Log.e(TAG, "Something wrong is happening with the server, please check urgently!");
+                        description = startStopLog.getServerState().name();
                         break;
                 }
                 break;
 
-            case "simpleNotification":
+            case SIMPLE_WATCHER_FIRED:
+                SimpleWatcherLog simpleWatcherLog = buildFromPropertiesMap((Map<String, String>) value, SimpleWatcherLog.class);
                 image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_warning);
-                description = logRecordData.get("simpleWatcherNotificationTextOriginal").toString();
+                description = simpleWatcherLog.getOriginalText();
                 break;
-
-            default:
-                Log.e(TAG, "Failed to process message with data: " + logRecordData);
 
         }
 

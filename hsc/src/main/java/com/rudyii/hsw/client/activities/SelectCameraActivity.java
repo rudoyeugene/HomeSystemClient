@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SelectCameraActivity extends AppCompatActivity {
-    private List<CameraSettingsInternal> cameraSettingsInternals = new ArrayList<>();
+    private final List<CameraSettingsInternal> cameraSettingsInternals = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

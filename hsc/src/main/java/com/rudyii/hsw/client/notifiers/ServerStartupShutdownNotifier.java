@@ -12,7 +12,7 @@ import android.content.Intent;
 
 import androidx.core.app.NotificationCompat;
 
-import com.rudyii.hs.common.objects.message.ServerStartedStoppedMessage;
+import com.rudyii.hs.common.objects.logs.StartStopLog;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.activities.MainActivity;
 
@@ -21,20 +21,20 @@ import com.rudyii.hsw.client.activities.MainActivity;
  */
 
 public class ServerStartupShutdownNotifier {
-    public ServerStartupShutdownNotifier(Context context, ServerStartedStoppedMessage serverStartedStoppedMessage) {
+    public ServerStartupShutdownNotifier(Context context, StartStopLog startStopLog, String serverAlias, long when) {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_NORMAL)
                 .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle(String.format(currentLocale, "%s: %s",
-                        serverStartedStoppedMessage.getServerAlias(),
-                        serverStartedStoppedMessage.getServerState()))
+                        serverAlias,
+                        startStopLog.getServerState()))
                 .setContentText(String.format(currentLocale, "%s",
-                        getCurrentTimeAndDateDoubleDotsDelimFrom(serverStartedStoppedMessage.getPublishedAt())))
+                        getCurrentTimeAndDateDoubleDotsDelimFrom(when)))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
-                .setWhen(serverStartedStoppedMessage.getPublishedAt())
+                .setWhen(when)
                 .setVibrate(new long[]{0, 500});
 
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

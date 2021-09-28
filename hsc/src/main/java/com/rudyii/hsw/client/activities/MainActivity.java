@@ -17,11 +17,9 @@ import static com.rudyii.hs.common.type.SystemModeType.AUTOMATIC;
 import static com.rudyii.hs.common.type.SystemModeType.MANUAL;
 import static com.rudyii.hs.common.type.SystemStateType.ARMED;
 import static com.rudyii.hs.common.type.SystemStateType.DISARMED;
-import static com.rudyii.hs.common.type.SystemStateType.RESOLVING;
 import static com.rudyii.hsw.client.BuildConfig.COMPATIBLE_SERVER_VERSION;
 import static com.rudyii.hsw.client.BuildConfig.SERVER_DOWNLOAD_URL;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
-import static com.rudyii.hsw.client.HomeSystemClientApplication.getToken;
 import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_MUTED;
 import static com.rudyii.hsw.client.helpers.Utils.DELAYED_ARM_DELAY_SECS;
 import static com.rudyii.hsw.client.helpers.Utils.calculateUptimeFromMinutes;
@@ -37,7 +35,7 @@ import static com.rudyii.hsw.client.helpers.Utils.retrievePermissions;
 import static com.rudyii.hsw.client.helpers.Utils.systemIsOnDarkMode;
 import static com.rudyii.hsw.client.helpers.Utils.updateServer;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.addOrUpdateServer;
-import static com.rudyii.hsw.client.providers.DatabaseProvider.getIntValueFromSettings;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.getIntValueFromSettingsStorage;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.setOrUpdateActiveServer;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getActiveServerRootReference;
 import static java.util.Objects.requireNonNull;
@@ -188,12 +186,12 @@ public class MainActivity extends AppCompatActivity {
         systemMode = findViewById(R.id.switchSystemMode);
         systemMode.setTextOn(getString(R.string.toggle_button_text_system_mode_automatic));
         systemMode.setTextOff(getString(R.string.toggle_button_text_system_mode_manual));
-        systemMode.setOnCheckedChangeListener((buttonView, isChecked) -> calculateAndUpdateSystemStateBasedOn(isChecked, systemState.isChecked()));
+        systemMode.setOnClickListener((buttonView) -> pushSystemStateUpdate());
 
         systemState = findViewById(R.id.switchSystemState);
         systemState.setTextOn(getString(R.string.toggle_button_text_system_state_armed));
         systemState.setTextOff(getString(R.string.toggle_button_text_system_state_disarmed));
-        systemState.setOnCheckedChangeListener((buttonView, isChecked) -> calculateAndUpdateSystemStateBasedOn(systemMode.isChecked(), isChecked));
+        systemState.setOnClickListener((buttonView) -> pushSystemStateUpdate());
 
         Button armLater = findViewById(R.id.buttonDelayedArm);
         armLater.setOnClickListener(v -> {
@@ -205,8 +203,9 @@ public class MainActivity extends AppCompatActivity {
                 delayedArmInProgress = true;
 
                 AsyncTask.execute(() -> {
+                    int notificationId = new Random().nextInt();
                     Context context = getAppContext();
-                    int delayedArmSeconds = getIntValueFromSettings(DELAYED_ARM_DELAY_SECS);
+                    int delayedArmSeconds = getIntValueFromSettingsStorage(DELAYED_ARM_DELAY_SECS);
                     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_MUTED)
                             .setSmallIcon(R.drawable.ic_stat_notification)
                             .setContentTitle(String.format(currentLocale, "%s %d %s",
@@ -216,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
                             .setProgress(delayedArmSeconds, 0, false);
 
                     NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                    requireNonNull(mNotificationManager).notify(4918151, mBuilder.build());
+                    requireNonNull(mNotificationManager).notify(notificationId, mBuilder.build());
 
                     int countUp = 1;
                     while (countUp < delayedArmSeconds) {
@@ -226,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
                             mBuilder.setOngoing(true)
                                     .setContentInfo(percent + "%")
                                     .setProgress(100, percent, false);
-                            requireNonNull(mNotificationManager).notify(4918151, mBuilder.build());
+                            requireNonNull(mNotificationManager).notify(notificationId, mBuilder.build());
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -236,19 +235,21 @@ public class MainActivity extends AppCompatActivity {
                     Handler handler = new Handler(getLooper());
                     handler.post(() -> {
                         systemState.setChecked(true);
-                        calculateAndUpdateSystemStateBasedOn(systemMode.isChecked(), systemState.isChecked());
-                        mNotificationManager.cancel(4918151);
+                        systemMode.setChecked(true);
+                        pushSystemStateUpdate();
+                        mNotificationManager.cancel(notificationId);
                         delayedArmInProgress = false;
                     });
                 });
             }
         });
+        resolveHourlyReportIcon();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        System.out.println("do start");
+
         subscribeFirebaseListeners();
 
         buildServersButton();
@@ -258,15 +259,15 @@ public class MainActivity extends AppCompatActivity {
         resolveNotificationType();
 
         buildHandlers();
-
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        System.out.println("do stop");
 
         serverLastPingHandler.removeCallbacks(serverLastPingRunnable);
+        serverLastPingHandler = null;
+        serverLastPingRunnable = null;
 
         unsubscribeFirebaseListeners();
     }
@@ -288,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
         resolveNotificationType();
         addOrUpdateServer(activeServer);
         setOrUpdateActiveServer(activeServer);
-        registerUserDataOnServer(activeServer, getToken());
+        registerUserDataOnServer(activeServer);
         resolveNotificationType();
     }
 
@@ -317,27 +318,36 @@ public class MainActivity extends AppCompatActivity {
         activeServer.setHourlyReportEnabled(buttonResendHourlyEnabled);
         addOrUpdateServer(activeServer);
         setOrUpdateActiveServer(activeServer);
-        registerUserDataOnServer(getActiveServer(), getToken());
+        registerUserDataOnServer(getActiveServer());
     }
 
     private void subscribeFirebaseListeners() {
-        infoRef = getActiveServerRootReference().child(INFO_ROOT).child(INFO_SERVER);
-        infoValueEventListener = buildInfoValueEventListener();
-        infoRef.addValueEventListener(infoValueEventListener);
+        if (infoRef == null) {
+            infoRef = getActiveServerRootReference().child(INFO_ROOT).child(INFO_SERVER);
+            infoValueEventListener = buildInfoValueEventListener();
+            infoRef.addValueEventListener(infoValueEventListener);
+        }
 
-        pingRef = getActiveServerRootReference().child(INFO_ROOT).child(INFO_PING);
-        pingValueEventListener = buildPingValueEventListener();
-        pingRef.addValueEventListener(pingValueEventListener);
+        if (pingRef == null) {
+            pingRef = getActiveServerRootReference().child(INFO_ROOT).child(INFO_PING);
+            pingValueEventListener = buildPingValueEventListener();
+            pingRef.addValueEventListener(pingValueEventListener);
+        }
 
-        statusesRef = getActiveServerRootReference().child(STATUS_ROOT).child(STATUS_SERVER);
-        statusesValueEventListener = buildStatusesValueEventListener();
-        statusesRef.addValueEventListener(statusesValueEventListener);
+        if (statusesRef == null) {
+            statusesRef = getActiveServerRootReference().child(STATUS_ROOT).child(STATUS_SERVER);
+            statusesValueEventListener = buildStatusesValueEventListener();
+            statusesRef.addValueEventListener(statusesValueEventListener);
+        }
     }
 
     private void unsubscribeFirebaseListeners() {
         infoRef.removeEventListener(infoValueEventListener);
+        infoRef = null;
         pingRef.removeEventListener(pingValueEventListener);
+        pingRef = null;
         statusesRef.removeEventListener(statusesValueEventListener);
+        statusesRef = null;
     }
 
     @Override
@@ -422,7 +432,7 @@ public class MainActivity extends AppCompatActivity {
         buttonNotificationType.setImageDrawable(icon);
         addOrUpdateServer(activeServer);
         setOrUpdateActiveServer(activeServer);
-        registerUserDataOnServer(activeServer, getToken());
+        registerUserDataOnServer(activeServer);
     }
 
     private void resolveHourlyReportIcon() {
@@ -522,36 +532,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void calculateAndUpdateSystemStateBasedOn(boolean isAutomatic, boolean isArmed) {
-        ServerStatusChangeRequest serverStatusChangeRequest;
-
-        if (isAutomatic) {
-            systemState.setEnabled(false);
-            serverStatusChangeRequest = ServerStatusChangeRequest.builder()
-                    .by(getPrimaryAccountEmail())
-                    .systemMode(AUTOMATIC)
-                    .systemState(RESOLVING)
-                    .build();
-
-        } else if (isArmed) {
-            systemState.setEnabled(true);
-            serverStatusChangeRequest = ServerStatusChangeRequest.builder()
-                    .by(getPrimaryAccountEmail())
-                    .systemMode(MANUAL)
-                    .systemState(ARMED)
-                    .build();
-
-        } else {
-            systemState.setEnabled(true);
-
-            serverStatusChangeRequest = ServerStatusChangeRequest.builder()
-                    .by(getPrimaryAccountEmail())
-                    .systemMode(MANUAL)
-                    .systemState(DISARMED)
-                    .build();
-        }
-
-        getActiveServerRootReference().child(REQUEST_ROOT).child(REQUEST_SYSTEM_MODE_AND_STATE).setValue(serverStatusChangeRequest);
+    private void pushSystemStateUpdate() {
+        getActiveServerRootReference().child(REQUEST_ROOT).child(REQUEST_SYSTEM_MODE_AND_STATE).setValue(ServerStatusChangeRequest.builder()
+                .by(getPrimaryAccountEmail())
+                .systemMode(systemMode.isChecked() ? AUTOMATIC : MANUAL)
+                .systemState(systemState.isChecked() ? ARMED : DISARMED)
+                .build());
     }
 
     private ValueEventListener buildInfoValueEventListener() {
@@ -615,8 +601,10 @@ public class MainActivity extends AppCompatActivity {
                     systemModeText.setText(getSystemModeLocalized(serverStatus.getSystemMode()));
                     if (AUTOMATIC.equals(serverStatus.getSystemMode())) {
                         systemModeText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.red));
+                        systemMode.setChecked(true);
                         systemState.setEnabled(false);
                     } else {
+                        systemMode.setChecked(false);
                         systemModeText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green));
                         systemState.setEnabled(true);
                     }
@@ -624,10 +612,13 @@ public class MainActivity extends AppCompatActivity {
                     systemStateText = findViewById(R.id.textViewForSwitchSystemState);
                     systemStateText.setText(getSystemStateLocalized(serverStatus.getSystemState()));
                     if (ARMED.equals(serverStatus.getSystemState())) {
+                        systemState.setChecked(true);
                         systemStateText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.red));
                     } else if (DISARMED.equals(serverStatus.getSystemState())) {
+                        systemState.setChecked(false);
                         systemStateText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green));
                     } else {
+                        systemState.setChecked(false);
                         systemStateText.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.blue));
                     }
                 }

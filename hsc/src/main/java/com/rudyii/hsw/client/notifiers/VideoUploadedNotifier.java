@@ -16,31 +16,31 @@ import android.net.Uri;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.FileProvider;
 
-import com.rudyii.hs.common.objects.message.VideoUploadedMessage;
+import com.rudyii.hs.common.objects.logs.UploadLog;
 import com.rudyii.hsw.client.BuildConfig;
 import com.rudyii.hsw.client.R;
 
 import java.io.File;
 
 public class VideoUploadedNotifier {
-    public VideoUploadedNotifier(Context context, VideoUploadedMessage videoUploadedMessage) {
+    public VideoUploadedNotifier(Context context, UploadLog uploadLog, String serverAlias, long when) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_NORMAL)
                 .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle(String.format(currentLocale, "%s: %s",
-                        videoUploadedMessage.getServerAlias(),
+                        serverAlias,
                         context.getResources().getString(R.string.notif_text_video_uploaded)))
-                .setContentText(videoUploadedMessage.getFileName())
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(getCurrentTimeAndDateDoubleDotsDelimFrom(videoUploadedMessage.getPublishedAt())))
+                .setContentText(uploadLog.getFileName())
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(getCurrentTimeAndDateDoubleDotsDelimFrom(when)))
                 .setAutoCancel(true)
-                .setWhen(videoUploadedMessage.getPublishedAt())
+                .setWhen(when)
                 .setVibrate(new long[]{0, 200, 200, 200, 200, 200});
 
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(videoUploadedMessage.getVideoUrl()));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uploadLog.getVideoUrl()));
         File outputDir = getAppContext().getCacheDir();
         try {
-            File outputFile = File.createTempFile(String.valueOf(videoUploadedMessage.getPublishedAt()), ".mp4", outputDir);
+            File outputFile = File.createTempFile(String.valueOf(when), ".mp4", outputDir);
             if (outputFile.length() == 0) {
-                saveDataFromUrl(videoUploadedMessage.getVideoUrl(), outputFile);
+                saveDataFromUrl(uploadLog.getVideoUrl(), outputFile);
             }
             intent = new Intent(Intent.ACTION_VIEW, FileProvider.getUriForFile(getAppContext(), BuildConfig.APPLICATION_ID + ".provider", outputFile));
         } catch (Exception e) {

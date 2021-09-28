@@ -1,5 +1,7 @@
 package com.rudyii.hsw.client.activities;
 
+import static com.rudyii.hsw.client.helpers.Utils.currentLocale;
+
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -21,15 +23,17 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
 
         String applicationVersion = "0";
+        int applicationBuild = 0;
         try {
             PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
 
             applicationVersion = pInfo.versionName;
+            applicationBuild = pInfo.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
 
         TextView aboutTextView = findViewById(R.id.aboutTextView);
-        aboutTextView.setText(String.format(getResources().getString(R.string.text_about), applicationVersion));
+        aboutTextView.setText(String.format(currentLocale, getResources().getString(R.string.text_about), applicationVersion, applicationBuild));
     }
 }

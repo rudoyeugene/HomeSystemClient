@@ -12,7 +12,7 @@ import static com.rudyii.hsw.client.helpers.Utils.removeServerByKey;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.addOrUpdateServer;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.deleteIdFromSettings;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getAllServers;
-import static com.rudyii.hsw.client.providers.DatabaseProvider.saveIntegerValueToSettings;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.saveIntegerValueToSettingsStorage;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.setOrUpdateActiveServer;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getActiveServerRootReference;
 
@@ -232,7 +232,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         if (globalSettingsChangeId != currentGlobalSettingsChangeId) {
-            saveIntegerValueToSettings(DELAYED_ARM_DELAY_SECS, globalSettingsCopy.getDelayedArmTimeout());
+            saveIntegerValueToSettingsStorage(DELAYED_ARM_DELAY_SECS, globalSettingsCopy.getDelayedArmTimeout());
             optionsReference.setValue(globalSettingsCopy);
         }
     }

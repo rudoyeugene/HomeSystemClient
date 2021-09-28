@@ -12,7 +12,6 @@ import com.rudyii.hsw.client.objects.internal.ServerData;
  */
 
 public class FirebaseDatabaseProvider {
-    private static final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
     public static DatabaseReference getActiveServerRootReference() {
         ServerData activeServer = getActiveServer();
@@ -23,17 +22,13 @@ public class FirebaseDatabaseProvider {
         }
 
         if (stringIsEmptyOrNull(serverKey)) {
-            return firebaseDatabase.getReference("nullReference");
+            return FirebaseDatabase.getInstance().getReference("nullReference");
         } else {
-            return firebaseDatabase.getReference(serverKey);
+            return FirebaseDatabase.getInstance().getReference(serverKey);
         }
     }
 
     public static DatabaseReference getCustomRootReference(String serverKey) {
-        return firebaseDatabase.getReference(serverKey);
-    }
-
-    public static DatabaseReference getActiveServerRootReference(String ref) {
-        return firebaseDatabase.getReference(ref);
+        return FirebaseDatabase.getInstance().getReference(serverKey);
     }
 }

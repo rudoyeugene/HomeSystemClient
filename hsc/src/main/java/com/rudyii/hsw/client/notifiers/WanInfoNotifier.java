@@ -11,7 +11,7 @@ import android.content.Intent;
 
 import androidx.core.app.NotificationCompat;
 
-import com.rudyii.hs.common.objects.message.IspChangedMessage;
+import com.rudyii.hs.common.objects.logs.IspLog;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.activities.MainActivity;
 
@@ -20,24 +20,24 @@ import com.rudyii.hsw.client.activities.MainActivity;
  */
 
 public class WanInfoNotifier {
-    public WanInfoNotifier(Context context, IspChangedMessage ispChangedMessage) {
+    public WanInfoNotifier(Context context, IspLog ispLog, String serverAlias, long when) {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_HIGH)
                 .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle(String.format(currentLocale, "%s %s",
-                        ispChangedMessage.getServerAlias(),
+                        serverAlias,
                         context.getResources().getString(R.string.notif_text_isp_changed)))
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(String.format(currentLocale, "%s: %s\n%s: %s",
                                 context.getResources().getString(R.string.notif_text_current_isp),
-                                ispChangedMessage.getIspName(),
+                                ispLog.getIspName(),
                                 context.getResources().getString(R.string.notif_text_current_ip),
-                                ispChangedMessage.getExternalIp())))
+                                ispLog.getIspIp())))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
-                .setWhen(ispChangedMessage.getPublishedAt())
+                .setWhen(when)
                 .setVibrate(new long[]{0, 500});
 
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

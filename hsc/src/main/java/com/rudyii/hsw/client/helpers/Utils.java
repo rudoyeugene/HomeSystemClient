@@ -5,9 +5,10 @@ import static com.rudyii.hsw.client.HomeSystemClientApplication.TAG;
 import static com.rudyii.hsw.client.HomeSystemClientApplication.getAppContext;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.addOrUpdateServer;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.getAllServers;
-import static com.rudyii.hsw.client.providers.DatabaseProvider.getStringValueFromSettings;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.readStringValueFromSettingsStorage;
 import static com.rudyii.hsw.client.providers.DatabaseProvider.setOrUpdateActiveServer;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getCustomRootReference;
+import static com.rudyii.hsw.client.services.FCMMessagingService.FCM_TOKEN;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -54,10 +55,8 @@ import java.util.TimeZone;
 public class Utils {
     public static final String DELAYED_ARM_DELAY_SECS = "DELAYED_ARM_DELAY_SECS";
     public static final String ACTIVE_SERVER = "ACTIVE_SERVER";
-    public static final String CAMERA_APP = "CAMERA_APP";
     public static final Locale currentLocale = getAppContext().getResources().getConfiguration().getLocales().get(0);
     private static final Gson gson = new Gson();
-    private static final String INSTALLATION_ID = "INSTALLATION_ID";
     private static HandlerThread handlerThread;
 
     public static String getCurrentTimeAndDateDoubleDotsDelimFrom(Long timeStamp) {
@@ -96,11 +95,11 @@ public class Utils {
         }
     }
 
-    public static void registerUserDataOnServers(String token) {
-        getAllServers().values().forEach(serverData -> registerUserDataOnServer(serverData, token));
+    public static void registerUserDataOnServers() {
+        getAllServers().values().forEach(Utils::registerUserDataOnServer);
     }
 
-    public static void registerUserDataOnServer(ServerData serverData, String token) {
+    public static void registerUserDataOnServer(ServerData serverData) {
         String simplifiedPrimaryAccountName = getSimplifiedPrimaryAccountName();
 
         PackageInfo pInfo;
@@ -116,7 +115,7 @@ public class Utils {
                 .appVersion(version)
                 .device(android.os.Build.MODEL)
                 .email(getPrimaryAccountEmail())
-                .token(token)
+                .token(readStringValueFromSettingsStorage(FCM_TOKEN))
                 .hourlyReportEnabled(serverData.isHourlyReportEnabled())
                 .lastRegistration(System.currentTimeMillis())
                 .notificationType(NotificationType.valueOf(serverData.getNotificationType().name()))
@@ -126,16 +125,7 @@ public class Utils {
     }
 
     public static String getSimplifiedPrimaryAccountName() {
-        Account[] accounts = getAccounts();
-        String simplifiedAccountName = "";
-
-        if (accounts.length > 0) {
-            Account mainAccount = accounts[0];
-            simplifiedAccountName = mainAccount.name.split("@")[0].replace(".", "");
-
-        }
-
-        return simplifiedAccountName;
+        return getPrimaryAccountEmail().split("@")[0].replace(".", "");
     }
 
     public static String getPrimaryAccountEmail() {
@@ -153,16 +143,12 @@ public class Utils {
         return string == null || "".equalsIgnoreCase(string);
     }
 
-    public static boolean stringIsNotEmptyOrNull(String string) {
-        return !stringIsEmptyOrNull(string);
-    }
-
     public static void removeServerByKey(String serverKey) {
         DatabaseProvider.removeServer(serverKey);
     }
 
     public static ServerData getActiveServer() {
-        return buildFromRawJson(getStringValueFromSettings(ACTIVE_SERVER), ServerData.class);
+        return buildFromRawJson(readStringValueFromSettingsStorage(ACTIVE_SERVER), ServerData.class);
     }
 
     public static void updateServer(ServerData serverData) {
@@ -270,5 +256,4 @@ public class Utils {
 
         return stringBuilder.toString();
     }
-
 }

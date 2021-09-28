@@ -1,21 +1,27 @@
 package com.rudyii.hsw.client.services;
 
-import static com.rudyii.hsw.client.HomeSystemClientApplication.updateToken;
+import static com.rudyii.hs.common.names.FirebaseNameSpaces.LOG_ROOT;
 import static com.rudyii.hsw.client.helpers.Utils.buildFromStringMap;
 import static com.rudyii.hsw.client.helpers.Utils.registerUserDataOnServers;
+import static com.rudyii.hsw.client.providers.DatabaseProvider.saveStringValueToSettingsStorage;
+import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getCustomRootReference;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.rudyii.hs.common.objects.message.CameraRebootMessage;
-import com.rudyii.hs.common.objects.message.IspChangedMessage;
-import com.rudyii.hs.common.objects.message.MessageBase;
-import com.rudyii.hs.common.objects.message.MotionDetectedMessage;
-import com.rudyii.hs.common.objects.message.ServerStartedStoppedMessage;
-import com.rudyii.hs.common.objects.message.SimpleWatchMessage;
-import com.rudyii.hs.common.objects.message.StateChangedMessage;
-import com.rudyii.hs.common.objects.message.VideoUploadedMessage;
+import com.rudyii.hs.common.objects.logs.CameraRebootLog;
+import com.rudyii.hs.common.objects.logs.IspLog;
+import com.rudyii.hs.common.objects.logs.LogBase;
+import com.rudyii.hs.common.objects.logs.MotionLog;
+import com.rudyii.hs.common.objects.logs.SimpleWatcherLog;
+import com.rudyii.hs.common.objects.logs.StartStopLog;
+import com.rudyii.hs.common.objects.logs.StateChangedLog;
+import com.rudyii.hs.common.objects.logs.UploadLog;
+import com.rudyii.hs.common.objects.message.FcmMessage;
 import com.rudyii.hsw.client.notifiers.CameraRebootNotifier;
 import com.rudyii.hsw.client.notifiers.MotionDetectedNotifier;
 import com.rudyii.hsw.client.notifiers.ServerStartupShutdownNotifier;
@@ -31,53 +37,72 @@ import java.util.Map;
  */
 
 public class FCMMessagingService extends FirebaseMessagingService {
+    public static final String FCM_TOKEN = "FCM_TOKEN";
+
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
-        updateToken(token);
-        registerUserDataOnServers(token);
+        saveStringValueToSettingsStorage(FCM_TOKEN, token);
+        registerUserDataOnServers();
     }
 
     @Override
     public void onMessageReceived(RemoteMessage message) {
         Map<String, String> objectProps = message.getData();
-        MessageBase messageBase = buildFromStringMap(objectProps, MessageBase.class);
+        FcmMessage fcmMessage = buildFromStringMap(objectProps, FcmMessage.class);
+        String serverAlias = fcmMessage.getServerAlias();
+        Long when = fcmMessage.getPublishedAt();
 
-        switch (messageBase.getMessageType()) {
-            case STATE_CHANGED:
-                StateChangedMessage stateChangedMessage = buildFromStringMap(objectProps, StateChangedMessage.class);
-                new StatusChangedNotifier(getApplicationContext(), stateChangedMessage);
-                break;
+        getCustomRootReference(fcmMessage.getServerKey()).child(LOG_ROOT).child(fcmMessage.getPublishedAt() + "").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    LogBase logBase = snapshot.getValue(LogBase.class);
 
-            case MOTION_DETECTED:
-                MotionDetectedMessage motionDetectedMessage = buildFromStringMap(objectProps, MotionDetectedMessage.class);
-                new MotionDetectedNotifier(getApplicationContext(), motionDetectedMessage);
-                break;
+                    switch (logBase.getLogType()) {
+                        case STATE_CHANGED:
+                            StateChangedLog stateChangedLog = snapshot.getValue(StateChangedLog.class);
+                            new StatusChangedNotifier(getApplicationContext(), stateChangedLog, serverAlias, when);
+                            break;
 
-            case RECORD_UPLOADED:
-                VideoUploadedMessage videoUploadedMessage = buildFromStringMap(objectProps, VideoUploadedMessage.class);
-                new VideoUploadedNotifier(getApplicationContext(), videoUploadedMessage);
-                break;
+                        case MOTION_DETECTED:
+                            MotionLog motionLog = snapshot.getValue(MotionLog.class);
+                            new MotionDetectedNotifier(getApplicationContext(), motionLog, serverAlias, when);
+                            break;
 
-            case ISP_CHANGED:
-                IspChangedMessage ispChangedMessage = buildFromStringMap(objectProps, IspChangedMessage.class);
-                new WanInfoNotifier(getApplicationContext(), ispChangedMessage);
-                break;
+                        case RECORD_UPLOADED:
+                            UploadLog uploadLog = snapshot.getValue(UploadLog.class);
+                            new VideoUploadedNotifier(getApplicationContext(), uploadLog, serverAlias, when);
+                            break;
 
-            case CAMERA_REBOOTED:
-                CameraRebootMessage cameraRebootMessage = buildFromStringMap(objectProps, CameraRebootMessage.class);
-                new CameraRebootNotifier(getApplicationContext(), cameraRebootMessage);
-                break;
+                        case ISP_CHANGED:
+                            IspLog ispLog = snapshot.getValue(IspLog.class);
+                            new WanInfoNotifier(getApplicationContext(), ispLog, serverAlias, when);
+                            break;
 
-            case SIMPLE_WATCHER_FIRED:
-                SimpleWatchMessage simpleWatchMessage = buildFromStringMap(objectProps, SimpleWatchMessage.class);
-                new SimpleNotifier(getApplicationContext(), simpleWatchMessage);
-                break;
+                        case CAMERA_REBOOTED:
+                            CameraRebootLog cameraRebootLog = snapshot.getValue(CameraRebootLog.class);
+                            new CameraRebootNotifier(getApplicationContext(), cameraRebootLog, serverAlias, when);
+                            break;
 
-            case SERVER_START_STOP:
-                ServerStartedStoppedMessage serverStartedStoppedMessage = buildFromStringMap(objectProps, ServerStartedStoppedMessage.class);
-                new ServerStartupShutdownNotifier(getApplicationContext(), serverStartedStoppedMessage);
-                break;
-        }
+                        case SIMPLE_WATCHER_FIRED:
+                            SimpleWatcherLog simpleWatcherLog = snapshot.getValue(SimpleWatcherLog.class);
+                            new SimpleNotifier(getApplicationContext(), simpleWatcherLog, serverAlias, when);
+                            break;
+
+                        case SERVER_START_STOP:
+                            StartStopLog startStopLog = snapshot.getValue(StartStopLog.class);
+                            new ServerStartupShutdownNotifier(getApplicationContext(), startStopLog, serverAlias, when);
+                            break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 }

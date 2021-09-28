@@ -17,7 +17,7 @@ import android.net.Uri;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.FileProvider;
 
-import com.rudyii.hs.common.objects.message.MotionDetectedMessage;
+import com.rudyii.hs.common.objects.logs.MotionLog;
 import com.rudyii.hsw.client.BuildConfig;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.helpers.ToastDrawer;
@@ -31,24 +31,24 @@ import java.io.IOException;
  */
 
 public class MotionDetectedNotifier {
-    public MotionDetectedNotifier(Context context, MotionDetectedMessage motionDetectedMessage) {
-        Bitmap motionImage = readImageFromUrl(motionDetectedMessage.getImageUrl());
+    public MotionDetectedNotifier(Context context, MotionLog motionLog, String serverAlias, long when) {
+        Bitmap motionImage = readImageFromUrl(motionLog.getImageUrl());
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_HIGH)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle(motionDetectedMessage.getServerAlias())
+                .setContentTitle(serverAlias)
                 .setContentText(String.format(currentLocale, "%s: %d %%, %s",
-                        motionDetectedMessage.getCameraName(),
-                        motionDetectedMessage.getMotionArea(),
-                        getCurrentTimeAndDateDoubleDotsDelimFrom(motionDetectedMessage.getPublishedAt())))
+                        motionLog.getCameraName(),
+                        motionLog.getMotionArea(),
+                        getCurrentTimeAndDateDoubleDotsDelimFrom(when)))
                 .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(motionImage))
                 .setAutoCancel(true)
-                .setWhen(motionDetectedMessage.getPublishedAt())
+                .setWhen(when)
                 .setVibrate(new long[]{0, 200, 200, 200, 200, 200});
 
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(motionDetectedMessage.getImageUrl()));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(motionLog.getImageUrl()));
         File outputDir = getAppContext().getCacheDir();
         try {
-            File outputFile = File.createTempFile(String.valueOf(motionDetectedMessage.getPublishedAt()), ".jpg", outputDir);
+            File outputFile = File.createTempFile(String.valueOf(when), ".jpg", outputDir);
             if (outputFile.length() == 0) {
                 FileOutputStream fos = new FileOutputStream(outputFile);
                 motionImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);

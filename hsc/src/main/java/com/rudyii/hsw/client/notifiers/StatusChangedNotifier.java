@@ -11,7 +11,7 @@ import android.content.Intent;
 
 import androidx.core.app.NotificationCompat;
 
-import com.rudyii.hs.common.objects.message.StateChangedMessage;
+import com.rudyii.hs.common.objects.logs.StateChangedLog;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.activities.MainActivity;
 
@@ -20,20 +20,20 @@ import com.rudyii.hsw.client.activities.MainActivity;
  */
 
 public class StatusChangedNotifier {
-    public StatusChangedNotifier(Context context, StateChangedMessage stateChangedMessage) {
+    public StatusChangedNotifier(Context context, StateChangedLog stateChangedLog, String serverAlias, Long when) {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_NORMAL)
                 .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle(String.format(currentLocale, "%s: %s>%s",
-                        stateChangedMessage.getServerAlias(),
-                        stateChangedMessage.getSystemMode(),
-                        stateChangedMessage.getSystemState()))
-                .setContentText(stateChangedMessage.getBy())
+                        serverAlias,
+                        stateChangedLog.getSystemMode(),
+                        stateChangedLog.getSystemState()))
+                .setContentText(stateChangedLog.getBy())
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
-                .setWhen(stateChangedMessage.getPublishedAt())
+                .setWhen(when)
                 .setVibrate(new long[]{0, 500});
 
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

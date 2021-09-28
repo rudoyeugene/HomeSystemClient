@@ -11,7 +11,7 @@ import android.content.Intent;
 
 import androidx.core.app.NotificationCompat;
 
-import com.rudyii.hs.common.objects.message.SimpleWatchMessage;
+import com.rudyii.hs.common.objects.logs.SimpleWatcherLog;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.activities.MainActivity;
 
@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 public class SimpleNotifier {
-    public SimpleNotifier(Context context, SimpleWatchMessage simpleWatchMessage) {
+    public SimpleNotifier(Context context, SimpleWatcherLog simpleWatcherLog, String serverAlias, long when) {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -27,12 +27,12 @@ public class SimpleNotifier {
                 .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle(String.format(currentLocale, "%s: %s",
                         context.getResources().getString(R.string.notif_text_simple_event),
-                        simpleWatchMessage.getServerAlias()))
+                        serverAlias))
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(new String(Base64.getDecoder().decode(simpleWatchMessage.getEncodedText()), StandardCharsets.UTF_8)))
+                        .bigText(new String(Base64.getDecoder().decode(simpleWatcherLog.getBase64EncodedText()), StandardCharsets.UTF_8)))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
-                .setWhen(simpleWatchMessage.getPublishedAt())
+                .setWhen(when)
                 .setVibrate(new long[]{0, 500});
 
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

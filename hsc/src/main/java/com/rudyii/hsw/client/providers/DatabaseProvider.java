@@ -41,7 +41,7 @@ public class DatabaseProvider {
         return writableDB;
     }
 
-    public static void saveStringValueToSettings(String id, String value) {
+    public static void saveStringValueToSettingsStorage(String id, String value) {
         ContentValues values = new ContentValues();
 
         values.put("_ID", id);
@@ -50,7 +50,7 @@ public class DatabaseProvider {
         getWritableDatabase().insertWithOnConflict(SETTINGS_TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
-    public static void saveIntegerValueToSettings(String id, int value) {
+    public static void saveIntegerValueToSettingsStorage(String id, int value) {
         ContentValues values = new ContentValues();
 
         values.put("_ID", id);
@@ -78,22 +78,6 @@ public class DatabaseProvider {
 
     }
 
-    public static ServerData getServer(String serverKey) {
-        String result = null;
-
-        Cursor cursor = getReadableDatabase().rawQuery("SELECT VALUE FROM " + SERVERS_TABLE + " WHERE _ID = ?", new String[]{serverKey});
-        if (cursor.moveToFirst()) {
-            result = cursor.getString(0);
-        }
-        cursor.close();
-
-        if (result == null) {
-            return ServerData.builder().build();
-        } else {
-            return buildFromRawJson(result, ServerData.class);
-        }
-    }
-
     public static Map<String, ServerData> getAllServers() {
         Map<String, ServerData> result = new HashMap<>();
 
@@ -113,10 +97,9 @@ public class DatabaseProvider {
 
     public static void removeServer(String serverKey) {
         getReadableDatabase().delete(SERVERS_TABLE, "_ID = ?", new String[]{serverKey});
-
     }
 
-    public static String getStringValueFromSettings(String id) {
+    public static String readStringValueFromSettingsStorage(String id) {
         String result = "";
 
         Cursor cursor = getReadableDatabase().rawQuery("SELECT VALUE FROM " + SETTINGS_TABLE + " WHERE _ID = ?", new String[]{id});
@@ -132,28 +115,7 @@ public class DatabaseProvider {
         }
     }
 
-    public static void saveLongValueToSettings(String id, Long value) {
-        ContentValues values = new ContentValues();
-
-        values.put("_ID", id);
-        values.put("VALUE", value);
-
-        getWritableDatabase().insertWithOnConflict(SETTINGS_TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-    }
-
-    public static Long getLongValueFromSettings(String id) {
-        long result = 0L;
-
-        Cursor cursor = getReadableDatabase().rawQuery("SELECT VALUE FROM " + SETTINGS_TABLE + " WHERE _ID = ?", new String[]{id});
-        if (cursor.moveToFirst()) {
-            result = cursor.getLong(0);
-        }
-        cursor.close();
-
-        return result;
-    }
-
-    public static int getIntValueFromSettings(String id) {
+    public static int getIntValueFromSettingsStorage(String id) {
         int result = 0;
 
         Cursor cursor = getReadableDatabase().rawQuery("SELECT VALUE FROM " + SETTINGS_TABLE + " WHERE _ID = ?", new String[]{id});

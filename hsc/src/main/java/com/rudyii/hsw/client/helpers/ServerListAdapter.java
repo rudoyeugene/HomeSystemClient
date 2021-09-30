@@ -49,10 +49,10 @@ public class ServerListAdapter extends BaseAdapter implements ListAdapter {
             view = inflater.inflate(R.layout.servers_list, null);
         }
 
-        Button serverButton = (Button) view.findViewById(R.id.btn);
+        Button button = view.findViewById(R.id.btn);
 
-        serverButton.setText(serverData.getServerAlias());
-        serverButton.setOnClickListener(v -> {
+        button.setText(serverData.getServerAlias());
+        button.setOnClickListener(v -> {
             setOrUpdateActiveServer(serverData);
             ((Activity) context).finish();
         });

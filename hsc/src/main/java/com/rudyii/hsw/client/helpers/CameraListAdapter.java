@@ -52,10 +52,10 @@ public class CameraListAdapter extends BaseAdapter implements ListAdapter {
             view = inflater.inflate(R.layout.servers_list, null);
         }
 
-        Button cameraButton = view.findViewById(R.id.btn);
+        Button button = view.findViewById(R.id.btn);
 
-        cameraButton.setText(cameraSettingsInternal.getCameraName());
-        cameraButton.setOnClickListener(v -> {
+        button.setText(cameraSettingsInternal.getCameraName());
+        button.setOnClickListener(v -> {
             Intent myIntent = new Intent(getAppContext(), CameraSettingsActivity.class);
             myIntent.putExtra(CAMERA_SETTINSG_EXTRA_DATA_NAME, writeJson(cameraSettingsInternal));
             myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

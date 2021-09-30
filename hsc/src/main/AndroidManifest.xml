@@ -137,6 +137,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
 
+        <activity
+            android:name=".activities.SelectModeAndStateActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
+
         <receiver
             android:name=".broadcasting.receivers.BootCompleted"
             android:exported="true">

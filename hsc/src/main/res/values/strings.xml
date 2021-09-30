@@ -33,6 +33,7 @@
 
     <string name="please_select_active_server">Please select active server</string>
     <string name="please_select_camera">Please select Camera</string>
+    <string name="please_select_desired_system_mode_and_state">Please select System Mode</string>
 
     <string name="shortcut_arm">Arm</string>
     <string name="shortcut_arm_activity_text">Requested system switch to MANUAL:ARM, you\'ll be notified</string>

@@ -33,6 +33,7 @@
 
     <string name="please_select_active_server">Выберите активный Сервер</string>
     <string name="please_select_camera">Выберите Камеру</string>
+    <string name="please_select_desired_system_mode_and_state">Выберите Режим</string>
 
     <string name="shortcut_arm">Включить</string>
     <string name="shortcut_arm_activity_text">Запрошено переключение в РУЧНОЙ:ВКЛЮЧЕН режим, Вы будете уведомлены</string>

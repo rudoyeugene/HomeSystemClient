@@ -58,7 +58,7 @@ public class ShortcutsActionProcessor extends AppCompatActivity {
 
             case "com.rudyii.hsw.client.AUTO":
                 stateRequest.put("armedMode", "AUTOMATIC");
-                stateRequest.put("armedState", "AUTO");
+                stateRequest.put("armedState", "RES");
                 shortcutsActivityDialogText.setText(getResources().getString(R.string.shortcut_auto_activity_text));
                 break;
         }

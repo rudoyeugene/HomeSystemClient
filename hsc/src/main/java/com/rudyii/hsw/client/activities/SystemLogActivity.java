@@ -6,6 +6,7 @@ import static com.rudyii.hsw.client.helpers.Utils.buildFromPropertiesMap;
 import static com.rudyii.hsw.client.helpers.Utils.currentLocale;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDotsDelimFrom;
 import static com.rudyii.hsw.client.helpers.Utils.getLooper;
+import static com.rudyii.hsw.client.helpers.Utils.getServerStateTypeLocalized;
 import static com.rudyii.hsw.client.helpers.Utils.getSystemModeLocalized;
 import static com.rudyii.hsw.client.helpers.Utils.getSystemStateLocalized;
 import static com.rudyii.hsw.client.helpers.Utils.readImageFromUrl;
@@ -325,12 +326,12 @@ public class SystemLogActivity extends AppCompatActivity {
                 switch (startStopLog.getServerState()) {
                     case STARTED:
                         image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_server_started);
-                        description = String.format(currentLocale, "%s, PID: %d", startStopLog.getServerState(), startStopLog.getPid());
+                        description = String.format(currentLocale, "%s, PID: %d", getServerStateTypeLocalized(startStopLog.getServerState()), startStopLog.getPid());
                         break;
 
                     case STOPPED:
                         image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_server_stopped);
-                        description = startStopLog.getServerState().name();
+                        description = getServerStateTypeLocalized(startStopLog.getServerState());
                         break;
                 }
                 break;

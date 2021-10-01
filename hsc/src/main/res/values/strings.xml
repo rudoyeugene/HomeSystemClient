@@ -60,6 +60,7 @@
     <string name="text_delayed_arm">Arm later</string>
     <string name="text_health_check_switch">Enable health check</string>
     <string name="text_horly_report_button">Hourly\nreport</string>
+    <string name="text_in_upper_unknown">UKNOWN</string>
     <string name="text_info_sound">Info sound</string>
     <string name="text_last_session_duration">Last session:</string>
     <string name="text_log_button">Log</string>
@@ -80,11 +81,18 @@
     <string name="text_retrieving_data">retrieving data</string>
     <string name="text_seconds">seconds</string>
     <string name="text_server_ping">Last time online:</string>
+    <string name="text_server_started">STARETD</string>
+    <string name="text_server_stopped">STOPPED</string>
     <string name="text_server_uptime">Server uptime:</string>
     <string name="text_server_version">Server version:</string>
     <string name="text_settings">Settings</string>
     <string name="text_stats_button">Statistics</string>
     <string name="text_system_log_is_empty">System log is empty</string>
+    <string name="text_system_mode_automatic">Auto</string>
+    <string name="text_system_mode_manual">Manual</string>
+    <string name="text_system_state_armed">Armed</string>
+    <string name="text_system_state_disarmed">Disarmed</string>
+    <string name="text_system_state_resolving">Resolving</string>
     <string name="text_textViewForSwitchCollectStats">Collect stats if ARMED</string>
     <string name="text_textViewForSwitchHourlyReportEnabled">Send hourly report if ARMED</string>
     <string name="text_textViewForSwitchHourlyReportForced">Always send hourly report</string>
@@ -109,11 +117,4 @@
     <string name="toast_server_unpair_failure">Unpairing failed</string>
     <string name="toast_server_unpair_success">Unpairing success</string>
     <string name="toast_text_data_unavailable">Data unavailable</string>
-
-    <string name="toggle_button_text_system_mode_automatic">Auto</string>
-    <string name="toggle_button_text_system_mode_manual">Manual</string>
-    <string name="toggle_button_text_system_mode_or_state_uknown">UKNOWN</string>
-    <string name="toggle_button_text_system_state_armed">Armed</string>
-    <string name="toggle_button_text_system_state_disarmed">Disarmed</string>
-    <string name="toggle_button_text_system_state_resolving">Resolving</string>
 </resources>

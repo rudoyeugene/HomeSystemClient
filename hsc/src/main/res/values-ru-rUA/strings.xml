@@ -59,6 +59,7 @@
     <string name="text_delayed_arm">Включить с задержкой</string>
     <string name="text_health_check_switch">Мониторинг здоровья</string>
     <string name="text_horly_report_button">Отчеты</string>
+    <string name="text_in_upper_unknown">Неизвестно</string>
     <string name="text_info_sound">Звук уведомления</string>
     <string name="text_last_session_duration">Последняя сессия:</string>
     <string name="text_log_button">Журнал</string>
@@ -79,11 +80,18 @@
     <string name="text_retrieving_data">получаем данные</string>
     <string name="text_seconds">\u0020секунд</string>
     <string name="text_server_ping">Последний раз в сети:</string>
+    <string name="text_server_started">Запущен</string>
+    <string name="text_server_stopped">Остановлен</string>
     <string name="text_server_uptime">Время в работе:</string>
     <string name="text_server_version">Версия сервера:</string>
     <string name="text_settings">Настройки</string>
     <string name="text_stats_button">График</string>
     <string name="text_system_log_is_empty">Системный журнал пуст</string>
+    <string name="text_system_mode_automatic">Авто</string>
+    <string name="text_system_mode_manual">Ручной</string>
+    <string name="text_system_state_armed">Включен</string>
+    <string name="text_system_state_disarmed">Выключен</string>
+    <string name="text_system_state_resolving">Выясняем</string>
     <string name="text_textViewForSwitchCollectStats">Собирать статистику если ВКЛЮЧЕН</string>
     <string name="text_textViewForSwitchHourlyReportEnabled">Отправлять ежечасный отчет если ВКЛЮЧЕН</string>
     <string name="text_textViewForSwitchHourlyReportForced">Всегда отправлять ежечасный отчет</string>
@@ -108,11 +116,4 @@
     <string name="toast_server_unpair_failure">Отсоединение не удалось</string>
     <string name="toast_server_unpair_success">Отсоединение удалось</string>
     <string name="toast_text_data_unavailable">Данные недоступны</string>
-
-    <string name="toggle_button_text_system_mode_automatic">Авто</string>
-    <string name="toggle_button_text_system_mode_manual">Ручной</string>
-    <string name="toggle_button_text_system_mode_or_state_uknown">Неизвестно</string>
-    <string name="toggle_button_text_system_state_armed">Включен</string>
-    <string name="toggle_button_text_system_state_disarmed">Выключен</string>
-    <string name="toggle_button_text_system_state_resolving">Выясняем</string>
 </resources>

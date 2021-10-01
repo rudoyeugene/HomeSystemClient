@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 import com.rudyii.hs.common.objects.ConnectedClient;
 import com.rudyii.hs.common.type.NotificationType;
+import com.rudyii.hs.common.type.ServerStateType;
 import com.rudyii.hs.common.type.SystemModeType;
 import com.rudyii.hs.common.type.SystemStateType;
 import com.rudyii.hsw.client.R;
@@ -74,24 +75,35 @@ public class Utils {
     public static String getSystemModeLocalized(SystemModeType systemModeType) {
         switch (systemModeType) {
             case AUTOMATIC:
-                return getAppContext().getString(R.string.toggle_button_text_system_mode_automatic);
+                return getAppContext().getString(R.string.text_system_mode_automatic);
             case MANUAL:
-                return getAppContext().getString(R.string.toggle_button_text_system_mode_manual);
+                return getAppContext().getString(R.string.text_system_mode_manual);
             default:
-                return getAppContext().getString(R.string.toggle_button_text_system_mode_or_state_uknown);
+                return getAppContext().getString(R.string.text_in_upper_unknown);
         }
     }
 
     public static String getSystemStateLocalized(SystemStateType systemStateType) {
         switch (systemStateType) {
             case ARMED:
-                return getAppContext().getString(R.string.toggle_button_text_system_state_armed);
+                return getAppContext().getString(R.string.text_system_state_armed);
             case DISARMED:
-                return getAppContext().getString(R.string.toggle_button_text_system_state_disarmed);
+                return getAppContext().getString(R.string.text_system_state_disarmed);
             case RESOLVING:
-                return getAppContext().getString(R.string.toggle_button_text_system_state_resolving);
+                return getAppContext().getString(R.string.text_system_state_resolving);
             default:
-                return getAppContext().getString(R.string.toggle_button_text_system_mode_or_state_uknown);
+                return getAppContext().getString(R.string.text_in_upper_unknown);
+        }
+    }
+
+    public static String getServerStateTypeLocalized(ServerStateType serverStateType) {
+        switch (serverStateType) {
+            case STARTED:
+                return getAppContext().getString(R.string.text_server_started);
+            case STOPPED:
+                return getAppContext().getString(R.string.text_server_stopped);
+            default:
+                return "";
         }
     }
 

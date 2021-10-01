@@ -3,6 +3,7 @@ package com.rudyii.hsw.client.notifiers;
 import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_NORMAL;
 import static com.rudyii.hsw.client.helpers.Utils.currentLocale;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDotsDelimFrom;
+import static com.rudyii.hsw.client.helpers.Utils.getServerStateTypeLocalized;
 import static java.util.Objects.requireNonNull;
 
 import android.app.NotificationManager;
@@ -29,7 +30,7 @@ public class ServerStartupShutdownNotifier {
                 .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle(String.format(currentLocale, "%s: %s",
                         serverAlias,
-                        startStopLog.getServerState()))
+                        getServerStateTypeLocalized(startStopLog.getServerState())))
                 .setContentText(String.format(currentLocale, "%s",
                         getCurrentTimeAndDateDoubleDotsDelimFrom(when)))
                 .setAutoCancel(true)

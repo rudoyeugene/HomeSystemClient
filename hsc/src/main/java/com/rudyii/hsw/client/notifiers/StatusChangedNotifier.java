@@ -2,6 +2,8 @@ package com.rudyii.hsw.client.notifiers;
 
 import static com.rudyii.hsw.client.helpers.NotificationChannelsBuilder.NOTIFICATION_CHANNEL_NORMAL;
 import static com.rudyii.hsw.client.helpers.Utils.currentLocale;
+import static com.rudyii.hsw.client.helpers.Utils.getSystemModeLocalized;
+import static com.rudyii.hsw.client.helpers.Utils.getSystemStateLocalized;
 import static java.util.Objects.requireNonNull;
 
 import android.app.NotificationManager;
@@ -28,8 +30,8 @@ public class StatusChangedNotifier {
                 .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle(String.format(currentLocale, "%s: %s>%s",
                         serverAlias,
-                        stateChangedLog.getSystemMode(),
-                        stateChangedLog.getSystemState()))
+                        getSystemModeLocalized(stateChangedLog.getSystemMode()),
+                        getSystemStateLocalized(stateChangedLog.getSystemState())))
                 .setContentText(stateChangedLog.getBy())
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)

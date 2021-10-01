@@ -28,7 +28,7 @@
     <string name="notif_text_current_isp">Текущий провайдер</string>
     <string name="notif_text_delayed_arm">Система будет включена через</string>
     <string name="notif_text_isp_changed">Провайдер изменен</string>
-    <string name="notif_text_simple_event">Уведомление от:\u0020</string>
+    <string name="notif_text_simple_event">Уведомление от</string>
     <string name="notif_text_video_uploaded">Загружено новое видео</string>
 
     <string name="please_select_active_server">Выберите активный Сервер</string>
@@ -42,7 +42,7 @@
     <string name="shortcut_disarm">Выключить</string>
     <string name="shortcut_disarm_activity_text">Запрошено переключение в РУЧНОЙ:ВЫКЛЮЧЕН режим, Вы будете уведомлены</string>
 
-    <string name="switched_active_server_to">Активирован Сервер:\u0020</string>
+    <string name="switched_active_server_to">Активирован Сервер</string>
 
     <string name="text_about">Home System Client версия %s сборка %d\n\n
         Данное Приложение распространяется как-есть, Автор не несет никакой ответственности в случае если по вине данного Приложения случилось происшествие.\n
@@ -51,7 +51,6 @@
         Это Приложение может содержать некоторые ошибки, чем раньше Вы сообщите о них Автору тем быстрее Автор их исправит.</string>
     <string name="text_armed_mode">Режим</string>
     <string name="text_armed_state">Состояние</string>
-    <string name="text_bar_data_usage_for" formatted="true">за %02d %s</string>
     <string name="text_camera_app_text">Открыть приложение для камер</string>
     <string name="text_camera_settings">Настроить камеры</string>
     <string name="text_current_server">Текущий Сервер:</string>

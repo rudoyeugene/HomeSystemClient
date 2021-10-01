@@ -37,6 +37,7 @@ public class UsageChartActivity extends AppCompatActivity {
 
         AnyChartView anyChartView = findViewById(R.id.usageChart);
         cartesian = AnyChart.vertical();
+        cartesian.animation(true, 1000);
         anyChartView.setChart(cartesian);
         usageRef.addValueEventListener(buildInfoValueEventListener());
     }

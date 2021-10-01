@@ -69,9 +69,8 @@ public class MainActivity extends AppCompatActivity {
     private final Random random = new Random();
     private ImageButton buttonResendHourlyReport;
     private ImageButton buttonNotificationType;
-    private TextView systemModeText, systemStateText;
     private Button serversList, buttonSystemModeAndState;
-    private boolean buttonNotificationTypeMuted, buttonResendHourlyEnabled, delayedArmInProgress;
+    private boolean buttonNotificationTypeMuted, buttonResendHourlyEnabled;
     private Handler serverLastPingHandler;
     private Runnable serverLastPingRunnable;
     private ColorStateList defaultTextColor;
@@ -96,9 +95,6 @@ public class MainActivity extends AppCompatActivity {
         updateServerListButtonActiveServerName();
 
         buttonResendHourlyReport = findViewById(R.id.buttonResendHourly);
-        if (systemIsInDarkMode) {
-            buttonResendHourlyReport.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_hourly_inverted));
-        }
         resolveHourlyReportIcon();
         buttonResendHourlyReport.setOnClickListener(v -> {
             if (buttonResendHourlyEnabled) {
@@ -193,8 +189,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        subscribeFirebaseListeners();
+
+        buildServersButton();
+
+        updateServerListButtonActiveServerName();
+        resolveHourlyReportIcon();
+        resolveNotificationType();
+
+        buildHandlers();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
+
+        if (serverLastPingHandler != null) {
+            serverLastPingHandler.removeCallbacks(serverLastPingRunnable);
+            serverLastPingHandler = null;
+            serverLastPingRunnable = null;
+        }
+
+        unsubscribeFirebaseListeners();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
 
         serverLastPingHandler.removeCallbacks(serverLastPingRunnable);
         serverLastPingHandler = null;
@@ -224,34 +248,6 @@ public class MainActivity extends AppCompatActivity {
         resolveNotificationType();
     }
 
-    private void muteUnmuteHourlyReporting() {
-        ServerData activeServer = getActiveServer();
-        buttonResendHourlyEnabled = activeServer.isHourlyReportEnabled();
-        Drawable icon;
-
-        if (buttonResendHourlyEnabled) {
-            buttonResendHourlyEnabled = false;
-            if (systemIsInDarkMode) {
-                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_hourly_inverted);
-            } else {
-                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_hourly);
-            }
-        } else {
-            buttonResendHourlyEnabled = true;
-            if (systemIsInDarkMode) {
-                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted_inverted);
-            } else {
-                icon = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.button_muted);
-            }
-        }
-
-        buttonResendHourlyReport.setImageDrawable(icon);
-        activeServer.setHourlyReportEnabled(buttonResendHourlyEnabled);
-        addOrUpdateServer(activeServer);
-        setOrUpdateActiveServer(activeServer);
-        registerUserDataOnServer(getActiveServer());
-    }
-
     private void subscribeFirebaseListeners() {
         if (infoRef == null) {
             infoRef = getActiveServerRootReference().child(INFO_ROOT).child(INFO_SERVER);
@@ -273,12 +269,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void unsubscribeFirebaseListeners() {
-        infoRef.removeEventListener(infoValueEventListener);
-        infoRef = null;
-        pingRef.removeEventListener(pingValueEventListener);
-        pingRef = null;
-        statusesRef.removeEventListener(statusesValueEventListener);
-        statusesRef = null;
+        if (infoRef != null) {
+            infoRef.removeEventListener(infoValueEventListener);
+            infoRef = null;
+        }
+        if (pingRef != null) {
+            pingRef.removeEventListener(pingValueEventListener);
+            pingRef = null;
+        }
+        if (statusesRef != null) {
+            statusesRef.removeEventListener(statusesValueEventListener);
+            statusesRef = null;
+        }
     }
 
     @Override
@@ -386,6 +388,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         buttonResendHourlyReport.setImageDrawable(icon);
+    }
+
+    private void muteUnmuteHourlyReporting() {
+        ServerData activeServer = getActiveServer();
+        if (activeServer != null) {
+            buttonResendHourlyEnabled = activeServer.isHourlyReportEnabled();
+
+            buttonResendHourlyEnabled = !buttonResendHourlyEnabled;
+
+            activeServer.setHourlyReportEnabled(buttonResendHourlyEnabled);
+            addOrUpdateServer(activeServer);
+            setOrUpdateActiveServer(activeServer);
+            resolveHourlyReportIcon();
+            registerUserDataOnServer(getActiveServer());
+        }
     }
 
     private void resolveNotificationType() {
@@ -537,27 +554,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void buildHandlers() {
-        serverLastPingHandler = new Handler();
-        serverLastPingRunnable = new Runnable() {
-            @Override
-            public void run() {
-                TextView serverLastPingTextValue = findViewById(R.id.textViewServerLastPingValue);
-                if (serverLastPing > 0 && System.currentTimeMillis() - serverLastPing > 300000) {
-                    serverLastPingTextValue.setTextColor(getApplicationContext().getColor(R.color.red));
-                    if (serverLastPingTextValue.getVisibility() == View.VISIBLE) {
-                        serverLastPingTextValue.setVisibility(View.INVISIBLE);
+        if (serverLastPingHandler == null) {
+            serverLastPingHandler = new Handler();
+            serverLastPingRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    TextView serverLastPingTextValue = findViewById(R.id.textViewServerLastPingValue);
+                    if (serverLastPing > 0 && System.currentTimeMillis() - serverLastPing > 300000) {
+                        serverLastPingTextValue.setTextColor(getApplicationContext().getColor(R.color.red));
+                        if (serverLastPingTextValue.getVisibility() == View.VISIBLE) {
+                            serverLastPingTextValue.setVisibility(View.INVISIBLE);
+                        } else {
+                            serverLastPingTextValue.setVisibility(View.VISIBLE);
+                        }
                     } else {
+                        serverLastPingTextValue.setTextColor(defaultTextColor);
                         serverLastPingTextValue.setVisibility(View.VISIBLE);
                     }
-                } else {
-                    serverLastPingTextValue.setTextColor(defaultTextColor);
-                    serverLastPingTextValue.setVisibility(View.VISIBLE);
+                    serverLastPingHandler.postDelayed(this, 1000);
                 }
-                serverLastPingHandler.postDelayed(this, 1000);
-            }
-        };
+            };
 
-        serverLastPingHandler.postDelayed(serverLastPingRunnable, 1000);
+            serverLastPingHandler.postDelayed(serverLastPingRunnable, 1000);
+        }
     }
 
     private void buildServersButton() {

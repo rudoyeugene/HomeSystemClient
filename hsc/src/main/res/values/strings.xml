@@ -52,7 +52,6 @@
     </string>
     <string name="text_armed_mode">ARMED MODE</string>
     <string name="text_armed_state">ARMED STATE</string>
-    <string name="text_bar_data_usage_for" formatted="true">for %02d %s</string>
     <string name="text_camera_app_text">Open camera application</string>
     <string name="text_camera_settings">Camera settings</string>
     <string name="text_current_server">Current server:</string>

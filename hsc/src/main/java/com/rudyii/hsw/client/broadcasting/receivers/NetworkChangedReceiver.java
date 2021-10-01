@@ -20,7 +20,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.rudyii.hs.common.objects.IamBack;
-import com.rudyii.hsw.client.helpers.ToastDrawer;
 import com.rudyii.hsw.client.objects.internal.ServerData;
 
 import org.json.JSONObject;
@@ -62,7 +61,6 @@ public class NetworkChangedReceiver extends BroadcastReceiver {
                         }, error -> {
                             System.out.println(error.toString());
                         });
-                        new ToastDrawer().showToast(serverData.getServerAlias() + " :)");
 
                         requestQueue.add(jsonObjectRequest);
                     }

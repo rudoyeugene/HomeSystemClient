@@ -6,6 +6,8 @@ import static com.rudyii.hsw.client.helpers.Utils.buildFromPropertiesMap;
 import static com.rudyii.hsw.client.helpers.Utils.currentLocale;
 import static com.rudyii.hsw.client.helpers.Utils.getCurrentTimeAndDateDoubleDotsDelimFrom;
 import static com.rudyii.hsw.client.helpers.Utils.getLooper;
+import static com.rudyii.hsw.client.helpers.Utils.getSystemModeLocalized;
+import static com.rudyii.hsw.client.helpers.Utils.getSystemStateLocalized;
 import static com.rudyii.hsw.client.helpers.Utils.readImageFromUrl;
 import static com.rudyii.hsw.client.helpers.Utils.saveDataFromUrl;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getActiveServerRootReference;
@@ -234,7 +236,7 @@ public class SystemLogActivity extends AppCompatActivity {
                         break;
                 }
 
-                description = String.format(currentLocale, "%s:%s", stateChangedLog.getSystemMode(), stateChangedLog.getSystemState());
+                description = String.format(currentLocale, "%s:%s", getSystemModeLocalized(stateChangedLog.getSystemMode()), getSystemStateLocalized(stateChangedLog.getSystemState()));
                 break;
 
             case MOTION_DETECTED:
@@ -276,7 +278,7 @@ public class SystemLogActivity extends AppCompatActivity {
             case RECORD_UPLOADED:
                 UploadLog uploadLog = buildFromPropertiesMap((Map<String, String>) value, UploadLog.class);
                 image = BitmapFactory.decodeResource(getResources(), R.mipmap.image_video);
-                description = String.format(currentLocale, "%s: %s", uploadLog.getCameraName(), uploadLog.getFileName());
+                description = String.format(currentLocale, "%s", uploadLog.getCameraName());
 
                 logItem = new LogItem(getApplicationContext()) {
                     @Override

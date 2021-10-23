@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.rudyii.hsw.client.R;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class UsageChartActivity extends AppCompatActivity {
         long fullHours = minutes / 60;
         double minutesLeft = minutes - (fullHours * 60);
         double minutesLeftDecimal = minutesLeft / 60;
-        return fullHours + minutesLeftDecimal;
+        return new BigDecimal(fullHours + minutesLeftDecimal).setScale(2, BigDecimal.ROUND_UP).doubleValue();
     }
 }
 

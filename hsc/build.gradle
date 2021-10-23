@@ -24,7 +24,7 @@ android {
         applicationId "com.rudyii.hsw.client"
         minSdkVersion 26
         targetSdkVersion 31
-        versionCode 91
+        versionCode 92
         versionName '2.0.1'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
@@ -67,8 +67,8 @@ android {
 }
 
 dependencies {
-    annotationProcessor 'org.projectlombok:lombok:1.18.20'
-    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    compileOnly 'org.projectlombok:lombok:1.18.22'
 
     api platform('com.google.cloud:libraries-bom:4.4.1')
     api 'com.google.cloud:google-cloud-storage'
@@ -97,8 +97,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage'
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta02'
-    implementation 'com.google.firebase:firebase-appcheck-debug:16.0.0-beta02'
+    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta03'
+    implementation 'com.google.firebase:firebase-appcheck-debug:16.0.0-beta03'
 
     //3rd party deps
     implementation 'com.google.zxing:core:3.4.1'

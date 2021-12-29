@@ -2,30 +2,38 @@ package com.rudyii.hsw.client.activities;
 
 import static com.rudyii.hs.common.names.FirebaseNameSpaces.SETTINGS_CAMERA;
 import static com.rudyii.hs.common.names.FirebaseNameSpaces.SETTINGS_ROOT;
+import static com.rudyii.hsw.client.helpers.MonitoringModeListAdapter.SELECTED_MODE;
 import static com.rudyii.hsw.client.helpers.Utils.buildFromRawJson;
+import static com.rudyii.hsw.client.helpers.Utils.currentLocale;
+import static com.rudyii.hsw.client.helpers.Utils.getCameraModeLocalized;
 import static com.rudyii.hsw.client.objects.internal.CameraSettingsInternal.CAMERA_SETTINSG_EXTRA_DATA_NAME;
 import static com.rudyii.hsw.client.providers.FirebaseDatabaseProvider.getActiveServerRootReference;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
 import com.rudyii.hs.common.objects.settings.CameraSettings;
+import com.rudyii.hs.common.type.MonitoringModeType;
 import com.rudyii.hsw.client.R;
 import com.rudyii.hsw.client.objects.internal.CameraSettingsInternal;
 
 public class CameraSettingsActivity extends AppCompatActivity {
     private CameraSettings cameraSettingsCopy;
-    private int cameraSettingsChangeId;
     private String cameraName;
     private SwitchCompat switchHealthCheckEnabled, switchUseMotionObject, switchContinuousMonitoring;
     private EditText editTextForMotionInterval, editTextForMotionArea, editTextForNoiseLevel, editTextForRebootTimeout, editTextForRecordLength;
+    private Button buttonCameraMode;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -35,9 +43,8 @@ public class CameraSettingsActivity extends AppCompatActivity {
 
         CameraSettingsInternal cameraSettingsInternal = buildFromRawJson(getIntent().getStringExtra(CAMERA_SETTINSG_EXTRA_DATA_NAME), CameraSettingsInternal.class);
         this.cameraName = cameraSettingsInternal.getCameraName();
-        this.setTitle(getTitle() + cameraName);
+        this.setTitle(getTitle() + " " + cameraName);
         this.cameraSettingsCopy = cameraSettingsInternal.getCameraSettings();
-        this.cameraSettingsChangeId = cameraSettingsCopy.hashCode();
 
         switchHealthCheckEnabled = findViewById(R.id.healthCheckEnabled);
         switchHealthCheckEnabled.setChecked(cameraSettingsCopy.isHealthCheckEnabled());
@@ -53,21 +60,25 @@ public class CameraSettingsActivity extends AppCompatActivity {
             cameraSettingsCopy.setShowMotionObject(isChecked);
         });
 
-        switchContinuousMonitoring = findViewById(R.id.continuousSwitch);
-        switchContinuousMonitoring.setChecked(cameraSettingsCopy.isContinuousMonitoring());
-        switchContinuousMonitoring.setEnabled(true);
-        switchContinuousMonitoring.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-            cameraSettingsCopy.setContinuousMonitoring(isChecked);
+        buttonCameraMode = findViewById(R.id.buttonCameraMode);
+        buttonCameraMode.setText(String.format(currentLocale, "%s", getCameraModeLocalized(cameraSettingsCopy.getMonitoringMode())));
+        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            MonitoringModeType selectedMonitoringModeType = MonitoringModeType.valueOf(result.getData().getStringExtra(SELECTED_MODE));
+            cameraSettingsCopy.setMonitoringMode(selectedMonitoringModeType);
+            buttonCameraMode.setText(String.format(currentLocale, "%s", getCameraModeLocalized(cameraSettingsCopy.getMonitoringMode())));
+            System.out.println(result);
         });
+        Intent runMenuIntent = new Intent(getApplicationContext(), SelectMonitoringModeActivity.class);
+        buttonCameraMode.setOnClickListener(view -> activityResultLauncher.launch(runMenuIntent));
 
         editTextForMotionInterval = findViewById(R.id.editTextForMotionInterval);
         editTextForMotionInterval.setInputType(InputType.TYPE_CLASS_NUMBER);
-        editTextForMotionInterval.setText(cameraSettingsCopy.getInterval() + "");
+        editTextForMotionInterval.setText(cameraSettingsCopy.getIntervalMs() + "");
         editTextForMotionInterval.setEnabled(true);
 
         editTextForMotionArea = findViewById(R.id.editTextForMotionArea);
         editTextForMotionArea.setInputType(InputType.TYPE_CLASS_NUMBER);
-        editTextForMotionArea.setText(cameraSettingsCopy.getMotionArea() + "");
+        editTextForMotionArea.setText(cameraSettingsCopy.getMotionAreaPercent() + "");
         editTextForMotionArea.setEnabled(true);
         editTextForMotionArea.addTextChangedListener(new TextWatcher() {
             @Override
@@ -77,7 +88,7 @@ public class CameraSettingsActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                cameraSettingsCopy.setMotionArea(Integer.parseInt(String.valueOf("".contentEquals(charSequence) ? "0" : charSequence)));
+                cameraSettingsCopy.setMotionAreaPercent(Integer.parseInt(String.valueOf("".contentEquals(charSequence) ? "0" : charSequence)));
             }
 
             @Override
@@ -130,7 +141,7 @@ public class CameraSettingsActivity extends AppCompatActivity {
 
         editTextForRecordLength = findViewById(R.id.editTextForRecordLength);
         editTextForRecordLength.setInputType(InputType.TYPE_CLASS_NUMBER);
-        editTextForRecordLength.setText(cameraSettingsCopy.getRecordLength() + "");
+        editTextForRecordLength.setText(cameraSettingsCopy.getRecordLengthSec() + "");
         editTextForRecordLength.setEnabled(true);
         editTextForRecordLength.addTextChangedListener(new TextWatcher() {
             @Override
@@ -140,7 +151,7 @@ public class CameraSettingsActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                cameraSettingsCopy.setRecordLength(Integer.parseInt(String.valueOf("".contentEquals(charSequence) ? "0" : charSequence)));
+                cameraSettingsCopy.setRecordLengthSec(Integer.parseInt(String.valueOf("".contentEquals(charSequence) ? "0" : charSequence)));
             }
 
             @Override
@@ -157,8 +168,6 @@ public class CameraSettingsActivity extends AppCompatActivity {
     }
 
     private void pushChanges() {
-        if (cameraSettingsChangeId != cameraSettingsCopy.hashCode()) {
-            getActiveServerRootReference().child(SETTINGS_ROOT).child(SETTINGS_CAMERA).child(cameraName).setValue(cameraSettingsCopy);
-        }
+        getActiveServerRootReference().child(SETTINGS_ROOT).child(SETTINGS_CAMERA).child(cameraName).setValue(cameraSettingsCopy);
     }
 }

@@ -65,7 +65,7 @@
     <string name="text_log_button">Журнал</string>
     <string name="text_menu_system_log_clear_log">Очистить журнал</string>
     <string name="text_motion_area">Зона движения (%)</string>
-    <string name="text_motion_check_interval">Интервал проверки (мс)</string>
+    <string name="text_motion_check_interval">Интервал проверки (мсeк)</string>
     <string name="text_motion_sound">Звук движения</string>
     <string name="text_no_server">НЕТ СЕРВЕРА</string>
     <string name="text_noise_level">Уровень шума</string>
@@ -78,7 +78,7 @@
     <string name="text_resend_hourly_text">Получить ежечасный отчет</string>
     <string name="text_resend_weekly_text">Открыть график использования</string>
     <string name="text_retrieving_data">получаем данные</string>
-    <string name="text_seconds">\u0020секунд</string>
+    <string name="text_seconds">секунд</string>
     <string name="text_server_ping">Последний раз в сети:</string>
     <string name="text_server_started">Запущен</string>
     <string name="text_server_stopped">Остановлен</string>
@@ -92,15 +92,17 @@
     <string name="text_system_state_armed">Включен</string>
     <string name="text_system_state_disarmed">Выключен</string>
     <string name="text_system_state_resolving">Выясняем</string>
+    <string name="text_textViewForMasterCheckIntervalArmed">Проверка пользвателей если ВКЛЮЧЕН (сек)</string>
+    <string name="text_textViewForMasterCheckIntervalDisarmed">Проверка пользвателей если ВЫКЛЮЧЕН (сек)</string>
     <string name="text_textViewForSwitchCollectStats">Собирать статистику если ВКЛЮЧЕН</string>
     <string name="text_textViewForSwitchHourlyReportEnabled">Отправлять ежечасный отчет если ВКЛЮЧЕН</string>
     <string name="text_textViewForSwitchHourlyReportForced">Всегда отправлять ежечасный отчет</string>
     <string name="text_textViewForSwitchMonitoringEnabled">Состояние устройств в ежечасном отчете</string>
-    <string name="text_textViewForSwitchShowMotionAreaEnabled">Отображать зону движения в %</string>
+    <string name="text_textViewForSwitchShowMotionAreaEnabled">Отображать зону движения (%)</string>
     <string name="text_textViewForSwitchVerboseOutputEnabled">Включить расширеное логгирование</string>
-    <string name="text_textViewForTextViewDelayedArmInterval">Задержка включения, сек:</string>
-    <string name="text_textViewForTextViewKeepDays">Хранить историю, дней:</string>
-    <string name="text_textViewForTextViewRecordInterval">Запись видео, сек:</string>
+    <string name="text_textViewForTextViewDelayedArmInterval">Задержка включения (сек)</string>
+    <string name="text_textViewForTextViewKeepDays">Хранить историю (дней)</string>
+    <string name="text_textViewForTextViewRecordInterval">Запись видео (сек)</string>
     <string name="text_textViewSelectCameraApp">Приложение для камер</string>
     <string name="text_toast_automatic_mode_selected">Отключите автоматический режим</string>
     <string name="text_toast_delayed_arm_in_progress">Включение с задержкой уже активно</string>
@@ -116,4 +118,7 @@
     <string name="toast_server_unpair_failure">Отсоединение не удалось</string>
     <string name="toast_server_unpair_success">Отсоединение удалось</string>
     <string name="toast_text_data_unavailable">Данные недоступны</string>
+    <string name="text_monitoring_mode_automatic">АВТО</string>
+    <string name="text_monitoring_mode_enabled">ВКЛЮЧЕНА</string>
+    <string name="text_monitoring_mode_disabled">ВЫКЛЮЧЕНА</string>
 </resources>

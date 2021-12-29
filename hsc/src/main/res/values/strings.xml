@@ -66,7 +66,7 @@
     <string name="text_log_button">Log</string>
     <string name="text_menu_system_log_clear_log">Clear log</string>
     <string name="text_motion_area">Motion area (%)</string>
-    <string name="text_motion_check_interval">Motion interval (ms)</string>
+    <string name="text_motion_check_interval">Motion interval (msec)</string>
     <string name="text_motion_sound">Motion sound</string>
     <string name="text_no_server">NO SERVER</string>
     <string name="text_noise_level">Noise level</string>
@@ -97,11 +97,11 @@
     <string name="text_textViewForSwitchHourlyReportEnabled">Send hourly report if ARMED</string>
     <string name="text_textViewForSwitchHourlyReportForced">Always send hourly report</string>
     <string name="text_textViewForSwitchMonitoringEnabled">Show devices state in hourly report</string>
-    <string name="text_textViewForSwitchShowMotionAreaEnabled">Show motion area in %</string>
+    <string name="text_textViewForSwitchShowMotionAreaEnabled">Show motion area (%)</string>
     <string name="text_textViewForSwitchVerboseOutputEnabled">Enable verbose output</string>
-    <string name="text_textViewForTextViewDelayedArmInterval">ARM delay, sec:</string>
-    <string name="text_textViewForTextViewKeepDays">Keep history for, days:</string>
-    <string name="text_textViewForTextViewRecordInterval">Record video for, sec:</string>
+    <string name="text_textViewForTextViewDelayedArmInterval">ARM delay (sec)</string>
+    <string name="text_textViewForTextViewKeepDays">Keep history (days)</string>
+    <string name="text_textViewForTextViewRecordInterval">Record video length (sec)</string>
     <string name="text_textViewSelectCameraApp">Camera app</string>
     <string name="text_toast_automatic_mode_selected">Automatic mode selected, disable it first</string>
     <string name="text_toast_delayed_arm_in_progress">Delayed arm already in progress</string>
@@ -117,4 +117,9 @@
     <string name="toast_server_unpair_failure">Unpairing failed</string>
     <string name="toast_server_unpair_success">Unpairing success</string>
     <string name="toast_text_data_unavailable">Data unavailable</string>
+    <string name="text_textViewForMasterCheckIntervalArmed">Master check: ARMED (sec)</string>
+    <string name="text_textViewForMasterCheckIntervalDisarmed">Master check: DISARMED (sec)</string>
+    <string name="text_monitoring_mode_automatic">AUTO</string>
+    <string name="text_monitoring_mode_enabled">ENABLED</string>
+    <string name="text_monitoring_mode_disabled">DISABLED</string>
 </resources>

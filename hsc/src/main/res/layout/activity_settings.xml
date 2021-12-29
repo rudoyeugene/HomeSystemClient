@@ -211,7 +211,7 @@
             app:layout_constraintTop_toBottomOf="@+id/switchVerboseOutputEnabled" />
 
         <TextView
-            android:id="@+id/textViewForTextViewDelayedArmInterval"
+            android:id="@+id/textViewForDelayedArmInterval"
             android:layout_width="0dp"
             android:layout_height="45dp"
             android:layout_marginStart="8dp"
@@ -239,10 +239,10 @@
             android:text="60"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/textViewForTextViewDelayedArmInterval"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewForDelayedArmInterval"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toTopOf="@+id/textViewForTextViewDelayedArmInterval" />
+            app:layout_constraintTop_toTopOf="@+id/textViewForDelayedArmInterval" />
 
         <TextView
             android:id="@+id/textViewForTextViewKeepDays"
@@ -255,7 +255,35 @@
             android:text="@string/text_textViewForTextViewKeepDays"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewForTextViewDelayedArmInterval" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewForDelayedArmInterval" />
+
+        <TextView
+            android:id="@+id/textViewForMasterCheckIntervalArmed"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="left|center"
+            android:text="@string/text_textViewForMasterCheckIntervalArmed"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewForTextViewKeepDays" />
+
+        <TextView
+            android:id="@+id/textViewForMasterCheckIntervalDisarmed"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="left|center"
+            android:text="@string/text_textViewForMasterCheckIntervalDisarmed"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewForMasterCheckIntervalArmed" />
 
         <EditText
             android:id="@+id/editTextForTextViewKeepDays"
@@ -277,6 +305,46 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toTopOf="@+id/textViewForTextViewKeepDays" />
+
+        <EditText
+            android:id="@+id/editTextForTextViewForMasterCheckIntervalArmed"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:ems="10"
+            android:enabled="true"
+            android:gravity="left|center"
+            android:inputType="number"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:text="30"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewForMasterCheckIntervalArmed"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline4"
+            app:layout_constraintTop_toTopOf="@+id/textViewForMasterCheckIntervalArmed" />
+
+        <EditText
+            android:id="@+id/editTextForTextViewForMasterCheckIntervalDisarmed"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:ems="10"
+            android:enabled="false"
+            android:gravity="left|center"
+            android:inputType="number"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:text="30"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewForMasterCheckIntervalDisarmed"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline4"
+            app:layout_constraintTop_toTopOf="@+id/textViewForMasterCheckIntervalDisarmed" />
 
         <Button
             android:id="@+id/buttonCameraSettings"

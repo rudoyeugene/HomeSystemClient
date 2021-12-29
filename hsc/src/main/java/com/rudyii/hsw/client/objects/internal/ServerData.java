@@ -17,7 +17,8 @@ public class ServerData {
     private String serverAlias;
     private String serverIp;
     private Integer serverPort;
-    private NotificationType notificationType;
+    @Builder.Default
+    private NotificationType notificationType = NotificationType.ALL;
     private boolean hourlyReportEnabled;
     private boolean notificationsMuted;
 }

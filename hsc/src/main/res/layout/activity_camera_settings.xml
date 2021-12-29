@@ -13,9 +13,8 @@
         android:layout_marginEnd="8dp"
         android:gravity="left|center"
         android:text="24/7"
-        app:layout_constraintBottom_toBottomOf="@+id/continuousSwitch"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/continuousSwitch"
+        app:layout_constraintStart_toEndOf="@+id/textViewForSwitchHealthCheckEnabled"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -42,19 +41,6 @@
         android:hapticFeedbackEnabled="true"
         android:textAllCaps="false"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/continuousSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:checked="false"
-        android:enabled="false"
-        android:hapticFeedbackEnabled="true"
-        android:textAllCaps="false"
-        app:layout_constraintStart_toStartOf="@+id/guideline5"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -84,7 +70,7 @@
         app:layout_constraintTop_toBottomOf="@+id/healthCheckEnabled" />
 
     <TextView
-        android:id="@+id/textViewForTextViewDelayedArmInterval"
+        android:id="@+id/textViewForDelayedArmInterval"
         android:layout_width="0dp"
         android:layout_height="45dp"
         android:layout_marginStart="8dp"
@@ -112,9 +98,9 @@
         android:text="500"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/textViewForTextViewDelayedArmInterval"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewForDelayedArmInterval"
         app:layout_constraintStart_toStartOf="@+id/guideline5"
-        app:layout_constraintTop_toTopOf="@+id/textViewForTextViewDelayedArmInterval" />
+        app:layout_constraintTop_toTopOf="@+id/textViewForDelayedArmInterval" />
 
     <TextView
         android:id="@+id/textViewForTextViewKeepDays"
@@ -128,7 +114,7 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewForTextViewDelayedArmInterval" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewForDelayedArmInterval" />
 
     <EditText
         android:id="@+id/editTextForMotionArea"
@@ -253,5 +239,17 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
+
+    <Button
+        android:id="@+id/buttonCameraMode"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="32dp"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewForSwitchHealthCheckEnabled"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textViewForSwitchContinuousMonitoring"
+        app:layout_constraintTop_toTopOf="@+id/textViewForSwitchHealthCheckEnabled" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

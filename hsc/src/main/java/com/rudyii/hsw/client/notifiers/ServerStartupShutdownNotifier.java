@@ -24,7 +24,7 @@ import com.rudyii.hsw.client.activities.MainActivity;
 public class ServerStartupShutdownNotifier {
     public ServerStartupShutdownNotifier(Context context, StartStopLog startStopLog, String serverAlias, long when) {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
-                new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+                new Intent(context, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_NORMAL)
                 .setSmallIcon(R.drawable.ic_stat_notification)

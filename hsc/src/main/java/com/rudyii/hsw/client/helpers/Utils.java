@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.rudyii.hs.common.objects.ConnectedClient;
+import com.rudyii.hs.common.type.MonitoringModeType;
 import com.rudyii.hs.common.type.NotificationType;
 import com.rudyii.hs.common.type.ServerStateType;
 import com.rudyii.hs.common.type.SystemModeType;
@@ -78,6 +79,19 @@ public class Utils {
                 return getAppContext().getString(R.string.text_system_mode_automatic);
             case MANUAL:
                 return getAppContext().getString(R.string.text_system_mode_manual);
+            default:
+                return getAppContext().getString(R.string.text_in_upper_unknown);
+        }
+    }
+
+    public static String getCameraModeLocalized(MonitoringModeType monitoringModeType) {
+        switch (monitoringModeType) {
+            case AUTO:
+                return getAppContext().getString(R.string.text_monitoring_mode_automatic);
+            case ENABLED:
+                return getAppContext().getString(R.string.text_monitoring_mode_enabled);
+            case DISABLED:
+                return getAppContext().getString(R.string.text_monitoring_mode_disabled);
             default:
                 return getAppContext().getString(R.string.text_in_upper_unknown);
         }

@@ -98,10 +98,10 @@ public class MainActivity extends AppCompatActivity {
         resolveHourlyReportIcon();
         buttonResendHourlyReport.setOnClickListener(v -> {
             if (buttonResendHourlyEnabled) {
-                new ToastDrawer().showToast(getResources().getString(R.string.text_resend_hourly_request_muted));
-            } else {
                 getActiveServerRootReference().child(REQUEST_ROOT).child(REQUEST_HOURLY_REPORT).setValue(random.nextInt());
                 new ToastDrawer().showToast(getResources().getString(R.string.text_resend_hourly_request_text));
+            } else {
+                new ToastDrawer().showToast(getResources().getString(R.string.text_resend_hourly_request_muted));
             }
         });
         buttonResendHourlyReport.setOnLongClickListener(v -> {

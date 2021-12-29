@@ -51,7 +51,7 @@ public class VideoUploadedNotifier {
             } finally {
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             }
-            mBuilder.setContentIntent(PendingIntent.getActivity(getAppContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT));
+            mBuilder.setContentIntent(PendingIntent.getActivity(getAppContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE));
 
             NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             requireNonNull(mNotificationManager).notify((int) System.currentTimeMillis(), mBuilder.build());

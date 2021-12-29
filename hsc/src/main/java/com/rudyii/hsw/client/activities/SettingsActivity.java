@@ -52,7 +52,7 @@ public class SettingsActivity extends AppCompatActivity {
     @SuppressWarnings("FieldCanBeLocal")
     private Button addServerButton, removeServerButton, cameraSettings;
     private SwitchCompat switchCollectStatsEnabled, switchMonitoringEnabled, switchHourlyReportEnabled, switchHourlyReportForced, switchVerboseOutputEnabled, switchShowMotionAreaEnabled;
-    private EditText editTextForDelayedArmInterval, editTextForTextViewKeepDays;
+    private EditText editTextForDelayedArmInterval, editTextForTextViewKeepDays, editTextForTextViewForMasterCheckIntervalArmed, editTextForTextViewForMasterCheckIntervalDisarmed;
     private DatabaseReference optionsReference;
     private ValueEventListener optionsValueEventListener;
     private GlobalSettings globalSettingsCopy;
@@ -173,7 +173,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                globalSettingsCopy.setDelayedArmTimeout(Integer.parseInt(String.valueOf("".contentEquals(s) ? "0" : s)));
+                globalSettingsCopy.setDelayedArmTimeoutSec(Integer.parseInt(String.valueOf("".contentEquals(s) ? "0" : s)));
             }
 
             @Override
@@ -199,6 +199,42 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        editTextForTextViewForMasterCheckIntervalArmed = findViewById(R.id.editTextForTextViewForMasterCheckIntervalArmed);
+        editTextForTextViewForMasterCheckIntervalArmed.setInputType(InputType.TYPE_CLASS_NUMBER);
+        editTextForTextViewForMasterCheckIntervalArmed.setTextColor(getAppContext().getColor(R.color.textColor));
+        editTextForTextViewForMasterCheckIntervalArmed.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                globalSettingsCopy.setMasterCheckPeriodIfArmedSec(Integer.parseInt(String.valueOf("".contentEquals(s) ? "0" : s)));
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        editTextForTextViewForMasterCheckIntervalDisarmed = findViewById(R.id.editTextForTextViewForMasterCheckIntervalDisarmed);
+        editTextForTextViewForMasterCheckIntervalDisarmed.setInputType(InputType.TYPE_CLASS_NUMBER);
+        editTextForTextViewForMasterCheckIntervalDisarmed.setTextColor(getAppContext().getColor(R.color.textColor));
+        editTextForTextViewForMasterCheckIntervalDisarmed.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                globalSettingsCopy.setMasterCheckPeriodIfDisarmedSec(Integer.parseInt(String.valueOf("".contentEquals(s) ? "0" : s)));
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
     }
 
     private void buildCameraSettingsButton() {
@@ -217,6 +253,8 @@ public class SettingsActivity extends AppCompatActivity {
         switchShowMotionAreaEnabled.setEnabled(false);
         editTextForDelayedArmInterval.setEnabled(false);
         editTextForTextViewKeepDays.setEnabled(false);
+        editTextForTextViewForMasterCheckIntervalArmed.setEnabled(false);
+        editTextForTextViewForMasterCheckIntervalDisarmed.setEnabled(false);
     }
 
     private void updateOptions() {
@@ -232,7 +270,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         if (globalSettingsChangeId != currentGlobalSettingsChangeId) {
-            saveIntegerValueToSettingsStorage(DELAYED_ARM_DELAY_SECS, globalSettingsCopy.getDelayedArmTimeout());
+            saveIntegerValueToSettingsStorage(DELAYED_ARM_DELAY_SECS, globalSettingsCopy.getDelayedArmTimeoutSec());
             optionsReference.setValue(globalSettingsCopy);
         }
     }
@@ -307,10 +345,16 @@ public class SettingsActivity extends AppCompatActivity {
         switchShowMotionAreaEnabled.setChecked(globalSettingsCopy.isShowMotionArea());
         switchShowMotionAreaEnabled.setEnabled(true);
 
-        editTextForDelayedArmInterval.setText(globalSettingsCopy.getDelayedArmTimeout() + "");
+        editTextForDelayedArmInterval.setText(globalSettingsCopy.getDelayedArmTimeoutSec() + "");
         editTextForDelayedArmInterval.setEnabled(true);
 
         editTextForTextViewKeepDays.setText(globalSettingsCopy.getHistoryDays() + "");
         editTextForTextViewKeepDays.setEnabled(true);
+
+        editTextForTextViewForMasterCheckIntervalArmed.setText(globalSettingsCopy.getMasterCheckPeriodIfArmedSec() + "");
+        editTextForTextViewForMasterCheckIntervalArmed.setEnabled(true);
+
+        editTextForTextViewForMasterCheckIntervalDisarmed.setText(globalSettingsCopy.getMasterCheckPeriodIfDisarmedSec() + "");
+        editTextForTextViewForMasterCheckIntervalDisarmed.setEnabled(true);
     }
 }

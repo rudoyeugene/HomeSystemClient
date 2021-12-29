@@ -89,7 +89,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/label_settings"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".activities.SettingsActivity"
@@ -97,7 +97,7 @@
             android:label="@string/label_settings"
             android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".activities.AboutActivity"
@@ -139,6 +139,12 @@
 
         <activity
             android:name=".activities.SelectModeAndStateActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
+
+        <activity
+            android:name=".activities.SelectMonitoringModeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
